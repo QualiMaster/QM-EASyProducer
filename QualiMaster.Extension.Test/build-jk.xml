@@ -43,7 +43,10 @@
 		<pathelement path="${libs.vil.core}"/>
 		<pathelement path="${libs.vil.ui}"/>
 		<pathelement path="../QualiMaster.Extension/build/jar/QualiMaster.Extension.jar"/>
-		<!-- Eclipse-Plugins -->
+        <fileset dir="../QualiMaster.Extension/lib">
+            <include name="**/*.jar" />
+        </fileset>
+				<!-- Eclipse-Plugins -->
 		<fileset dir="${eclipse.plugins.dir}">
 			<include name="**/*.jar" />
 		</fileset>
@@ -59,17 +62,12 @@
 		<mkdir dir="${build.classes.dir}"/>
 		<mkdir dir="${build.jar.dir}"/>
 	
-	    <mavenUpdate pomFile="pom.xml"/>
-        <artifact:dependencies pathId="maven.compile.classpath">
-            <pom file="pom.xml" id="pom"/>
-        </artifact:dependencies>
 	</target>
 	
 	<!-- Compile all files without test classes -->
 	<target name="compile" depends="init">
 		<javac srcdir="${src.dir}" debug="on" destdir="${build.classes.dir}" includeAntRuntime="no" failonerror="true" source="${javacSource}" target="${javacTarget}" encoding="${javac.encoding}">
             <classpath refid="includes" />	
-            <classpath refid="maven.compile.classpath" />
         </javac>
     </target>
 	
@@ -77,7 +75,6 @@
       <jacoco:coverage output="file" destfile="jacoco.exec" excludes="backtype.*:org.apache.thrift7.*">
         <junit printsummary="withOutAndErr" dir="${build.base.dir}" fork="true" timeout="240000" showoutput="yes">
             <classpath>
-                <path refid="maven.compile.classpath" />
                 <path refid="includes" />
                 <pathelement location="${build.classes.dir}" />
             </classpath>
