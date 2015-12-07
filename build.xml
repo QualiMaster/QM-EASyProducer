@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="QualiMaster.Ex" default="compile" basedir=".">	
+
+	<target name="compile">
+        <echo>#########################################</echo>
+        <echo>###  Compiling QualiMaster.Extension  ###</echo>
+        <echo>#########################################</echo>
+        <ant dir="QualiMaster.Extension" antfile="${build.script.name}" />
+            
+        <!-- Must be compiled before rt-Instantiator Core -->
+        <echo>##############################################</echo>
+        <echo>###  Compiling QualiMaster.Extension.Test  ###</echo>
+        <echo>##############################################</echo>
+        <ant dir="QualiMaster.Extension.Test" antfile="${build.script.name}" /> 
+	</target>
+	
+</project>
