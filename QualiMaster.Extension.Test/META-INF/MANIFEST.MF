@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Tests for the EASy extension for QualiMaster
+Bundle-SymbolicName: QualiMaster.Extension.Test
+Bundle-Version: 0.2.0
+Require-Bundle: QualiMaster.Extension;bundle-version="0.2.0",
+ org.junit;bundle-version="4.8.2",
+ de.uni_hildesheim.sse.varModel,
+ de.uni-hildesheim.sse.easy.instantiatorCore

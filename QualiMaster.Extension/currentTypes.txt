@@ -1,0 +1,197 @@
+    * AbstractCommandContainer / qualimaster::AbstractCommandContainer
+        * CoordinationCommand command(int)
+        * Integer commandCount()
+        * add(CoordinationCommand)
+        * CoordinationCommand getCommand(int)
+        * Integer getCommandCount()
+        * exec()
+        * Boolean keepOrdering()
+        * new AbstractCommandContainer ()
+        * new AbstractCommandContainer (PseudoVoid)
+        * new AbstractCommandContainer (sequenceOf)
+    * AbstractPipelineCommand / qualimaster::AbstractPipelineCommand
+        * String getPipeline()
+        * String pipeline()
+        * exec()
+    * AbstractPipelineElementCommand / qualimaster::AbstractPipelineElementCommand
+        * String getPipelineElement()
+        * String pipelineElement()
+        * String getPipeline()
+        * String pipeline()
+        * exec()
+        * new AbstractPipelineElementCommand (String,String)
+    * AdaptationEvent / qualimaster::AdaptationEvent
+        * new AdaptationEvent ()
+    * AlgorithmChangeCommand / qualimaster::AlgorithmChangeCommand
+        * String algorithm()
+        * String getPipelineElement()
+        * String pipelineElement()
+        * String getPipeline()
+        * String pipeline()
+        * String getAlgorithm()
+        * exec()
+        * new AlgorithmChangeCommand (String,String,String)
+    * CommandSequence / qualimaster::CommandSequence
+        * CoordinationCommand command(int)
+        * Integer commandCount()
+        * add(CoordinationCommand)
+        * CoordinationCommand getCommand(int)
+        * Integer getCommandCount()
+        * exec()
+        * Boolean keepOrdering()
+        * new CommandSequence (sequenceOf)
+        * new CommandSequence (PseudoVoid)
+        * new CommandSequence ()
+    * CommandSet / qualimaster::CommandSet
+        * CoordinationCommand command(int)
+        * Integer commandCount()
+        * add(CoordinationCommand)
+        * CoordinationCommand getCommand(int)
+        * Integer getCommandCount()
+        * exec()
+        * Boolean keepOrdering()
+        * new CommandSet (sequenceOf)
+        * new CommandSet (PseudoVoid)
+        * new CommandSet ()
+    * CoordinationCommand / qualimaster::CoordinationCommand
+        * exec()
+        * new CoordinationCommand ()
+    * EnactmentFailedAdaptationEvent / qualimaster::EnactmentFailedAdaptationEvent
+        * CoordinationCommand getFailed()
+        * CoordinationCommand getCommand()
+        * Integer getCode()
+        * Integer code()
+        * CoordinationCommand command()
+        * CoordinationCommand failed()
+    * Event / qualimaster::Event
+    * ForwardedCoordinationCommand / qualimaster::ForwardedCoordinationCommand
+        * timestamp()
+        * getTimestamp()
+    * FrozenSystemState / qualimaster::FrozenSystemState
+        * Real getMachineObservation(String,IObservable)
+        * Real algorithmObservation(String,IObservable)
+        * Real infrastructureObservation(IObservable)
+        * Real pipelineElementObservation(String,String,IObservable)
+        * Real getAlgorithmObservation(String,IObservable)
+        * Real machineObservation(String,IObservable)
+        * Real getDataSourceObservation(String,IObservable)
+        * Real pipelineObservation(String,IObservable)
+        * Real getDataSinkObservation(String,IObservable)
+        * Real getPipelineObservation(String,IObservable)
+        * Real getHwNodeObservation(String,IObservable)
+        * Real dataSourceObservation(String,IObservable)
+        * Real getPipelineElementObservation(String,String,IObservable)
+        * Real dataSinkObservation(String,IObservable)
+        * Real getInfrastructureObservation(IObservable)
+        * Real hwNodeObservation(String,IObservable)
+        * new FrozenSystemState ()
+        * new FrozenSystemState (mapOf(String, Real))
+    * FunctionalSuitability / qualimaster::FunctionalSuitability
+        * FunctionalSuitability ACCURACY_CONFIDENCE
+        * FunctionalSuitability ACCURACY_ERROR_RATE
+        * FunctionalSuitability BELIEVABILITY
+        * FunctionalSuitability RELEVANCY
+        * FunctionalSuitability COMPLETENESS
+        * FunctionalSuitability MP_VOLATILITY
+        * String name()
+    * InfrastructureEvent / qualimaster::InfrastructureEvent
+        * new InfrastructureEvent ()
+    * MonitoringChangeCommand / qualimaster::MonitoringChangeCommand
+        * Observable observable()
+        * Observable getObservable()
+        * Boolean isEnabled()
+        * String getPipelineElement()
+        * String pipelineElement()
+        * String getPipeline()
+        * String pipeline()
+        * exec()
+        * new MonitoringChangeCommand (String,String,Observable,Boolean)
+        * new MonitoringChangeCommand (String,Observable,Boolean)
+        * new MonitoringChangeCommand (Boolean)
+        * new MonitoringChangeCommand (Observable,Boolean)
+    * Observable / qualimaster::Observable
+        * String name()
+    * ParallelismChangeCommand / qualimaster::ParallelismChangeCommand
+        * mapOf(String, Integer) executors()
+        * mapOf(String, Integer) getExecutors()
+        * Integer getNumberOfWorkers()
+        * Integer numberOfWorkers()
+        * String getPipeline()
+        * String pipeline()
+        * exec()
+        * new ParallelismChangeCommand (String,Integer,mapOf(String, Integer))
+    * ParameterChangeCommand / qualimaster::ParameterChangeCommand
+        * Any getValue()
+        * String getPipelineElement()
+        * String pipelineElement()
+        * Any value()
+        * String parameter()
+        * String getPipeline()
+        * String pipeline()
+        * exec()
+        * String getParameter()
+        * new ParameterChangeCommand (String,String,String,Any)
+    * PipelineCommand / qualimaster::PipelineCommand
+        * PipelineCommandStatus getStatus()
+        * String getPipeline()
+        * String pipeline()
+        * PipelineCommandStatus status()
+        * exec()
+        * new PipelineCommand (String,PipelineCommandStatus)
+    * PipelineLifecycleEvent / qualimaster::PipelineLifecycleEvent
+        * PipelineLifecycleEventStatus getStatus()
+        * String getPipeline()
+        * PipelineLifecycleEventStatus status()
+        * String pipeline()
+        * new PipelineLifecycleEvent (String,PipelineLifecycleEventStatus)
+    * RegularAdaptationEvent / qualimaster::RegularAdaptationEvent
+        * timestamp()
+        * getTimestamp()
+        * new RegularAdaptationEvent ()
+    * ResourceUsage / qualimaster::ResourceUsage
+        * ResourceUsage MEMORY_USE
+        * ResourceUsage AVAILABLE_MACHINES
+        * ResourceUsage USED_MACHINES
+        * ResourceUsage AVAILABLE_DFES
+        * ResourceUsage USED_DFES
+        * ResourceUsage BANDWIDTH
+        * ResourceUsage CAPACITY
+        * ResourceUsage EXECUTORS
+        * ResourceUsage AVAILABLE_CPUS
+        * ResourceUsage USED_CPUS
+        * String name()
+    * Scalability / qualimaster::Scalability
+        * Scalability VOLUME
+        * Scalability VELOCITY
+        * Scalability VOLATILITY
+        * Scalability VARIETY
+        * String name()
+    * ScheduleWavefrontAdaptationCommand / qualimaster::ScheduleWavefrontAdaptationCommand
+        * String getPipelineElement()
+        * String pipelineElement()
+        * String getPipeline()
+        * String pipeline()
+        * exec()
+        * new ScheduleWavefrontAdaptationCommand (String,String)
+    * SlaViolatedAdaptationEvent / qualimaster::SlaViolatedAdaptationEvent
+        * violatingClauses()
+        * Integer getViolatingClauseCount()
+        * getViolatingClauses()
+        * SlaViolatedAdaptationEventViolatingClause getViolatingClause(int)
+        * SlaViolatedAdaptationEventViolatingClause violatingClause(int)
+        * Integer violatingClauseCount()
+    * StartupAdaptationEvent / qualimaster::StartupAdaptationEvent
+        * String getPipeline()
+        * String pipeline()
+        * new StartupAdaptationEvent (String)
+    * TimeBehavior / qualimaster::TimeBehavior
+        * TimeBehavior LATENCY
+        * TimeBehavior THROUGHPUT_ITEMS
+        * TimeBehavior THROUGHPUT_VOLUME
+        * TimeBehavior ENACTMENT_DELAY
+        * String name()
+    * UserTriggerAdaptationEvent / qualimaster::UserTriggerAdaptationEvent
+        * Any getValue()
+        * Any value()
+        * String parameter()
+        * String getParameter()
