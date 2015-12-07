@@ -5,13 +5,13 @@
         <echo>#########################################</echo>
         <echo>###  Compiling QualiMaster.Extension  ###</echo>
         <echo>#########################################</echo>
-        <ant dir="QualiMaster.Extension" antfile="${build.script.name}" />
+        <ant dir="QualiMaster.Extension" antfile="build-jk.xml" />
             
         <!-- Must be compiled before rt-Instantiator Core -->
         <echo>##############################################</echo>
         <echo>###  Compiling QualiMaster.Extension.Test  ###</echo>
         <echo>##############################################</echo>
-        <ant dir="QualiMaster.Extension.Test" antfile="${build.script.name}" /> 
+        <ant dir="QualiMaster.Extension.Test" antfile="build-jk.xml" /> 
 	</target>
 	
 </project>
