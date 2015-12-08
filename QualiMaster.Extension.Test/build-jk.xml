@@ -78,7 +78,7 @@
                 <path refid="includes" />
                 <pathelement location="${build.classes.dir}" />
             </classpath>
-            <test name="tests.eu.qualimaster.easy.extension.internal" haltonfailure="no" outfile="result">
+            <test name="test.eu.qualimaster.easy.extension.internal.AllTests" haltonfailure="no" outfile="result">
                 <formatter type="xml" />
             </test>
             <jvmarg value="-Dqm.base.dir=${home.QualiMaster.Extension.java.dir}"/>
