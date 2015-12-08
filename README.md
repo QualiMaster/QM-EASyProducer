@@ -5,3 +5,5 @@ infrastructure within these languages and to even simulate executions using the 
 
 The implementation bridges the Maven nature of the QualiMaster infrastructure and the Eclipse nature of EASy-Producer. For using this extension, 
 EASy-Producer (https://github.com/SSEHUB/EASyProducer) must be installed (either as source code or as release bundles).
+
+QM-IConf is released as open source under the Apache 2.0 license.
