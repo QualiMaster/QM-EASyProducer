@@ -13,6 +13,7 @@ eu.qualimaster.coordination.commands.ParameterChangeCommand
 eu.qualimaster.coordination.commands.PipelineCommand
 eu.qualimaster.coordination.commands.ScheduleWavefrontAdaptationCommand
 eu.qualimaster.adaptation.events.AdaptationEvent
+eu.qualimaster.adaptation.events.AlgorithmConfigurationAdaptationEvent
 eu.qualimaster.adaptation.events.ConstraintViolationAdaptationEvent
 eu.qualimaster.adaptation.events.ImplementationPayloadAdaptationEvent
 eu.qualimaster.adaptation.events.InitExperimentEvent
