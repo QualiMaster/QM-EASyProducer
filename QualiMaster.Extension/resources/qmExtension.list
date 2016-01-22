@@ -15,7 +15,6 @@ eu.qualimaster.coordination.commands.ScheduleWavefrontAdaptationCommand
 eu.qualimaster.adaptation.events.AdaptationEvent
 eu.qualimaster.adaptation.events.AlgorithmConfigurationAdaptationEvent
 eu.qualimaster.adaptation.events.ConstraintViolationAdaptationEvent
-eu.qualimaster.adaptation.events.ImplementationPayloadAdaptationEvent
 eu.qualimaster.adaptation.events.InitExperimentEvent
 eu.qualimaster.adaptation.events.ParameterConfigurationAdaptationEvent
 eu.qualimaster.adaptation.events.ResourceChangedAdaptationEvent
