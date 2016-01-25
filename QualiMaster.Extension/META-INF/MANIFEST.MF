@@ -13,6 +13,14 @@ Require-Bundle: de.uni-hildesheim.sse.easy.instantiatorCore;bundle-version="0.11
  de.uni_hildesheim.sse.utils;bundle-version="0.4.3",
  org.eclipse.equinox.ds,
  org.eclipse.core.runtime,
+ org.eclipse.osgi.services,
+ de.uni_hildesheim.sse.vil.rt;bundle-version="0.0.1",
+ ReasonerCore;bundle-version="1.0.0",
+ de.uni_hildesheim.sse.vil.buildlang;bundle-version="1.0.0",
+ de.uni_hildesheim.sse.vil.expressions;bundle-version="1.0.0",
+ de.uni_hildesheim.sse.vil.templatelang;bundle-version="1.0.0",
+ de.uni_hildesheim.sse.reasoning.reasoner;bundle-version="1.0.0",
+ de.uni_hildesheim.sse.ivml;bundle-version="1.0.0",
  de.uni_hildesheim.sse.varModel;bundle-version="0.11.3"
 EASyLoader-BundleClassPath: false
 Service-Component: OSGI-INF/qualimaster.xml
