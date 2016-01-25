@@ -1,29 +1,43 @@
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.List;
+//import java.util.List;
 
 import org.osgi.service.component.ComponentContext;
 
+//import de.uni_hildesheim.sse.model.varModel.datatypes.Compound;
+//import de.uni_hildesheim.sse.model.varModel.datatypes.Enum;
+//import de.uni_hildesheim.sse.model.varModel.datatypes.OclKeyWords;
+//import de.uni_hildesheim.sse.model.varModel.values.ValueDoesNotMatchTypeException;
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.rtVil.Executor;
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.rtVil.RtVilModel;
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.rtVil.Script;
+//import de.uni_hildesheim.sse.easy_producer.instantiator.model.rtVil.VariableValueCopier;
+//import de.uni_hildesheim.sse.easy_producer.instantiator.model.rtVil.VariableValueCopier.IFreezeProvider;
+//import de.uni_hildesheim.sse.easy_producer.instantiator.model.rtVil.VariableValueCopier.CopySpec;
+//import de.uni_hildesheim.sse.easy_producer.instantiator.model.rtVil.VariableValueCopier.EnumAttributeFreezeProvider;
 import de.uni_hildesheim.sse.model.confModel.Configuration;
+//import de.uni_hildesheim.sse.model.confModel.ConfigurationException;
+//import de.uni_hildesheim.sse.model.cst.CSTSemanticException;
 import de.uni_hildesheim.sse.model.management.VarModel;
+//import de.uni_hildesheim.sse.model.varModel.Attribute;
+//import de.uni_hildesheim.sse.model.varModel.ModelQuery;
+//import de.uni_hildesheim.sse.model.varModel.ModelQueryException;
 import de.uni_hildesheim.sse.model.varModel.Project;
 import de.uni_hildesheim.sse.reasoning.core.frontend.ReasonerFrontend;
 import de.uni_hildesheim.sse.reasoning.core.reasoner.ReasonerConfiguration;
 import de.uni_hildesheim.sse.reasoning.core.reasoner.ReasonerConfiguration.IAdditionalInformationLogger;
-import de.uni_hildesheim.sse.utils.modelManagement.IModel;
-import de.uni_hildesheim.sse.utils.modelManagement.ModelInfo;
+//import de.uni_hildesheim.sse.utils.modelManagement.IModel;
+//import de.uni_hildesheim.sse.utils.modelManagement.ModelInfo;
 import de.uni_hildesheim.sse.utils.modelManagement.ModelInitializer;
-import de.uni_hildesheim.sse.utils.modelManagement.ModelManagement;
+//import de.uni_hildesheim.sse.utils.modelManagement.ModelManagement;
 import de.uni_hildesheim.sse.utils.modelManagement.ModelManagementException;
-import de.uni_hildesheim.sse.utils.modelManagement.Version;
-import de.uni_hildesheim.sse.utils.modelManagement.VersionFormatException;
-import de.uni_hildesheim.sse.utils.modelManagement.VersionedModelInfos;
+//import de.uni_hildesheim.sse.utils.modelManagement.Version;
+//import de.uni_hildesheim.sse.utils.modelManagement.VersionFormatException;
+//import de.uni_hildesheim.sse.utils.modelManagement.VersionedModelInfos;
 import de.uni_hildesheim.sse.utils.progress.ProgressObserver;
 import eu.qualimaster.adaptation.events.AdaptationEvent;
+import eu.qualimaster.coordination.RepositoryHelper;
 import eu.qualimaster.monitoring.events.FrozenSystemState;
 
 /*
@@ -74,7 +88,7 @@ public class Main {
      * @param version the version (<b>null</b> for obtaining the maximum version)
      * @return the obtained model, <b>null</b> if none was found
      */
-    public static <M extends IModel> M obtainModel(ModelManagement<M> mgt, String name, String version) {
+    /*public static <M extends IModel> M obtainModel(ModelManagement<M> mgt, String name, String version) {
         ModelInfo<M> info = null;
         if (null != version) {
             Version ver = null;
@@ -108,14 +122,14 @@ public class Main {
             result = info.getResolved();
         }
         return result;
-    }
+    }*/
     
     /**
      * Creates a temporary folder for executing the adaptation specification within.
      * 
      * @return the temporary folder
      */
-    public static File createTmpFolder() {
+    /*public static File createTmpFolder() {
         File tmp = null;
         try {
             tmp = File.createTempFile("qmAdapt", "tmp");
@@ -127,7 +141,7 @@ public class Main {
                 + " " + e.getMessage());
         }
         return tmp;
-    }
+    }*/
 
     /**
      * Simulates Eclipse-DS initialization.
@@ -157,7 +171,7 @@ public class Main {
      * @param state the system state
      * @return the executor
      */
-    public static Executor createExecutor(Script rtVilModel, File folder, Configuration config, AdaptationEvent event, 
+    /*public static Executor createExecutor(Script rtVilModel, File folder, Configuration config, AdaptationEvent event, 
         FrozenSystemState state) {
         Executor exec = new Executor(rtVilModel);
         exec.addBase(folder);
@@ -171,41 +185,96 @@ public class Main {
             exec.addCustomArgument(rtVilModel.getParameter(4).getName(), state.getMapping());
         }
         return exec;
-    }
+    }*/
+  
+/*    public static Configuration createConfiguration(Project project, String newVariablePrefix) {
+        Configuration configuration = new Configuration(project);
+        try {
+            // did not want to introduce an IVML copy operation by now
+            Enum bindingTime = (Enum) ModelQuery.findType(project, "BindingTime", Enum.class);
+            // take any one - just used for type and name
+            Attribute annotation = (Attribute) ModelQuery.findElementByName(project, "bindingTime", Attribute.class);
+            IFreezeProvider freezeProvider = new EnumAttributeFreezeProvider("b", annotation, 
+                OclKeyWords.GREATER_EQUALS, bindingTime.getLiteral(1));
+
+            Compound sourceType = RepositoryHelper.findCompound(project, "Source");
+            CopySpec specSource = new CopySpec(sourceType, "source", freezeProvider, "available", "actual");
+            Compound familyElementType = RepositoryHelper.findCompound(project, "FamilyElement");
+            CopySpec specFamily = new CopySpec(familyElementType, "family.members", freezeProvider, "available");
+            Compound sinkType = RepositoryHelper.findCompound(project, "Sink");
+            CopySpec specSink = new CopySpec(sinkType, "sink", freezeProvider, "available", "actual");
+            VariableValueCopier copier 
+                = new VariableValueCopier(newVariablePrefix, specSource, specFamily, specSink);
+            copier.process(configuration);
+        } catch (ConfigurationException | ValueDoesNotMatchTypeException 
+            | ModelQueryException | CSTSemanticException e) {
+            System.out.println("Cannot initialize runtime model: " + e.getMessage());
+        }
+        return configuration;
+    }*/
 
     /**
      * Executes the test in sequence. Please adjust your model location and the files to be analyzed.
      * 
-     * @param args ignored
+     * @param args location of the model, requested functionality (none: just load the model, monitor: process 
+     *   file/monitoring_ in sequence, adapt: process file/adaptation_ in sequence)
      * @throws ModelManagementException shall not occur
      */
     public static void main(String[] args) throws ModelManagementException {
-        File modelLocation = new File("W:\\runtime-EclipseApplication13\\QM2.devel\\EASy");
-        String prefix = "monitoring_";
+        if (0 == args.length) {
+            System.exit(0);
+        } else {
+            //File modelLocation = new File("W:\\runtime-EclipseApplication15\\QM2.devel\\EASy");
+            File modelLocation = new File(args[0]);
+            String prefix = null;
+            if (args.length > 1) {
+                if ("monitor".equals(args[1])) {
+                    prefix = "monitoring_";     
+                } else if ("adapt".equals(args[1])) {
+                    prefix = "adaptation_";
+                }
+            }
 
-        initialize(de.uni_hildesheim.sse.IvmlParser.class);
-        initialize(de.uni_hildesheim.sse.VilExpressionParser.class);
-        initialize(de.uni_hildesheim.sse.vil.templatelang.VtlExpressionParser.class);
-        initialize(de.uni_hildesheim.sse.reasoning.reasoner.Reasoner.class);
-        initialize(de.uni_hildesheim.sse.vil.rt.RtVilExpressionParser.class);
-        initialize(de.uni_hildesheim.sse.easy_producer.instantiator.model.BuiltIn.class);
-        initialize(de.uni_hildesheim.sse.easy_producer.instantiator.model.rtVil.BuiltIn.class);
-        initialize(eu.qualimaster.easy.extension.internal.Registration.class);
+            initialize(de.uni_hildesheim.sse.IvmlParser.class);
+            initialize(de.uni_hildesheim.sse.VilExpressionParser.class);
+            initialize(de.uni_hildesheim.sse.vil.templatelang.VtlExpressionParser.class);
+            initialize(de.uni_hildesheim.sse.reasoning.reasoner.Reasoner.class);
+            initialize(de.uni_hildesheim.sse.vil.rt.RtVilExpressionParser.class);
+            initialize(de.uni_hildesheim.sse.easy_producer.instantiator.model.BuiltIn.class);
+            initialize(de.uni_hildesheim.sse.easy_producer.instantiator.model.rtVil.BuiltIn.class);
+            initialize(eu.qualimaster.easy.extension.internal.Registration.class);
+            
+            ModelInitializer.registerLoader(ProgressObserver.NO_OBSERVER);
+            ModelInitializer.addLocation(modelLocation, ProgressObserver.NO_OBSERVER);
+            Project project = RepositoryHelper.obtainModel(VarModel.INSTANCE, "QM", null);
+            Script rtVilModel = RepositoryHelper.obtainModel(RtVilModel.INSTANCE, "QM", null);
+            Configuration config = RepositoryHelper.createConfiguration(project, "TESTING");
+            System.out.println("Model loaded...");
+            
+            if (null != prefix) {
+                process(prefix, config, rtVilModel);
+            }
+        }
         
-        ModelInitializer.registerLoader(ProgressObserver.NO_OBSERVER);
-        ModelInitializer.addLocation(modelLocation, ProgressObserver.NO_OBSERVER);
-        Project project = obtainModel(VarModel.INSTANCE, "QM", null);
-        Script rtVilModel = obtainModel(RtVilModel.INSTANCE, "QM", null);
-        Configuration config = new Configuration(project);
+    }
+    
+    /**
+     * Processes the logged files.
+     * 
+     * @param prefix the file name prefix
+     * @param config the configuration
+     * @param rtVilModel the rt-VIL model
+     */
+    private static void process(String prefix, Configuration config, Script rtVilModel) {
         int file = 0;
-        File tmp = createTmpFolder();
+        File tmp = RepositoryHelper.createTmpFolder();
         while (true) {
             File stateFile = new File("files", prefix + file);
             System.out.println("Checking " + stateFile.getAbsolutePath());            
             if (stateFile.exists()) {
                 try {
                     FrozenSystemState state = new FrozenSystemState(stateFile);
-                    Executor exec = createExecutor(rtVilModel, tmp, config, event, state);
+                    Executor exec = RepositoryHelper.createExecutor(rtVilModel, tmp, config, event, state);
                     exec.stopAfterBindValues();
                     try {
                         exec.execute();
