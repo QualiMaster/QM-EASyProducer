@@ -7,4 +7,6 @@ The implementation bridges the Maven nature of the QualiMaster infrastructure an
 EASy-Producer (https://github.com/SSEHUB/EASyProducer) must be installed (either as source code or as release bundles). Also the QualiMaster infrastructure
 configuration tool (QM-IConf, https://github.com/QualiMaster/QM-IConf) uses the EASy-Producer extensions for QualiMaster.
 
-QM-IConf is released as open source under the Apache 2.0 license.
+Further, the extension also contains a debug program useful to load a (local) version of the QualiMaster configuration model and to perform tests / debug against the source code of EASy-Producer.
+
+QualiMaster.Extension for EASy-Producer is released as open source under the Apache 2.0 license.
