@@ -1,4 +1,4 @@
-eu.qualimaster.coordination.EnactmentFailedAdaptationEvent
+eu.qualimaster.coordination.CoordinationCommandExecutionEvent
 eu.qualimaster.coordination.ParallelismChangeRequest
 eu.qualimaster.coordination.commands.AbstractCommandContainer
 eu.qualimaster.coordination.commands.AbstractPipelineCommand
@@ -13,12 +13,12 @@ eu.qualimaster.coordination.commands.ParameterChangeCommand
 eu.qualimaster.coordination.commands.PipelineCommand
 eu.qualimaster.coordination.commands.ScheduleWavefrontAdaptationCommand
 eu.qualimaster.adaptation.events.AdaptationEvent
+eu.qualimaster.adaptation.events.AdaptationEventResponse
 eu.qualimaster.adaptation.events.AlgorithmConfigurationAdaptationEvent
 eu.qualimaster.adaptation.events.ConstraintViolationAdaptationEvent
 eu.qualimaster.adaptation.events.InitExperimentEvent
 eu.qualimaster.adaptation.events.ParameterConfigurationAdaptationEvent
 eu.qualimaster.adaptation.events.ResourceChangedAdaptationEvent
-eu.qualimaster.adaptation.events.UserTriggerAdaptationEvent
 eu.qualimaster.adaptation.events.ViolatingClause
 eu.qualimaster.events.AbstractEvent
 eu.qualimaster.events.IEvent
