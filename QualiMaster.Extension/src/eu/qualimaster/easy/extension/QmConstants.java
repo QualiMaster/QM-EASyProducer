@@ -23,6 +23,11 @@ package eu.qualimaster.easy.extension;
 public class QmConstants {
 
     /**
+     * Model name postfix to distinguish model definition and configuration model parts.
+     */
+    public static final String CFG_POSTFIX = "Cfg";
+    
+    /**
      * Configurable elements have by convention a logical name.
      */
     public static final String SLOT_NAME = "name";
@@ -94,6 +99,7 @@ public class QmConstants {
     public static final String CONST_BINDING_TIME_RUNTIME_MON = "runtimeMon";
     public static final String CONST_BINDING_TIME_RUNTIME_ENACT = "runtimeEnact";
     public static final String ANNOTATION_BINDING_TIME = "bindingTime";
+    public static final String ANNOTATION_USER_VISIBLE = "userVisible";
     
     public static final String SLOT_INFRASTRUCTURE_REPOSITORY_URL = "repositoryURL";
     public static final String SLOT_INFRASTRUCTURE_DEPLOYMENT_URL = "deploymentURL";
