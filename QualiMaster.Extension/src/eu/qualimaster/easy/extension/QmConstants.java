@@ -16,7 +16,9 @@
 package eu.qualimaster.easy.extension;
 
 /**
- * Defines global model constants.
+ * Defines global model constants to avoid the use of simple strings and inconsistencies
+ * when the model changes. Some constants are global due to conventions such as {@link #SLOT_NAME}, 
+ * others follow a certain naming convention according to their containment in projects / compounds. 
  * 
  * @author Holger Eichelberger
  */
@@ -33,22 +35,86 @@ public class QmConstants {
     public static final String SLOT_NAME = "name";
     
     public static final String PROJECT_TOP_LEVEL = "QM";
+
+    // -------------------------------- infrastructure --------------------------
     
+    public static final String PROJECT_INFRASTRUCTURE = "Infrastructure";
+    public static final String VAR_INFRASTRUCTURE_REPOSITORY_URL = "repositoryURL";
+    public static final String VAR_INFRASTRUCTURE_DEPLOYMENT_URL = "deploymentURL";
+
+    // -------------------------- pipelines --------------------------------
+
+    public static final String PROJECT_PIPELINES = "Pipelines";
+
     public static final String TYPE_PIPELINE_ELEMENT = "PipelineElement";
+    
     public static final String TYPE_FAMILY_ELEMENT = "FamilyElement";
+    
     public static final String TYPE_PIPELINE = "Pipeline";
+    public static final String VAR_PIPELINES_PIPELINES = "pipelines";
+
+    // ------------------------- adaptivity ---------------------------------
+
+    public static final String PROJECT_ADAPTIVITY = "Adaptivity";
+    public static final String TYPE_ADAPTIVITY_QPARAMWEIGHTING = "QualityParameterWeighting";
+    public static final String VAR_ADAPTIVITY_PIPELINEIMPORTANCE = "pipelineImportance";
+    public static final String VAR_ADAPTIVITY_CROSSPIPELINETRADEOFFS = "crossPipelineTradeoffs";
+   
+    // ------------------------- observables  ---------------------------------
+
+    public static final String PROJECT_OBSERVABLES = "Observables";
+    public static final String TYPE_OBSERVABLES_CONFIGUREDQPARAM = "ConfiguredQualityParameter";
+    public static final String VAR_OBSERVABLES_CONFIGUREDPARAMS = "configuredParameters";
+    
+    // -------------------------- families  ---------------------------------
+
+    public static final String PROJECT_FAMILIES = "Families";
+    public static final String TYPE_FAMILY = "Family";
+    public static final String VAR_FAMILIES_FAMILIES = "families";
+
+    // -------------------------- algorithms  -------------------------------
+
+    public static final String PROJECT_ALGORITHMS = "Algorithms";
+
     public static final String TYPE_ALGORITHM = "Algorithm";
     public static final String SLOT_ALGORITHM_MEMBERS = "members";
-    public static final String TYPE_FAMILY = "Family";
-    public static final String TYPE_MACHINE = "Machine";
+    public static final String VAR_ALGORITHMS_ALGORITHMS = "algorithms";
+
+    // ------------------------ data management -----------------------------
+
+    public static final String PROJECT_DATAMGT = "DataManagement";
+
     public static final String TYPE_DATAELEMENT = "DataElement";
+    public static final String TYPE_DATASOURCE = "DataSource";
+    public static final String TYPE_DATASINK = "DataSink";
+    public static final String TYPE_PERSISTENTDATAELT = "PersistentDataElement";
+    public static final String VAR_DATAMGT_DATASOURCES = "dataSources";
+    public static final String VAR_DATAMGT_DATASINKS = "dataSinks";
+    public static final String VAR_DATAMGT_PERSISTENTDATAELTS = "persistentDataElements";
     
+    // -------------------- general-purpose hardware  -----------------------
+
+    public static final String PROJECT_HARDWARE = "Hardware";
+    public static final String TYPE_MACHINE = "Machine";
+    public static final String VAR_HARDWARE_MACHINES = "machines";
+
+    // -------------------- reconfigurable hardware  ------------------------
+
+    public static final String PROJECT_RECONFHW = "ReconfigurableHardware";
+    public static final String TYPE_HWNODE = "HwNode";
+    public static final String VAR_RECONFHW_CLUSTERS = "clusters";
+    
+    // ---------------------------- basics ----------------------------------
+    
+    public static final String PROJECT_BASICS = "Basics";
+
     public static final String TYPE_FIELDTYPE = "FieldType";
     public static final String SLOT_FIELDTYPE = SLOT_NAME;
     public static final String SLOT_FIELDTYPE_CLASS = "class";
     public static final String SLOT_FIELDTYPE_ARTIFACT = "artifact";
     public static final String SLOT_FIELDTYPE_SERIALIZER = "serializer";
     public static final String SLOT_FIELDTYPE_SERIALIZERARTIFACT = "serializerArtifact"; 
+    public static final String VAR_BASICS_TYPES = "types";
 
     public static final String TYPE_TUPLE = "Tuple";
     public static final String SLOT_TUPLE_NAME = SLOT_NAME;
@@ -101,9 +167,4 @@ public class QmConstants {
     public static final String ANNOTATION_BINDING_TIME = "bindingTime";
     public static final String ANNOTATION_USER_VISIBLE = "userVisible";
     
-    public static final String SLOT_INFRASTRUCTURE_REPOSITORY_URL = "repositoryURL";
-    public static final String SLOT_INFRASTRUCTURE_DEPLOYMENT_URL = "deploymentURL";
-    
-    public static final String VAR_PIPELINES_PIPELINES = "pipelines";
-   
 }
