@@ -310,8 +310,8 @@ public class PipelineHelperTest {
      */
     @Test
     public void testObtainPipelineFromIVML() {
-        Assert.assertNull(PipelineHelper.obtainPipeline(qmCfg.getConfiguration(), "bla"));
-        Assert.assertNotNull(PipelineHelper.obtainPipeline(qmCfg.getConfiguration(), VAR_PIP));
+        Assert.assertNull(PipelineHelper.obtainPipelineByName(qmCfg.getConfiguration(), "bla"));
+        Assert.assertNotNull(PipelineHelper.obtainPipelineByName(qmCfg.getConfiguration(), VAR_PIP));
     }
     
     /**
@@ -319,10 +319,10 @@ public class PipelineHelperTest {
      */
     @Test
     public void obtainFamilyFromIVML() {
-        IDecisionVariable pip = PipelineHelper.obtainPipeline(qmCfg.getConfiguration(), VAR_PIP);
+        IDecisionVariable pip = PipelineHelper.obtainPipelineByName(qmCfg.getConfiguration(), VAR_PIP);
         Assert.assertNotNull(pip);
-        Assert.assertNotNull(PipelineHelper.obtainFamily(pip, VAR_FAM1));
-        Assert.assertNull(PipelineHelper.obtainFamily(pip, "unknown"));
+        Assert.assertNotNull(PipelineHelper.obtainFamilyByName(pip, VAR_FAM1));
+        Assert.assertNull(PipelineHelper.obtainFamilyByName(pip, "unknown"));
     }
     
     /**
@@ -330,17 +330,17 @@ public class PipelineHelperTest {
      */
     @Test
     public void obtainAlgorithmFromIVML() {
-        IDecisionVariable pip = PipelineHelper.obtainPipeline(qmCfg.getConfiguration(), VAR_PIP);
+        IDecisionVariable pip = PipelineHelper.obtainPipelineByName(qmCfg.getConfiguration(), VAR_PIP);
         Assert.assertNotNull(pip);
-        IDecisionVariable family1 = PipelineHelper.obtainFamily(pip, VAR_FAM1);
+        IDecisionVariable family1 = PipelineHelper.obtainFamilyByName(pip, VAR_FAM1);
         Assert.assertNotNull(family1);
-        IDecisionVariable family2 = PipelineHelper.obtainFamily(pip, VAR_FAM2);
+        IDecisionVariable family2 = PipelineHelper.obtainFamilyByName(pip, VAR_FAM2);
         Assert.assertNotNull(family2);
         
-        Assert.assertNotNull(PipelineHelper.obtainAlgorithmFromFamily(family1, VAR_ALG1));
-        Assert.assertNull(PipelineHelper.obtainAlgorithmFromFamily(family1, VAR_ALG2));
-        Assert.assertNull(PipelineHelper.obtainAlgorithmFromFamily(family2, VAR_ALG1));
-        Assert.assertNotNull(PipelineHelper.obtainAlgorithmFromFamily(family2, VAR_ALG2));
+        Assert.assertNotNull(PipelineHelper.obtainAlgorithmFromFamilyByName(family1, VAR_ALG1));
+        Assert.assertNull(PipelineHelper.obtainAlgorithmFromFamilyByName(family1, VAR_ALG2));
+        Assert.assertNull(PipelineHelper.obtainAlgorithmFromFamilyByName(family2, VAR_ALG1));
+        Assert.assertNotNull(PipelineHelper.obtainAlgorithmFromFamilyByName(family2, VAR_ALG2));
     }
 
 }

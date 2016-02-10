@@ -213,7 +213,7 @@ public class PipelineHelper implements IVilType {
      * @return the pipeline or <b>null</b> if it does not exist
      */
     @QMInternal
-    public static IDecisionVariable obtainPipeline(de.uni_hildesheim.sse.model.confModel.Configuration config, 
+    public static IDecisionVariable obtainPipelineByName(de.uni_hildesheim.sse.model.confModel.Configuration config, 
         String name) {
         IDecisionVariable result = null;
         try {
@@ -235,7 +235,6 @@ public class PipelineHelper implements IVilType {
         return result;
     }
 
-
     /**
      * Obtains a family of given <code>name</code> from <code>pipeline</code>.
      * 
@@ -244,13 +243,13 @@ public class PipelineHelper implements IVilType {
      * @return the family if it exists, <b>null</b> if there is no family
      */
     @QMInternal
-    public static IDecisionVariable obtainFamily(IDecisionVariable pipeline, String name) {
+    public static IDecisionVariable obtainFamilyByName(IDecisionVariable pipeline, String name) {
         IDecisionVariable result = null;
         if (null != pipeline) {
             try {
                 IDatatype type = ModelQuery.findType(pipeline.getConfiguration().getProject(), 
                     QmConstants.TYPE_FAMILY_ELEMENT, null);
-                result = obtainPipelineElement(pipeline, type, name);
+                result = obtainPipelineElementByName(pipeline, type, name);
             } catch (ModelQueryException e) {
                 // result -> null
             }
@@ -267,7 +266,8 @@ public class PipelineHelper implements IVilType {
      * @return the element or <b>null</b> if it does not exist for some reason
      */
     @QMInternal
-    public static IDecisionVariable obtainPipelineElement(IDecisionVariable pipeline, IDatatype type, String name) {
+    public static IDecisionVariable obtainPipelineElementByName(IDecisionVariable pipeline, IDatatype type, 
+        String name) {
         IDecisionVariable result = null;
         de.uni_hildesheim.sse.model.confModel.Configuration config = null;
         Project project = null;
@@ -301,7 +301,7 @@ public class PipelineHelper implements IVilType {
      * @return the algorithm or <b>null</b> if none exists
      */
     @QMInternal
-    public static IDecisionVariable obtainAlgorithmFromFamily(IDecisionVariable family, String name) {
+    public static IDecisionVariable obtainAlgorithmFromFamilyByName(IDecisionVariable family, String name) {
         IDecisionVariable result = null;
         if (null != family) {
             IDecisionVariable avail = family.getNestedElement(QmConstants.SLOT_FAMILYELEMENT_AVAILABLE);
