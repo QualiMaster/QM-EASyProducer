@@ -16,6 +16,7 @@
 package test.eu.qualimaster.easy.extension.internal;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -39,7 +40,9 @@ public class QmConstantsTest {
     public void test() throws IllegalArgumentException, IllegalAccessException {
         Field[] fields = QmConstants.class.getDeclaredFields();
         for (Field f : fields) {
-            Assert.assertNotNull(f.get(null)); // static
+            if (Modifier.isPublic(f.getModifiers()) && Modifier.isStatic(f.getModifiers())) {
+                Assert.assertNotNull(f.get(null)); // static
+            }
         }
     }
 
