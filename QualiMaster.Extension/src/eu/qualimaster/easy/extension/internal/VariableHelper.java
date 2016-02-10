@@ -29,6 +29,26 @@ import eu.qualimaster.easy.extension.QmConstants;
 public class VariableHelper {
 
     /**
+     * Returns the logical name of <code>var</code> from slot {@link QmConstants#SLOT_NAME}.
+     * 
+     * @param var the variable (may be <b>null</b>)
+     * @return the name of <code>var</code>, <b>null</b> if there is none
+     */
+    public static String getName(IDecisionVariable var) {
+        String result = null;
+        if (null != var) {
+            IDecisionVariable nameVar = var.getNestedElement(QmConstants.SLOT_NAME);
+            if (null != nameVar) {
+                Value nameValue = nameVar.getValue();
+                if (nameValue instanceof StringValue) {
+                    result = ((StringValue) nameValue).getValue();
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
      * Returns whether <code>var</code> has a slot {@link QmConstants#SLOT_NAME} and the 
      * value is a string equals to <code>name</code>.
      * 
@@ -38,14 +58,9 @@ public class VariableHelper {
      */
     public static boolean hasName(IDecisionVariable var, String name) {
         boolean result = false;
-        if (null != var) {
-            IDecisionVariable nameVar = var.getNestedElement(QmConstants.SLOT_NAME);
-            if (null != nameVar) {
-                Value nameValue = nameVar.getValue();
-                if (nameValue instanceof StringValue && ((StringValue) nameValue).getValue().equals(name)) {
-                    result = true;
-                }
-            }
+        String varName = getName(var);
+        if (null != varName) {
+            result = varName.equals(name);
         }
         return result;
     }

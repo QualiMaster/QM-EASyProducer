@@ -85,8 +85,9 @@ public class VariableHelperTest {
         Assert.assertEquals(boolVarValue, VariableHelper.getBoolean(varVar2, boolVarName));
         
         Assert.assertFalse(VariableHelper.hasName(null, name));
-        Assert.assertFalse(VariableHelper.hasName(varVar1, name));
+        Assert.assertFalse(VariableHelper.hasName(varVar1, name)); 
         Assert.assertTrue(VariableHelper.hasName(varVar2, name));
+        Assert.assertEquals(name, VariableHelper.getName(varVar2));
         Assert.assertFalse(VariableHelper.hasName(varVar2, "whatever"));
     }
     
