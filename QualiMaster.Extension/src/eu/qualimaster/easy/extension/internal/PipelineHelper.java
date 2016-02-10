@@ -30,6 +30,7 @@ import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.configura
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.configuration.DecisionVariable;
 import de.uni_hildesheim.sse.model.confModel.IDecisionVariable;
 import de.uni_hildesheim.sse.model.varModel.AbstractVariable;
+import de.uni_hildesheim.sse.model.varModel.ContainableModelElement;
 import de.uni_hildesheim.sse.model.varModel.DecisionVariableDeclaration;
 import de.uni_hildesheim.sse.model.varModel.IModelElement;
 import de.uni_hildesheim.sse.model.varModel.ModelQuery;
@@ -38,6 +39,7 @@ import de.uni_hildesheim.sse.model.varModel.Project;
 import de.uni_hildesheim.sse.model.varModel.datatypes.IDatatype;
 import de.uni_hildesheim.sse.model.varModel.datatypes.IResolutionScope;
 import eu.qualimaster.adaptation.events.ViolatingClause;
+import eu.qualimaster.common.QMInternal;
 import eu.qualimaster.easy.extension.QmConstants;
 
 /**
@@ -201,6 +203,119 @@ public class PipelineHelper implements IVilType {
             }
         }
         return new SetSet<DecisionVariable>(result, DecisionVariable.class);
+    }
+    
+    /**
+     * Returns a pipeline from the configuration.
+     * 
+     * @param config the configuration
+     * @param name the name of the pipeline
+     * @return the pipeline or <b>null</b> if it does not exist
+     */
+    @QMInternal
+    public static IDecisionVariable obtainPipeline(de.uni_hildesheim.sse.model.confModel.Configuration config, 
+        String name) {
+        IDecisionVariable result = null;
+        try {
+            AbstractVariable pips = ModelQuery.findVariable(config.getProject(), 
+                QmConstants.VAR_PIPELINES_PIPELINES, null);
+            IDecisionVariable pipsVar = config.getDecision(pips);
+            if (null != pipsVar) {
+                for (int n = 0; null == result && n < pipsVar.getNestedElementsCount(); n++) {
+                    IDecisionVariable pip = de.uni_hildesheim.sse.model.confModel.Configuration.dereference(
+                        pipsVar.getNestedElement(n));
+                    if (VariableHelper.hasName(pip, name)) {
+                        result = pip;
+                    }
+                }
+            }
+        } catch (ModelQueryException e) {
+                // -> result = null
+        }
+        return result;
+    }
+
+
+    /**
+     * Obtains a family of given <code>name</code> from <code>pipeline</code>.
+     * 
+     * @param pipeline the pipeline to obtain the family from (may be <b>null</b>)
+     * @param name the name of the family
+     * @return the family if it exists, <b>null</b> if there is no family
+     */
+    @QMInternal
+    public static IDecisionVariable obtainFamily(IDecisionVariable pipeline, String name) {
+        IDecisionVariable result = null;
+        if (null != pipeline) {
+            try {
+                IDatatype type = ModelQuery.findType(pipeline.getConfiguration().getProject(), 
+                    QmConstants.TYPE_FAMILY_ELEMENT, null);
+                result = obtainPipelineElement(pipeline, type, name);
+            } catch (ModelQueryException e) {
+                // result -> null
+            }
+        }
+        return result;
+    }
+    
+    /**
+     * Obtains a pipeline element.
+     * 
+     * @param pipeline the pipeline
+     * @param type the type of the element (may be <b>null</b>)
+     * @param name the name of the element
+     * @return the element or <b>null</b> if it does not exist for some reason
+     */
+    @QMInternal
+    public static IDecisionVariable obtainPipelineElement(IDecisionVariable pipeline, IDatatype type, String name) {
+        IDecisionVariable result = null;
+        de.uni_hildesheim.sse.model.confModel.Configuration config = null;
+        Project project = null;
+        if (null != pipeline) {
+            config = pipeline.getConfiguration();
+            AbstractVariable var = pipeline.getDeclaration();
+            project = var.getProject();
+        }
+        if (null != project) { // implies config != null
+            for (int e = 0, n = project.getElementCount(); null == result && e < n; e++) {
+                ContainableModelElement elt = project.getElement(e);
+                if (elt instanceof DecisionVariableDeclaration) {
+                    DecisionVariableDeclaration decl = (DecisionVariableDeclaration) elt;
+                    if (type.isAssignableFrom(decl.getType())) {
+                        IDecisionVariable decVar = config.getDecision(decl);
+                        if (VariableHelper.hasName(decVar, name)) {
+                            result = decVar;
+                        }
+                    }
+                }
+            }
+        }
+        return result;
+    }
+    
+    /**
+     * Obtains an algorithm form a family.
+     * 
+     * @param family the family (may be <b>null</b>)
+     * @param name the name of the algorithm
+     * @return the algorithm or <b>null</b> if none exists
+     */
+    @QMInternal
+    public static IDecisionVariable obtainAlgorithmFromFamily(IDecisionVariable family, String name) {
+        IDecisionVariable result = null;
+        if (null != family) {
+            IDecisionVariable avail = family.getNestedElement(QmConstants.SLOT_FAMILYELEMENT_AVAILABLE);
+            if (null != avail) {
+                for (int n = 0, c = avail.getNestedElementsCount(); null == result && n < c; n++) {
+                    IDecisionVariable alg = de.uni_hildesheim.sse.model.confModel.Configuration.dereference(
+                        avail.getNestedElement(n));
+                    if (VariableHelper.hasName(alg, name)) {
+                        result = alg;
+                    }
+                }
+            }
+        }
+        return result;
     }
 
 }

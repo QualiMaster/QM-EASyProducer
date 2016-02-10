@@ -31,16 +31,19 @@ import de.uni_hildesheim.sse.model.confModel.ConfigurationException;
 import de.uni_hildesheim.sse.model.confModel.IDecisionVariable;
 import de.uni_hildesheim.sse.model.varModel.AbstractVariable;
 import de.uni_hildesheim.sse.model.varModel.DecisionVariableDeclaration;
+import de.uni_hildesheim.sse.model.varModel.IModelElement;
 import de.uni_hildesheim.sse.model.varModel.ModelQueryException;
 import de.uni_hildesheim.sse.model.varModel.Project;
 import de.uni_hildesheim.sse.model.varModel.ProjectImport;
 import de.uni_hildesheim.sse.model.varModel.datatypes.Compound;
 import de.uni_hildesheim.sse.model.varModel.datatypes.IDatatype;
+import de.uni_hildesheim.sse.model.varModel.datatypes.Reference;
+import de.uni_hildesheim.sse.model.varModel.datatypes.Set;
 import de.uni_hildesheim.sse.model.varModel.datatypes.StringType;
 import de.uni_hildesheim.sse.model.varModel.values.ValueDoesNotMatchTypeException;
 import de.uni_hildesheim.sse.model.varModel.values.ValueFactory;
 import de.uni_hildesheim.sse.utils.modelManagement.ModelManagementException;
-import eu.qualimaster.easy.extension.QmConstants;
+import static eu.qualimaster.easy.extension.QmConstants.*;
 import eu.qualimaster.easy.extension.internal.PipelineHelper;
 
 /**
@@ -51,6 +54,8 @@ import eu.qualimaster.easy.extension.internal.PipelineHelper;
 public class PipelineHelperTest {
 
     private static Configuration qmCfg;
+    private static final String VAR_ALG1 = "alg1";
+    private static final String VAR_ALG2 = "alg2";
     private static final String VAR_FAM1 = "fam1";
     private static final String VAR_FAM2 = "fam2";
     private static final String VAR_PIP = "pip";
@@ -66,7 +71,7 @@ public class PipelineHelperTest {
      */
     private static Compound createCompoundWithName(String name, Project project, Compound refines) {
         Compound result = new Compound(name, project, refines);
-        DecisionVariableDeclaration nameDecl = new DecisionVariableDeclaration("name", StringType.TYPE, result);
+        DecisionVariableDeclaration nameDecl = new DecisionVariableDeclaration(SLOT_NAME, StringType.TYPE, result);
         result.add(nameDecl);
         project.add(result);
         return result;
@@ -92,16 +97,32 @@ public class PipelineHelperTest {
      * 
      * @param name the name of the decision
      * @param type the type of the decision
-     * @param parent the parent project
+     * @param parent the parent model element
      * @return the created variable declaration
      */
     private static DecisionVariableDeclaration createDecisionVariableDeclaration(String name, IDatatype type, 
-        Project parent) {
+        IModelElement parent) {
         DecisionVariableDeclaration decl = new DecisionVariableDeclaration(name, type, parent);
-        parent.add(decl);
+        if (parent instanceof Project) {
+            ((Project) parent).add(decl);
+        } else if (parent instanceof Compound) {
+            ((Compound) parent).add(decl);
+        } else {
+            System.err.println("invalid parent " + parent);
+        }
         VARIABLES.put(decl.getName(), decl);
         VARIABLES.put(decl.getQualifiedName(), decl);
         return decl;
+    }
+    
+    /**
+     * Turns arbitrary objects into an array.
+     * 
+     * @param values the values
+     * @return the array
+     */
+    private static Object[] toArray(Object... values) {
+        return values;
     }
     
     /**
@@ -178,14 +199,35 @@ public class PipelineHelperTest {
     @BeforeClass
     public static void startUp() throws ModelManagementException, ValueDoesNotMatchTypeException, 
         ConfigurationException {
+        Project algorithms = new Project("Algorithms");
+        Compound algorithmType = createCompoundWithName(TYPE_ALGORITHM, algorithms, null);
+        Set algorithmsType = new Set("setOf(refTo(Algorithm))", 
+            new Reference("refTo(Algorithm)", algorithmType, algorithms), algorithms);
+        DecisionVariableDeclaration algs = createDecisionVariableDeclaration(
+            VAR_ALGORITHMS_ALGORITHMS, algorithmsType, algorithms);
+
+        Project algorithmsCfg = new Project("AlgorithmsCfg");
+        addProjectImport(algorithms, algorithmsCfg);
+        DecisionVariableDeclaration alg1 = createDecisionVariableDeclaration(VAR_ALG1, 
+            algorithmType, algorithmsCfg);
+        DecisionVariableDeclaration alg2 = createDecisionVariableDeclaration(VAR_ALG2, 
+            algorithmType, algorithmsCfg);
+
         Project pipelines = new Project("Pipelines");
-        Compound pipelineElementType = createCompoundWithName(QmConstants.TYPE_PIPELINE_ELEMENT, pipelines, null);
-        Compound familyElementType = createCompoundWithName(QmConstants.TYPE_FAMILY_ELEMENT, pipelines, 
+        addProjectImport(pipelines, algorithms);
+        Compound pipelineElementType = createCompoundWithName(TYPE_PIPELINE_ELEMENT, pipelines, null);
+        Compound familyElementType = createCompoundWithName(TYPE_FAMILY_ELEMENT, pipelines, 
             pipelineElementType);
-        Compound pipeline = createCompoundWithName(QmConstants.TYPE_PIPELINE, pipelines, null);
+        createDecisionVariableDeclaration(SLOT_FAMILYELEMENT_AVAILABLE, algorithmsType, familyElementType);
+        Compound pipeline = createCompoundWithName(TYPE_PIPELINE, pipelines, null);
+        Set pipelinesType = new Set("setOf(refTo(Pipeline))", 
+            new Reference("refTo(pipeline)", pipeline, pipelines), pipelines);
+        DecisionVariableDeclaration pips = createDecisionVariableDeclaration(VAR_PIPELINES_PIPELINES, 
+            pipelinesType, pipelines);
         
         Project myPipelineCfg = new Project("MyPipelineCfg");
         addProjectImport(pipelines, myPipelineCfg);
+        addProjectImport(algorithmsCfg, myPipelineCfg);
         DecisionVariableDeclaration fam1 = createDecisionVariableDeclaration(VAR_FAM1, 
             familyElementType, myPipelineCfg);
         DecisionVariableDeclaration fam2 = createDecisionVariableDeclaration(VAR_FAM2, 
@@ -201,9 +243,14 @@ public class PipelineHelperTest {
         
         de.uni_hildesheim.sse.model.confModel.Configuration cfg 
             = new de.uni_hildesheim.sse.model.confModel.Configuration(qm);
-        configureAndFreeze(cfg, fam1, new Object[] {"name", VAR_FAM1});
-        configureAndFreeze(cfg, fam2, new Object[] {"name", VAR_FAM2});
-        configureAndFreeze(cfg, pip, new Object[] {"name", VAR_PIP});
+        configureAndFreeze(cfg, alg1, SLOT_NAME, VAR_ALG1);
+        configureAndFreeze(cfg, alg2, SLOT_NAME, VAR_ALG2);
+        configureAndFreeze(cfg, algs, alg1, alg2);
+        configureAndFreeze(cfg, fam1, SLOT_NAME, VAR_FAM1, SLOT_FAMILYELEMENT_AVAILABLE, toArray(alg1));
+        configureAndFreeze(cfg, fam2, SLOT_NAME, VAR_FAM2, SLOT_FAMILYELEMENT_AVAILABLE, toArray(alg2));
+        configureAndFreeze(cfg, pip, SLOT_NAME, VAR_PIP);
+        configureAndFreeze(cfg, pips, new Object[] {pip});
+        // de.uni_hildesheim.sse.model.confModel.Configuration.printConfig(System.out, cfg);
         
         qmCfg = new Configuration(cfg);
     }
@@ -228,7 +275,7 @@ public class PipelineHelperTest {
         Assert.assertTrue(pipeline == PipelineHelper.obtainPipeline(cfg, getDecision(cfg, VAR_FAM1)));
         Assert.assertTrue(pipeline == PipelineHelper.obtainPipeline(cfg, getDecision(cfg, VAR_FAM2)));
         Assert.assertNull(PipelineHelper.obtainPipeline(cfg, getDecision(cfg, VAR_PIP))); // limitation on famElts
-        Assert.assertNull(PipelineHelper.obtainPipeline(cfg, null)); // limitation on famElts
+        Assert.assertNull(PipelineHelper.obtainPipeline(cfg, (IDecisionVariable) null)); // limitation on famElts
     }
     
     /**
@@ -257,5 +304,43 @@ public class PipelineHelperTest {
     }
 
     // cannot access ViolatingClause from here...
+
+    /**
+     * Tests obtaining a pipeline from a configuration.
+     */
+    @Test
+    public void testObtainPipelineFromIVML() {
+        Assert.assertNull(PipelineHelper.obtainPipeline(qmCfg.getConfiguration(), "bla"));
+        Assert.assertNotNull(PipelineHelper.obtainPipeline(qmCfg.getConfiguration(), VAR_PIP));
+    }
+    
+    /**
+     * Obtains a family from IVML.
+     */
+    @Test
+    public void obtainFamilyFromIVML() {
+        IDecisionVariable pip = PipelineHelper.obtainPipeline(qmCfg.getConfiguration(), VAR_PIP);
+        Assert.assertNotNull(pip);
+        Assert.assertNotNull(PipelineHelper.obtainFamily(pip, VAR_FAM1));
+        Assert.assertNull(PipelineHelper.obtainFamily(pip, "unknown"));
+    }
+    
+    /**
+     * Obtains an algorithm from IVML.
+     */
+    @Test
+    public void obtainAlgorithmFromIVML() {
+        IDecisionVariable pip = PipelineHelper.obtainPipeline(qmCfg.getConfiguration(), VAR_PIP);
+        Assert.assertNotNull(pip);
+        IDecisionVariable family1 = PipelineHelper.obtainFamily(pip, VAR_FAM1);
+        Assert.assertNotNull(family1);
+        IDecisionVariable family2 = PipelineHelper.obtainFamily(pip, VAR_FAM2);
+        Assert.assertNotNull(family2);
+        
+        Assert.assertNotNull(PipelineHelper.obtainAlgorithmFromFamily(family1, VAR_ALG1));
+        Assert.assertNull(PipelineHelper.obtainAlgorithmFromFamily(family1, VAR_ALG2));
+        Assert.assertNull(PipelineHelper.obtainAlgorithmFromFamily(family2, VAR_ALG1));
+        Assert.assertNotNull(PipelineHelper.obtainAlgorithmFromFamily(family2, VAR_ALG2));
+    }
 
 }

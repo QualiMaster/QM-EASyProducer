@@ -48,7 +48,13 @@ public class QmConstants {
 
     public static final String TYPE_PIPELINE_ELEMENT = "PipelineElement";
     
-    public static final String TYPE_FAMILY_ELEMENT = "FamilyElement";
+    public static final String TYPE_FAMILYELEMENT = "FamilyElement";
+    public static final String TYPE_FAMILY_ELEMENT = TYPE_FAMILYELEMENT; // TODO remove
+    public static final String SLOT_FAMILYELEMENT_NAME = SLOT_NAME;
+    public static final String SLOT_FAMILYELEMENT_AVAILABLE = "available";
+    public static final String SLOT_FAMILYELEMENT_ACTUAL = "actual";
+    public static final String SLOT_FAMILYELEMENT_FAMILY = "family";
+    public static final String SLOT_FAMILYELEMENT_DEFAULT = "default";
     
     public static final String TYPE_PIPELINE = "Pipeline";
     public static final String VAR_PIPELINES_PIPELINES = "pipelines";
