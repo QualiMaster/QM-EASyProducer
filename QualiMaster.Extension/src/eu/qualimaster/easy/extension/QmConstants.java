@@ -33,6 +33,11 @@ public class QmConstants {
      * Configurable elements have by convention a logical name.
      */
     public static final String SLOT_NAME = "name";
+
+    /**
+     * Configurable elements may have a runtime flag whether they are valid at all.
+     */
+    public static final String SLOT_ISVALID = "isValid";
     
     public static final String PROJECT_TOP_LEVEL = "QM";
 
