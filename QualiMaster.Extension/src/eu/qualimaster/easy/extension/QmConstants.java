@@ -47,6 +47,12 @@ public class QmConstants {
     public static final String PROJECT_PIPELINES = "Pipelines";
 
     public static final String TYPE_PIPELINE_ELEMENT = "PipelineElement";
+    public static final String TYPE_PIPELINE_NODE = "PipelineNode";
+    public static final String TYPE_SOURCE = "Source";
+    public static final String TYPE_SINK = "Sink";
+    public static final String TYPE_FLOW = "Flow";
+    public static final String TYPE_PROCESSINGELEMENT = "ProcessingElement";
+    public static final String TYPE_DATAMANAGEMENTELEMENT = "DataMangementElement";
     
     public static final String TYPE_FAMILYELEMENT = "FamilyElement";
     public static final String TYPE_FAMILY_ELEMENT = TYPE_FAMILYELEMENT; // TODO remove
