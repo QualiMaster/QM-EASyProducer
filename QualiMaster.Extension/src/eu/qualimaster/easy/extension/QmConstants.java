@@ -52,12 +52,25 @@ public class QmConstants {
     public static final String PROJECT_PIPELINES = "Pipelines";
 
     public static final String TYPE_PIPELINE_ELEMENT = "PipelineElement";
+    public static final String SLOT_PIPELINE_ELEMENT_ISVALID = SLOT_ISVALID;
+    
     public static final String TYPE_PIPELINE_NODE = "PipelineNode";
+    public static final String SLOT_PIPELINE_NODE_ISVALID = SLOT_ISVALID;
+    
     public static final String TYPE_SOURCE = "Source";
+    public static final String SLOT_SOURCE_ISVALID = SLOT_ISVALID;
+    
     public static final String TYPE_SINK = "Sink";
+    public static final String SLOT_SINK_ISVALID = SLOT_ISVALID;
+    
     public static final String TYPE_FLOW = "Flow";
+    public static final String SLOT_FLOW_ISVALID = SLOT_ISVALID;
+    
     public static final String TYPE_PROCESSINGELEMENT = "ProcessingElement";
+    public static final String SLOT_PROCESSINGELEMENT_ISVALID = SLOT_ISVALID;
+    
     public static final String TYPE_DATAMANAGEMENTELEMENT = "DataMangementElement";
+    public static final String SLOT_DATAMANAGEMENTELEMENT_ISVALID = SLOT_ISVALID;
     
     public static final String TYPE_FAMILYELEMENT = "FamilyElement";
     public static final String TYPE_FAMILY_ELEMENT = TYPE_FAMILYELEMENT; // TODO remove
@@ -66,8 +79,10 @@ public class QmConstants {
     public static final String SLOT_FAMILYELEMENT_ACTUAL = "actual";
     public static final String SLOT_FAMILYELEMENT_FAMILY = "family";
     public static final String SLOT_FAMILYELEMENT_DEFAULT = "default";
+    public static final String SLOT_FAMILYELEMENT_ISVALID = SLOT_ISVALID;
     
     public static final String TYPE_PIPELINE = "Pipeline";
+    public static final String SLOT_PIPELINE_ISVALID = SLOT_ISVALID;
     public static final String VAR_PIPELINES_PIPELINES = "pipelines";
 
     // ------------------------- adaptivity ---------------------------------
@@ -95,6 +110,8 @@ public class QmConstants {
 
     public static final String TYPE_ALGORITHM = "Algorithm";
     public static final String SLOT_ALGORITHM_MEMBERS = "members";
+    public static final String SLOT_ALGORITHM_ISVALID = SLOT_ISVALID;
+    
     public static final String VAR_ALGORITHMS_ALGORITHMS = "algorithms";
 
     // ------------------------ data management -----------------------------
@@ -102,9 +119,15 @@ public class QmConstants {
     public static final String PROJECT_DATAMGT = "DataManagement";
 
     public static final String TYPE_DATAELEMENT = "DataElement";
+    
     public static final String TYPE_DATASOURCE = "DataSource";
+    public static final String SLOT_DATASOURCE_ISVALID = SLOT_ISVALID;
+    
     public static final String TYPE_DATASINK = "DataSink";
+    public static final String SLOT_DATASINK_ISVALID = SLOT_ISVALID;
+    
     public static final String TYPE_PERSISTENTDATAELT = "PersistentDataElement";
+    
     public static final String VAR_DATAMGT_DATASOURCES = "dataSources";
     public static final String VAR_DATAMGT_DATASINKS = "dataSinks";
     public static final String VAR_DATAMGT_PERSISTENTDATAELTS = "persistentDataElements";
