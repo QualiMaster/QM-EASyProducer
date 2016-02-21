@@ -1,41 +1,19 @@
 package eu.qualimaster.easy.extension;
+
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Method;
-//import java.util.List;
 
-import org.osgi.service.component.ComponentContext;
-
-//import de.uni_hildesheim.sse.model.varModel.datatypes.Compound;
-//import de.uni_hildesheim.sse.model.varModel.datatypes.Enum;
-//import de.uni_hildesheim.sse.model.varModel.datatypes.OclKeyWords;
-//import de.uni_hildesheim.sse.model.varModel.values.ValueDoesNotMatchTypeException;
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.rtVil.Executor;
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.rtVil.RtVilModel;
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.rtVil.Script;
-//import de.uni_hildesheim.sse.easy_producer.instantiator.model.rtVil.VariableValueCopier;
-//import de.uni_hildesheim.sse.easy_producer.instantiator.model.rtVil.VariableValueCopier.IFreezeProvider;
-//import de.uni_hildesheim.sse.easy_producer.instantiator.model.rtVil.VariableValueCopier.CopySpec;
-//import de.uni_hildesheim.sse.easy_producer.instantiator.model.rtVil.VariableValueCopier.EnumAttributeFreezeProvider;
 import de.uni_hildesheim.sse.model.confModel.Configuration;
-//import de.uni_hildesheim.sse.model.confModel.ConfigurationException;
-//import de.uni_hildesheim.sse.model.cst.CSTSemanticException;
 import de.uni_hildesheim.sse.model.management.VarModel;
-//import de.uni_hildesheim.sse.model.varModel.Attribute;
-//import de.uni_hildesheim.sse.model.varModel.ModelQuery;
-//import de.uni_hildesheim.sse.model.varModel.ModelQueryException;
 import de.uni_hildesheim.sse.model.varModel.Project;
 import de.uni_hildesheim.sse.reasoning.core.frontend.ReasonerFrontend;
 import de.uni_hildesheim.sse.reasoning.core.reasoner.ReasonerConfiguration;
 import de.uni_hildesheim.sse.reasoning.core.reasoner.ReasonerConfiguration.IAdditionalInformationLogger;
-//import de.uni_hildesheim.sse.utils.modelManagement.IModel;
-//import de.uni_hildesheim.sse.utils.modelManagement.ModelInfo;
 import de.uni_hildesheim.sse.utils.modelManagement.ModelInitializer;
-//import de.uni_hildesheim.sse.utils.modelManagement.ModelManagement;
 import de.uni_hildesheim.sse.utils.modelManagement.ModelManagementException;
-//import de.uni_hildesheim.sse.utils.modelManagement.Version;
-//import de.uni_hildesheim.sse.utils.modelManagement.VersionFormatException;
-//import de.uni_hildesheim.sse.utils.modelManagement.VersionedModelInfos;
 import de.uni_hildesheim.sse.utils.progress.ProgressObserver;
 import eu.qualimaster.adaptation.events.AdaptationEvent;
 import eu.qualimaster.coordination.RepositoryHelper;
@@ -62,7 +40,7 @@ import eu.qualimaster.monitoring.events.FrozenSystemState;
  * 
  * @author Holger Eichelberger
  */
-public class Debug {
+public class Debug extends AbstractDebug {
     
     private static AdaptationEvent event = new AdaptationEvent() {
 
@@ -81,24 +59,6 @@ public class Debug {
     }
     
     // checkstyle: stop exception type check
-
-    /**
-     * Simulates Eclipse-DS initialization.
-     * 
-     * @param cls the class to be initialized
-     */
-    private static void initialize(Class<?> cls) {
-        try {
-            Method m = cls.getDeclaredMethod("activate", ComponentContext.class);
-            m.setAccessible(true);
-            Object o  = cls.newInstance();
-            Object[] param = new Object[1];
-            param[0] = null;
-            m.invoke(o, param);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     /**
      * Processes the logged files.
@@ -154,8 +114,11 @@ public class Debug {
             System.out.println("qualimaster.debug: <model location> [monitor|adapt]");
             System.exit(0);
         } else {
-            //File modelLocation = new File("W:\\runtime-EclipseApplication15\\QM2.devel\\EASy");
             File modelLocation = new File(args[0]);
+            if (!modelLocation.exists()) {
+                System.out.println("model location " + modelLocation + " does not exist");
+                System.exit(0);
+            }
             String prefix = null;
             if (args.length > 1) {
                 if ("monitor".equals(args[1])) {
@@ -165,14 +128,7 @@ public class Debug {
                 }
             }
 
-            initialize(de.uni_hildesheim.sse.IvmlParser.class);
-            initialize(de.uni_hildesheim.sse.VilExpressionParser.class);
-            initialize(de.uni_hildesheim.sse.vil.templatelang.VtlExpressionParser.class);
-            initialize(de.uni_hildesheim.sse.reasoning.reasoner.Reasoner.class);
-            initialize(de.uni_hildesheim.sse.vil.rt.RtVilExpressionParser.class);
-            initialize(de.uni_hildesheim.sse.easy_producer.instantiator.model.BuiltIn.class);
-            initialize(de.uni_hildesheim.sse.easy_producer.instantiator.model.rtVil.BuiltIn.class);
-            initialize(eu.qualimaster.easy.extension.internal.Registration.class);
+            initialize();
             
             ModelInitializer.registerLoader(ProgressObserver.NO_OBSERVER);
             ModelInitializer.addLocation(modelLocation, ProgressObserver.NO_OBSERVER);
