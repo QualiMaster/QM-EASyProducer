@@ -47,6 +47,7 @@ public class QmConstants {
     // -------------------------------- infrastructure --------------------------
     
     public static final String PROJECT_INFRASTRUCTURE = "Infrastructure";
+    public static final String VAR_INFRASTRUCTURE_ACTIVEPIPELINES = "activePipelines";
     public static final String VAR_INFRASTRUCTURE_REPOSITORY_URL = "repositoryURL";
     public static final String VAR_INFRASTRUCTURE_DEPLOYMENT_URL = "deploymentURL";
 
@@ -85,6 +86,7 @@ public class QmConstants {
     public static final String SLOT_FAMILYELEMENT_ISVALID = SLOT_ISVALID;
     
     public static final String TYPE_PIPELINE = "Pipeline";
+    public static final String SLOT_PIPELINE_NAME = SLOT_NAME;
     public static final String SLOT_PIPELINE_ISVALID = SLOT_ISVALID;
     public static final String VAR_PIPELINES_PIPELINES = "pipelines";
 
