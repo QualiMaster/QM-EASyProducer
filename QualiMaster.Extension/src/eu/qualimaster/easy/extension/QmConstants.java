@@ -38,6 +38,9 @@ public class QmConstants {
      * Configurable elements may have a runtime flag whether they are valid at all.
      */
     public static final String SLOT_ISVALID = "isValid";
+    public static final String SLOT_INPUT = "input";
+    public static final String SLOT_OUTPUT = "output";
+    public static final String SLOT_PARAMETER = "isValid";
     
     public static final String PROJECT_TOP_LEVEL = "QM";
 
@@ -110,6 +113,9 @@ public class QmConstants {
 
     public static final String TYPE_ALGORITHM = "Algorithm";
     public static final String SLOT_ALGORITHM_MEMBERS = "members";
+    public static final String SLOT_ALGORITHM_INPUT = "input";
+    public static final String SLOT_ALGORITHM_OUTPUT = "output";
+    public static final String SLOT_ALGORITHM_PARAMETERS = "output";
     public static final String SLOT_ALGORITHM_ISVALID = SLOT_ISVALID;
     
     public static final String VAR_ALGORITHMS_ALGORITHMS = "algorithms";
@@ -121,9 +127,13 @@ public class QmConstants {
     public static final String TYPE_DATAELEMENT = "DataElement";
     
     public static final String TYPE_DATASOURCE = "DataSource";
+    public static final String SLOT_DATASOURCE_TUPLES = "input";
+    public static final String SLOT_DATASOURCE_PARAMETERS = "output";
     public static final String SLOT_DATASOURCE_ISVALID = SLOT_ISVALID;
     
     public static final String TYPE_DATASINK = "DataSink";
+    public static final String SLOT_DATASINK_TUPLES = "output";
+    public static final String SLOT_DATASINK_PARAMETERS = "output";
     public static final String SLOT_DATASINK_ISVALID = SLOT_ISVALID;
     
     public static final String TYPE_PERSISTENTDATAELT = "PersistentDataElement";
