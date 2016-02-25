@@ -27,6 +27,10 @@ public class QmObservables {
 
     public static final String PART_INFRASTRUCTURE = "Infrastructure";
     
+    // link to Monitoring layer :o
+    public static final String PREFIX_MACHINE = "machine:";
+    public static final String PREFIX_HWNODE = "hwNode:";
+    
     public static final String RESOURCEUSAGE_USED_MACHINES = ResourceUsage.USED_MACHINES.name();
     public static final String RESOURCEUSAGE_USED_DFES = ResourceUsage.USED_DFES.name();
     
