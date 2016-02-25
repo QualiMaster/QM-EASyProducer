@@ -40,7 +40,7 @@ public class QmConstants {
     public static final String SLOT_ISVALID = "isValid";
     public static final String SLOT_INPUT = "input";
     public static final String SLOT_OUTPUT = "output";
-    public static final String SLOT_PARAMETER = "isValid";
+    public static final String SLOT_PARAMETERS = "parameters";
     
     public static final String PROJECT_TOP_LEVEL = "QM";
 
@@ -105,6 +105,10 @@ public class QmConstants {
 
     public static final String PROJECT_FAMILIES = "Families";
     public static final String TYPE_FAMILY = "Family";
+    public static final String SLOT_FAMILY_MEMBERS = "members";
+    public static final String SLOT_FAMILY_INPUT = SLOT_INPUT;
+    public static final String SLOT_FAMILY_OUTPUT = SLOT_OUTPUT;
+    public static final String SLOT_FAMILY_PARAMETERS = SLOT_PARAMETERS;
     public static final String VAR_FAMILIES_FAMILIES = "families";
 
     // -------------------------- algorithms  -------------------------------
@@ -112,10 +116,10 @@ public class QmConstants {
     public static final String PROJECT_ALGORITHMS = "Algorithms";
 
     public static final String TYPE_ALGORITHM = "Algorithm";
-    public static final String SLOT_ALGORITHM_MEMBERS = "members";
-    public static final String SLOT_ALGORITHM_INPUT = "input";
-    public static final String SLOT_ALGORITHM_OUTPUT = "output";
-    public static final String SLOT_ALGORITHM_PARAMETERS = "output";
+    public static final String SLOT_ALGORITHM_INPUT = SLOT_INPUT;
+    public static final String SLOT_ALGORITHM_OUTPUT = SLOT_OUTPUT;
+    public static final String SLOT_ALGORITHM_PARAMETERS = SLOT_PARAMETERS;
+    public static final String SLOT_ALGORITHM_TOPOLOGYCLASS = "algTopologyClass";
     public static final String SLOT_ALGORITHM_ISVALID = SLOT_ISVALID;
     
     public static final String VAR_ALGORITHMS_ALGORITHMS = "algorithms";
@@ -127,13 +131,13 @@ public class QmConstants {
     public static final String TYPE_DATAELEMENT = "DataElement";
     
     public static final String TYPE_DATASOURCE = "DataSource";
-    public static final String SLOT_DATASOURCE_TUPLES = "input";
-    public static final String SLOT_DATASOURCE_PARAMETERS = "output";
+    public static final String SLOT_DATASOURCE_TUPLES = SLOT_INPUT;
+    public static final String SLOT_DATASOURCE_PARAMETERS = SLOT_PARAMETERS;
     public static final String SLOT_DATASOURCE_ISVALID = SLOT_ISVALID;
     
     public static final String TYPE_DATASINK = "DataSink";
-    public static final String SLOT_DATASINK_TUPLES = "output";
-    public static final String SLOT_DATASINK_PARAMETERS = "output";
+    public static final String SLOT_DATASINK_TUPLES = SLOT_OUTPUT;
+    public static final String SLOT_DATASINK_PARAMETERS = SLOT_PARAMETERS;
     public static final String SLOT_DATASINK_ISVALID = SLOT_ISVALID;
     
     public static final String TYPE_PERSISTENTDATAELT = "PersistentDataElement";
