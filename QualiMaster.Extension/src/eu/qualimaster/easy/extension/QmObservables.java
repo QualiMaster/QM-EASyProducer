@@ -17,6 +17,7 @@ package eu.qualimaster.easy.extension;
 
 import eu.qualimaster.observables.ResourceUsage;
 import eu.qualimaster.observables.Scalability;
+import eu.qualimaster.observables.TimeBehavior;
 
 /**
  * Maps the QM observables into names. Due to OSGi problems, we do not use the observables themselves.
@@ -33,7 +34,10 @@ public class QmObservables {
     
     public static final String RESOURCEUSAGE_USED_MACHINES = ResourceUsage.USED_MACHINES.name();
     public static final String RESOURCEUSAGE_USED_DFES = ResourceUsage.USED_DFES.name();
-    
+
+    public static final String TIMEBEHAVIOR_THROUGHPUT_ITEMS = TimeBehavior.THROUGHPUT_ITEMS.name();
+    public static final String TIMEBEHAVIOR_LATENCY = TimeBehavior.LATENCY.name();
+
     public static final String SCALABILITY_ITEMS = Scalability.ITEMS.name();
 
 }
