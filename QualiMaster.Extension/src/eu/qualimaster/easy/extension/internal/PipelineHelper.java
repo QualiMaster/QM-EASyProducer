@@ -281,7 +281,7 @@ public class PipelineHelper implements IVilType {
                 ContainableModelElement elt = project.getElement(e);
                 if (elt instanceof DecisionVariableDeclaration) {
                     DecisionVariableDeclaration decl = (DecisionVariableDeclaration) elt;
-                    if (type.isAssignableFrom(decl.getType())) {
+                    if (null == type || type.isAssignableFrom(decl.getType())) {
                         IDecisionVariable decVar = config.getDecision(decl);
                         if (VariableHelper.hasName(decVar, name)) {
                             result = decVar;
