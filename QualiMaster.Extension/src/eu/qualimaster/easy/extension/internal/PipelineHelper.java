@@ -284,7 +284,7 @@ public class PipelineHelper implements IVilType {
                     DecisionVariableDeclaration decl = (DecisionVariableDeclaration) elt;
                     if (null == type || type.isAssignableFrom(decl.getType())) {
                         IDecisionVariable decVar = config.getDecision(decl);
-                        if (VariableHelper.hasName(decVar, name)) {
+                        if (VariableHelper.hasName(decVar, name) || decVar.getDeclaration().getName().equals(name)) {
                             result = decVar;
                         }
                     }

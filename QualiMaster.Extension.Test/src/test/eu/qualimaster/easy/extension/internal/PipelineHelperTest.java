@@ -316,13 +316,28 @@ public class PipelineHelperTest {
     @Test
     public void testObtainPipelineElementVIL() throws VilException {
         assertVarEquals(VAR_FAM1, VAR_FAM1);
+        String varName = getDecision(qmCfg, VAR_FAM1).getDeclaration().getName();
+        assertVarEquals(VAR_FAM1, varName);
+
         // qualified with cfg name
         assertVarEquals(VAR_FAM1, PRJ_MYPIP_CFG + IvmlKeyWords.NAMESPACE_SEPARATOR + VAR_FAM1);
+        assertVarEquals(VAR_FAM1, PRJ_MYPIP_CFG + IvmlKeyWords.NAMESPACE_SEPARATOR + varName);
+
         assertVarEquals(VAR_FAM1, PRJ_MYPIP_CFG + IvmlKeyWords.NAMESPACE_SEPARATOR + VAR_FAM1 
             + IvmlKeyWords.NAMESPACE_SEPARATOR + "name");
+        
+        assertVarEquals(VAR_FAM1, PRJ_MYPIP_CFG + IvmlKeyWords.NAMESPACE_SEPARATOR + varName
+            + IvmlKeyWords.NAMESPACE_SEPARATOR + "name");
+        
         assertVarEquals(VAR_FAM1, PRJ_MYPIP_CFG + IvmlKeyWords.NAMESPACE_SEPARATOR + VAR_FAM1 
             + IvmlKeyWords.COMPOUND_ACCESS + "name");
+
+        assertVarEquals(VAR_FAM1, PRJ_MYPIP_CFG + IvmlKeyWords.NAMESPACE_SEPARATOR + varName 
+            + IvmlKeyWords.COMPOUND_ACCESS + "name");
+
         assertVarEquals(null, null);
+        assertVarEquals(null, PRJ_MYPIP_CFG + IvmlKeyWords.NAMESPACE_SEPARATOR + "?bla?" 
+            + IvmlKeyWords.COMPOUND_ACCESS + "name");
     }
 
     /**

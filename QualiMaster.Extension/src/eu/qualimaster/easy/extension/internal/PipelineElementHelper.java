@@ -58,8 +58,8 @@ public class PipelineElementHelper implements IVilType {
             while (null == tmp && pos >= 0) {
                 pos = tmpName.lastIndexOf(IvmlKeyWords.NAMESPACE_SEPARATOR);
                 if (pos > 0) {
-                    tmp = PipelineHelper.obtainPipelineElementByName(pip.getDecisionVariable(), null, 
-                        tmpName.substring(0, pos));
+                    tmpName = tmpName.substring(0, pos);
+                    tmp = PipelineHelper.obtainPipelineElementByName(pip.getDecisionVariable(), null, tmpName);
                 }
                 pos--;
             }
