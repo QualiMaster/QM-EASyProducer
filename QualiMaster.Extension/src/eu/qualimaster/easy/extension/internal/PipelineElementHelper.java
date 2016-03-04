@@ -21,6 +21,7 @@ import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.Instantia
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.configuration.Configuration;
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.configuration.DecisionVariable;
 import de.uni_hildesheim.sse.model.confModel.IDecisionVariable;
+import de.uni_hildesheim.sse.model.varModel.IvmlKeyWords;
 
 /**
  * Helper functions on pipeline element level.
@@ -41,14 +42,46 @@ public class PipelineElementHelper implements IVilType {
     public static DecisionVariable obtainPipelineElement(Configuration config, String variableName) 
         throws VilException {
         DecisionVariable result = null;
-        DecisionVariable pip = PipelineHelper.obtainPipeline(config, variableName);
+        DecisionVariable pip = null;
+        if (null != variableName && null != config) {
+            variableName = variableName.replace(String.valueOf(IvmlKeyWords.COMPOUND_ACCESS), 
+                IvmlKeyWords.NAMESPACE_SEPARATOR); // compensate instanceName
+            pip = PipelineHelper.obtainPipeline(config, variableName);
+        }
         if (null != pip) {
+            String scopeName = pip.getDecisionVariable().getDeclaration().getParent().getName();
+            String tmpName = cutPrefix(variableName, scopeName);
+            tmpName = cutPrefix(tmpName, IvmlKeyWords.NAMESPACE_SEPARATOR);
             IDecisionVariable tmp = PipelineHelper.obtainPipelineElementByName(pip.getDecisionVariable(), null, 
-                variableName);
+                tmpName);
+            int pos = 0;
+            while (null == tmp && pos >= 0) {
+                pos = tmpName.lastIndexOf(IvmlKeyWords.NAMESPACE_SEPARATOR);
+                if (pos > 0) {
+                    tmp = PipelineHelper.obtainPipelineElementByName(pip.getDecisionVariable(), null, 
+                        tmpName.substring(0, pos));
+                }
+                pos--;
+            }
             if (null != tmp) { // top-level var
                 // better: config.findVariable
                 result = config.getByName(de.uni_hildesheim.sse.model.confModel.Configuration.getInstanceName(tmp));
             }
+        }
+        return result;
+    }
+
+    /**
+     * Cuts <code>prefix</code> from <code>name</code>.
+     * 
+     * @param name the name
+     * @param prefix the prefix to remove from
+     * @return <code>name</code> or <code>name</code> without prefix
+     */
+    private static String cutPrefix(String name, String prefix) {
+        String result = name;
+        if (name.startsWith(prefix)) {
+            result = name.substring(prefix.length());
         }
         return result;
     }

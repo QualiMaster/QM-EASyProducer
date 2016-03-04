@@ -25,6 +25,7 @@ import org.junit.Test;
 
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.common.VilException;
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.configuration.Configuration;
+import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.configuration.DecisionVariable;
 import de.uni_hildesheim.sse.model.confModel.AllFreezeSelector;
 import de.uni_hildesheim.sse.model.confModel.AssignmentState;
 import de.uni_hildesheim.sse.model.confModel.ConfigurationException;
@@ -32,6 +33,7 @@ import de.uni_hildesheim.sse.model.confModel.IDecisionVariable;
 import de.uni_hildesheim.sse.model.varModel.AbstractVariable;
 import de.uni_hildesheim.sse.model.varModel.DecisionVariableDeclaration;
 import de.uni_hildesheim.sse.model.varModel.IModelElement;
+import de.uni_hildesheim.sse.model.varModel.IvmlKeyWords;
 import de.uni_hildesheim.sse.model.varModel.ModelQueryException;
 import de.uni_hildesheim.sse.model.varModel.Project;
 import de.uni_hildesheim.sse.model.varModel.ProjectImport;
@@ -44,6 +46,8 @@ import de.uni_hildesheim.sse.model.varModel.values.ValueDoesNotMatchTypeExceptio
 import de.uni_hildesheim.sse.model.varModel.values.ValueFactory;
 import de.uni_hildesheim.sse.utils.modelManagement.ModelManagementException;
 import static eu.qualimaster.easy.extension.QmConstants.*;
+
+import eu.qualimaster.easy.extension.internal.PipelineElementHelper;
 import eu.qualimaster.easy.extension.internal.PipelineHelper;
 
 /**
@@ -54,6 +58,7 @@ import eu.qualimaster.easy.extension.internal.PipelineHelper;
 public class PipelineHelperTest {
 
     private static Configuration qmCfg;
+    private static final String PRJ_MYPIP_CFG = "MyPipelineCfg";
     private static final String VAR_ALG1 = "alg1";
     private static final String VAR_ALG2 = "alg2";
     private static final String VAR_FAM1 = "fam1";
@@ -225,7 +230,7 @@ public class PipelineHelperTest {
         DecisionVariableDeclaration pips = createDecisionVariableDeclaration(VAR_PIPELINES_PIPELINES, 
             pipelinesType, pipelines);
         
-        Project myPipelineCfg = new Project("MyPipelineCfg");
+        Project myPipelineCfg = new Project(PRJ_MYPIP_CFG);
         addProjectImport(pipelines, myPipelineCfg);
         addProjectImport(algorithmsCfg, myPipelineCfg);
         DecisionVariableDeclaration fam1 = createDecisionVariableDeclaration(VAR_FAM1, 
@@ -301,6 +306,45 @@ public class PipelineHelperTest {
         String instanceName = de.uni_hildesheim.sse.model.confModel.Configuration.getInstanceName(var, true);
         Assert.assertTrue(getDecision(qmCfg, VAR_PIP) 
             == PipelineHelper.obtainPipeline(qmCfg, instanceName).getVariable());
+    }
+
+    /**
+     * Tests {@link PipelineElementHelper#obtainPipelineElement(Configuration, String)}.
+     * 
+     * @throws VilException in case that accessing the pipeline or a type fails
+     */
+    @Test
+    public void testObtainPipelineElementVIL() throws VilException {
+        assertVarEquals(VAR_FAM1, VAR_FAM1);
+        // qualified with cfg name
+        assertVarEquals(VAR_FAM1, PRJ_MYPIP_CFG + IvmlKeyWords.NAMESPACE_SEPARATOR + VAR_FAM1);
+        assertVarEquals(VAR_FAM1, PRJ_MYPIP_CFG + IvmlKeyWords.NAMESPACE_SEPARATOR + VAR_FAM1 
+            + IvmlKeyWords.NAMESPACE_SEPARATOR + "name");
+        assertVarEquals(VAR_FAM1, PRJ_MYPIP_CFG + IvmlKeyWords.NAMESPACE_SEPARATOR + VAR_FAM1 
+            + IvmlKeyWords.COMPOUND_ACCESS + "name");
+        assertVarEquals(null, null);
+    }
+
+    /**
+     * Asserts variable equality.
+     * 
+     * @param expectedVarName the name of the expected variable (may be <b>null</b>)
+     * @param givenVarName the name of the actual variable (may be <b>null</b>)
+     * @throws VilException in case that accessing the pipeline or a type fails
+     */
+    private void assertVarEquals(String expectedVarName, String givenVarName) throws VilException {
+        if (null != givenVarName && givenVarName.indexOf(IvmlKeyWords.NAMESPACE_SEPARATOR) < 0) {
+            givenVarName = getVariableInstanceName(qmCfg, givenVarName);
+        } 
+        DecisionVariable actual = PipelineElementHelper.obtainPipelineElement(qmCfg, givenVarName);
+        if (null == expectedVarName) {
+            Assert.assertNull(actual);
+        } else {
+            IDecisionVariable expected = getDecision(qmCfg, expectedVarName);
+            Assert.assertNotNull(actual);
+            Assert.assertNotNull(actual.getVariable());
+            Assert.assertTrue(expected == actual.getVariable());
+        }
     }
 
     // cannot access ViolatingClause from here...
