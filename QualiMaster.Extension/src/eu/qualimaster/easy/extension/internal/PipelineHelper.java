@@ -72,6 +72,7 @@ public class PipelineHelper implements IVilType {
                 try {
                     IDecisionVariable pipVar = obtainPipeline(configuration.getConfiguration(), decVar);
                     if (null != pipVar) { // top-level var
+                        // better: config.findVariable                        
                         result = configuration.getByName(
                             de.uni_hildesheim.sse.model.confModel.Configuration.getInstanceName(pipVar));
                     }

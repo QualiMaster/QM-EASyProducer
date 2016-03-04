@@ -442,6 +442,7 @@ public class Registration implements IRegistration {
         // this is not the official way of using DS but the official way is unstable
         register(null);
         RtVilTypeRegistry.INSTANCE.register(PipelineHelper.class);
+        RtVilTypeRegistry.INSTANCE.register(PipelineElementHelper.class);
         RtVilTypeRegistry.INSTANCE.register(PipelineElementObservationPrediction.class);
         RtVilTypeRegistry.INSTANCE.register(PipelineElementParameterPrediction.class);
     }
