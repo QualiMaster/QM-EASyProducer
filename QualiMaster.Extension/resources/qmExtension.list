@@ -26,6 +26,7 @@ eu.qualimaster.infrastructure.InfrastructureEvent
 eu.qualimaster.infrastructure.InfrastructurePart
 eu.qualimaster.infrastructure.PipelineLifecycleEvent
 eu.qualimaster.monitoring.events.FrozenSystemState
+eu.qualimaster.monitoring.events.PlatformMultiObservationHostMonitoringEvent
 eu.qualimaster.observables.AnalysisObservables
 eu.qualimaster.observables.FunctionalSuitability
 eu.qualimaster.observables.IForwardedCoordinationCommand
