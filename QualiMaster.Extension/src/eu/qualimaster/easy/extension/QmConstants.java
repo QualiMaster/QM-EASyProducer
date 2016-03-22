@@ -41,6 +41,8 @@ public class QmConstants {
     public static final String SLOT_INPUT = "input";
     public static final String SLOT_OUTPUT = "output";
     public static final String SLOT_PARAMETERS = "parameters";
+    public static final String SLOT_AVAILABLE = "available";
+    public static final String SLOT_ACTUAL = "actual";
     
     public static final String PROJECT_TOP_LEVEL = "QM";
 
@@ -63,9 +65,15 @@ public class QmConstants {
     
     public static final String TYPE_SOURCE = "Source";
     public static final String SLOT_SOURCE_ISVALID = SLOT_ISVALID;
+    public static final String SLOT_SOURCE_SOURCE = "source";
+    public static final String SLOT_SOURCE_AVAILABLE = SLOT_AVAILABLE;
+    public static final String SLOT_SOURCE_ACTUAL = SLOT_ACTUAL;
     
     public static final String TYPE_SINK = "Sink";
     public static final String SLOT_SINK_ISVALID = SLOT_ISVALID;
+    public static final String SLOT_SINK_SINK = "sink";
+    public static final String SLOT_SINK_AVAILABLE = SLOT_AVAILABLE;
+    public static final String SLOT_SINK_ACTUAL = SLOT_ACTUAL;
     
     public static final String TYPE_FLOW = "Flow";
     public static final String SLOT_FLOW_ISVALID = SLOT_ISVALID;
@@ -77,10 +85,9 @@ public class QmConstants {
     public static final String SLOT_DATAMANAGEMENTELEMENT_ISVALID = SLOT_ISVALID;
     
     public static final String TYPE_FAMILYELEMENT = "FamilyElement";
-    public static final String TYPE_FAMILY_ELEMENT = TYPE_FAMILYELEMENT; // TODO remove
     public static final String SLOT_FAMILYELEMENT_NAME = SLOT_NAME;
-    public static final String SLOT_FAMILYELEMENT_AVAILABLE = "available";
-    public static final String SLOT_FAMILYELEMENT_ACTUAL = "actual";
+    public static final String SLOT_FAMILYELEMENT_AVAILABLE = SLOT_AVAILABLE;
+    public static final String SLOT_FAMILYELEMENT_ACTUAL = SLOT_ACTUAL;
     public static final String SLOT_FAMILYELEMENT_FAMILY = "family";
     public static final String SLOT_FAMILYELEMENT_DEFAULT = "default";
     public static final String SLOT_FAMILYELEMENT_ISVALID = SLOT_ISVALID;

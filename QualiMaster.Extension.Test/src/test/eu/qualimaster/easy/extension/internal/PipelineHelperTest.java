@@ -221,7 +221,7 @@ public class PipelineHelperTest {
         Project pipelines = new Project("Pipelines");
         addProjectImport(pipelines, algorithms);
         Compound pipelineElementType = createCompoundWithName(TYPE_PIPELINE_ELEMENT, pipelines, null);
-        Compound familyElementType = createCompoundWithName(TYPE_FAMILY_ELEMENT, pipelines, 
+        Compound familyElementType = createCompoundWithName(TYPE_FAMILYELEMENT, pipelines, 
             pipelineElementType);
         createDecisionVariableDeclaration(SLOT_FAMILYELEMENT_AVAILABLE, algorithmsType, familyElementType);
         Compound pipeline = createCompoundWithName(TYPE_PIPELINE, pipelines, null);

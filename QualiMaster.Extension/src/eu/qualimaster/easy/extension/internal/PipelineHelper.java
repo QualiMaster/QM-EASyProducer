@@ -249,7 +249,7 @@ public class PipelineHelper implements IVilType {
         if (null != pipeline) {
             try {
                 IDatatype type = ModelQuery.findType(pipeline.getConfiguration().getProject(), 
-                    QmConstants.TYPE_FAMILY_ELEMENT, null);
+                    QmConstants.TYPE_FAMILYELEMENT, null);
                 result = obtainPipelineElementByName(pipeline, type, name);
             } catch (ModelQueryException e) {
                 // result -> null
