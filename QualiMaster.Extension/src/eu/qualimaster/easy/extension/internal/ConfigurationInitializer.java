@@ -16,6 +16,7 @@
 package eu.qualimaster.easy.extension.internal;
 
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.rtVil.VariableValueCopier.IFreezeProvider;
+import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.Invisible;
 import de.uni_hildesheim.sse.model.confModel.ConfigurationException;
 import de.uni_hildesheim.sse.model.cst.CSTSemanticException;
 import de.uni_hildesheim.sse.model.varModel.Attribute;
@@ -28,6 +29,7 @@ import de.uni_hildesheim.sse.model.varModel.datatypes.Enum;
 import de.uni_hildesheim.sse.model.varModel.datatypes.OclKeyWords;
 import de.uni_hildesheim.sse.model.varModel.values.ValueDoesNotMatchTypeException;
 import eu.qualimaster.common.QMInternal;
+import eu.qualimaster.coordination.RuntimeVariableMapping;
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.common.VilException;
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.rtVil.VariableValueCopier;
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.rtVil.VariableValueCopier.CopySpec;
@@ -77,10 +79,29 @@ public class ConfigurationInitializer {
             VariableValueCopier copier = new VariableValueCopier(newVariablePrefix, specSource, specFamily, specSink);
             copier.setAssignmentListener(copyListener);
             copier.process(config);
-        } catch (ConfigurationException | ValueDoesNotMatchTypeException 
-            | ModelQueryException | CSTSemanticException e) {
-            throw new VilException(e, VilException.ID_RUNTIME);
+        } catch (ConfigurationException e1) {
+            throw new VilException(e1, VilException.ID_RUNTIME);
+        } catch (ValueDoesNotMatchTypeException e2) {
+            throw new VilException(e2, VilException.ID_RUNTIME);
+        } catch (ModelQueryException e3) {
+            throw new VilException(e3, VilException.ID_RUNTIME);
+        } catch (CSTSemanticException e4) {
+            throw new VilException(e4, VilException.ID_RUNTIME);
         }
+    }
+    
+    /**
+     * Creates a runtime variable mapping for <code>configuration</code>.
+     * 
+     * @param config the configuration
+     * @return the runtime variable mapping
+     */
+    @Invisible
+    public static RuntimeVariableMapping createVariableMapping(
+        de.uni_hildesheim.sse.model.confModel.Configuration config) {
+        //RuntimeVariableMapping result = new RuntimeVariableMapping();
+        
+        return null;
     }
     
     /**
