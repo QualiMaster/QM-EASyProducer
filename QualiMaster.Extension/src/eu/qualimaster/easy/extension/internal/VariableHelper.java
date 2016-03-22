@@ -15,7 +15,11 @@
  */
 package eu.qualimaster.easy.extension.internal;
 
+import java.util.Iterator;
+
+import de.uni_hildesheim.sse.model.confModel.Configuration;
 import de.uni_hildesheim.sse.model.confModel.IDecisionVariable;
+import de.uni_hildesheim.sse.model.varModel.datatypes.IDatatype;
 import de.uni_hildesheim.sse.model.varModel.values.BooleanValue;
 import de.uni_hildesheim.sse.model.varModel.values.StringValue;
 import de.uni_hildesheim.sse.model.varModel.values.Value;
@@ -82,6 +86,26 @@ public class VariableHelper {
                 if (value instanceof BooleanValue) {
                     result = ((BooleanValue) value).getValue();
                 }
+            }
+        }
+        return result;
+    }
+    
+    /**
+     * Finds a named variable of given <code>type</code> in <code>config</code>.
+     * 
+     * @param config the configuration
+     * @param type the type to search for (ignored if <b>null</b>)
+     * @param name the (logical) name
+     * @return the decision variable
+     */
+    public static final IDecisionVariable findNamedVariable(Configuration config, IDatatype type, String name) {
+        IDecisionVariable result = null;
+        Iterator<IDecisionVariable> iter = config.iterator();
+        while (null == result && iter.hasNext()) {
+            IDecisionVariable var = iter.next();
+            if ((null == type || type.isAssignableFrom(var.getDeclaration().getType())) && hasName(var, name)) {
+                result = var;
             }
         }
         return result;

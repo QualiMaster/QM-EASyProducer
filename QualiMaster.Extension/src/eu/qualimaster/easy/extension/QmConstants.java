@@ -70,15 +70,22 @@ public class QmConstants {
     public static final String SLOT_SOURCE_SOURCE = "source";
     public static final String SLOT_SOURCE_AVAILABLE = SLOT_AVAILABLE;
     public static final String SLOT_SOURCE_ACTUAL = SLOT_ACTUAL;
-    
+    public static final String SLOT_SOURCE_NAME = SLOT_NAME;
+    public static final String SLOT_SOURCE_OUTPUT = "output";
+
     public static final String TYPE_SINK = "Sink";
     public static final String SLOT_SINK_ISVALID = SLOT_ISVALID;
     public static final String SLOT_SINK_SINK = "sink";
     public static final String SLOT_SINK_AVAILABLE = SLOT_AVAILABLE;
     public static final String SLOT_SINK_ACTUAL = SLOT_ACTUAL;
+    public static final String SLOT_SINK_NAME = SLOT_NAME;
     
     public static final String TYPE_FLOW = "Flow";
+    public static final String SLOT_FLOW_NAME = SLOT_NAME;
+    public static final String SLOT_FLOW_DESTINATION = "destination";
+    public static final String SLOT_FLOW_GROUPING = "grouping";
     public static final String SLOT_FLOW_ISVALID = SLOT_ISVALID;
+    public static final String CONST_GROUPING_SHUFFLEGROUPING = "shuffleGrouping";
     
     public static final String TYPE_PROCESSINGELEMENT = "ProcessingElement";
     public static final String SLOT_PROCESSINGELEMENT_ISVALID = SLOT_ISVALID;
@@ -96,12 +103,16 @@ public class QmConstants {
     
     public static final String TYPE_PIPELINE = "Pipeline";
     public static final String SLOT_PIPELINE_NAME = SLOT_NAME;
+    public static final String SLOT_PIPELINE_SOURCES = "sources";
+    public static final String SLOT_PIPELINE_NUMWORKERS = "numworkers";
+    public static final String SLOT_PIPELINE_ARTIFACT = "artifact";
     public static final String SLOT_PIPELINE_ISVALID = SLOT_ISVALID;
     public static final String VAR_PIPELINES_PIPELINES = "pipelines";
 
     // ------------------------- adaptivity ---------------------------------
 
     public static final String PROJECT_ADAPTIVITY = "Adaptivity";
+    public static final String PROJECT_ADAPTIVITYCFG = PROJECT_ADAPTIVITY + CFG_POSTFIX;
     public static final String TYPE_ADAPTIVITY_QPARAMWEIGHTING = "QualityParameterWeighting";
     public static final String VAR_ADAPTIVITY_PIPELINEIMPORTANCE = "pipelineImportance";
     public static final String VAR_ADAPTIVITY_CROSSPIPELINETRADEOFFS = "crossPipelineTradeoffs";
@@ -109,6 +120,7 @@ public class QmConstants {
     // ------------------------- observables  ---------------------------------
 
     public static final String PROJECT_OBSERVABLES = "Observables";
+    public static final String PROJECT_OBSERVABLESCFG = PROJECT_OBSERVABLES + CFG_POSTFIX; 
     public static final String TYPE_OBSERVABLES_CONFIGUREDQPARAM = "ConfiguredQualityParameter";
     public static final String VAR_OBSERVABLES_CONFIGUREDPARAMS = "configuredParameters";
     
@@ -146,9 +158,16 @@ public class QmConstants {
     public static final String TYPE_DATAELEMENT = "DataElement";
     
     public static final String TYPE_DATASOURCE = "DataSource";
+    public static final String SLOT_DATASOURCE_NAME = SLOT_NAME;
     public static final String SLOT_DATASOURCE_TUPLES = SLOT_INPUT;
     public static final String SLOT_DATASOURCE_PARAMETERS = SLOT_PARAMETERS;
     public static final String SLOT_DATASOURCE_ISVALID = SLOT_ISVALID;
+    public static final String SLOT_DATASOURCE_ARTIFACT = "artifact";
+    public static final String SLOT_DATASOURCE_STORAGELOCATION = "storageLocation";
+    public static final String SLOT_DATASOURCE_DATAMANAGEMENTSTRATEGY = "strategy";
+    public static final String SLOT_DATASOURCE_SOURCECLS = "sourceCls";
+    
+    public static final String CONST_DATAMANAGEMENTSTRATEGY_NONE = "None";
     
     public static final String TYPE_DATASINK = "DataSink";
     public static final String SLOT_DATASINK_TUPLES = SLOT_OUTPUT;
@@ -164,12 +183,14 @@ public class QmConstants {
     // -------------------- general-purpose hardware  -----------------------
 
     public static final String PROJECT_HARDWARE = "Hardware";
+    public static final String PROJECT_HARDWARECFG = PROJECT_HARDWARE + CFG_POSTFIX;
     public static final String TYPE_MACHINE = "Machine";
     public static final String VAR_HARDWARE_MACHINES = "machines";
 
     // -------------------- reconfigurable hardware  ------------------------
 
     public static final String PROJECT_RECONFHW = "ReconfigurableHardware";
+    public static final String PROJECT_RECONFHWCFG = PROJECT_RECONFHW + CFG_POSTFIX;
     public static final String TYPE_HWNODE = "HwNode";
     public static final String VAR_RECONFHW_CLUSTERS = "clusters";
     

@@ -57,6 +57,24 @@ public class Utils {
     public static Compound findCompound(Project project, String name) throws ModelQueryException {
         return (Compound) ModelQuery.findType(project, name, Compound.class);
     }
+
+    /**
+     * Creates a freeze block for project.
+     * 
+     * @param freezables the freezables
+     * @param project the IVML project to add to (may be <b>null</b> if failed)
+     * @param fallbackForType in case that <code>project</code> is being written the first time, may be <b>null</b>
+     * @return the created freeze block
+     * @throws CSTSemanticException in case of CST errors
+     * @throws ValueDoesNotMatchTypeException in case of unmatching values
+     * @throws ModelQueryException in case of model access problems
+     */
+    public static FreezeBlock createFreezeBlock(List<IFreezable> freezables, Project project, Project fallbackForType) 
+        throws CSTSemanticException, ValueDoesNotMatchTypeException, ModelQueryException {
+        IFreezable[] tmp = new IFreezable[freezables.size()];
+        freezables.toArray(tmp);
+        return createFreezeBlock(tmp, project, fallbackForType);
+    }
     
     /**
      * Creates a freeze block for project.
@@ -110,9 +128,7 @@ public class Utils {
                 freezables.add((IFreezable) elt);
             }
         }
-        IFreezable[] tmp = new IFreezable[freezables.size()];
-        freezables.toArray(tmp);
-        FreezeBlock result = createFreezeBlock(tmp, project, project);
+        FreezeBlock result = createFreezeBlock(freezables, project, project);
         project.add(result);
         return result;
     }

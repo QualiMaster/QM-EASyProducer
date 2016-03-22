@@ -107,7 +107,7 @@ public class ConfigurationInitializer {
     @Invisible
     public static RuntimeVariableMapping createVariableMapping(
         de.uni_hildesheim.sse.model.confModel.Configuration config) throws ModelQueryException {
-        /*Project project = config.getProject();
+        Project project = config.getProject();
         Compound sourceType = findCompound(project, TYPE_SOURCE);
         Compound familyElementType = findCompound(project, TYPE_FAMILYELEMENT);
         Compound sinkType = findCompound(project, TYPE_SINK);
@@ -121,8 +121,7 @@ public class ConfigurationInitializer {
                 addVariableMapping(var, SLOT_AVAILABLE, result);
             }
         }
-        return result;*/
-        return null;
+        return result;
     }
     
     /**
@@ -132,7 +131,7 @@ public class ConfigurationInitializer {
      * @param fieldName the field name to analyze
      * @param result the mapping to be modified as a side effect
      */
-    /*private static void addVariableMapping(IDecisionVariable var,  
+    private static void addVariableMapping(IDecisionVariable var,  
         String fieldName, RuntimeVariableMapping result) {
         IDecisionVariable nested = VariableValueCopier.findVariable(var, fieldName);
         if (null != nested) {
@@ -148,6 +147,6 @@ public class ConfigurationInitializer {
                 }
             }
         }
-    }*/
+    }
 
 }
