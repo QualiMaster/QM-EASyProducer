@@ -18,6 +18,7 @@ package eu.qualimaster.easy.extension.internal;
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.rtVil.VariableValueCopier.IFreezeProvider;
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.Invisible;
 import de.uni_hildesheim.sse.model.confModel.ConfigurationException;
+import de.uni_hildesheim.sse.model.confModel.IDecisionVariable;
 import de.uni_hildesheim.sse.model.cst.CSTSemanticException;
 import de.uni_hildesheim.sse.model.varModel.Attribute;
 import de.uni_hildesheim.sse.model.varModel.IvmlKeyWords;
@@ -26,7 +27,10 @@ import de.uni_hildesheim.sse.model.varModel.ModelQueryException;
 import de.uni_hildesheim.sse.model.varModel.Project;
 import de.uni_hildesheim.sse.model.varModel.datatypes.Compound;
 import de.uni_hildesheim.sse.model.varModel.datatypes.Enum;
+import de.uni_hildesheim.sse.model.varModel.datatypes.IDatatype;
 import de.uni_hildesheim.sse.model.varModel.datatypes.OclKeyWords;
+import de.uni_hildesheim.sse.model.varModel.values.ReferenceValue;
+import de.uni_hildesheim.sse.model.varModel.values.Value;
 import de.uni_hildesheim.sse.model.varModel.values.ValueDoesNotMatchTypeException;
 import eu.qualimaster.common.QMInternal;
 import eu.qualimaster.coordination.RuntimeVariableMapping;
@@ -37,6 +41,8 @@ import de.uni_hildesheim.sse.easy_producer.instantiator.model.rtVil.VariableValu
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.rtVil.VariableValueCopier.IAssignmentListener;
 
 import static eu.qualimaster.easy.extension.QmConstants.*;
+
+import java.util.Iterator;
 
 /**
  * Configuration initialization utility functions. [map into VIL]
@@ -95,13 +101,51 @@ public class ConfigurationInitializer {
      * 
      * @param config the configuration
      * @return the runtime variable mapping
+     * @throws ModelQueryException in case of problems accessing model elements
      */
     @Invisible
     public static RuntimeVariableMapping createVariableMapping(
-        de.uni_hildesheim.sse.model.confModel.Configuration config) {
-        //RuntimeVariableMapping result = new RuntimeVariableMapping();
-        
-        return null;
+        de.uni_hildesheim.sse.model.confModel.Configuration config) throws ModelQueryException {
+        Project project = config.getProject();
+        Compound sourceType = findCompound(project, TYPE_SOURCE);
+        Compound familyElementType = findCompound(project, TYPE_FAMILYELEMENT);
+        Compound sinkType = findCompound(project, TYPE_SINK);
+        RuntimeVariableMapping result = new RuntimeVariableMapping();
+        Iterator<IDecisionVariable> iter = config.iterator();
+        while (iter.hasNext()) {
+            IDecisionVariable var = iter.next();
+            IDatatype type = var.getDeclaration().getType();
+            if (sourceType.isAssignableFrom(type) || sinkType.isAssignableFrom(type)
+                || familyElementType.isAssignableFrom(type)) {
+                addVariableMapping(var, SLOT_AVAILABLE, result);
+            }
+        }
+        return result;
+    }
+    
+    /**
+     * Adds the variable mapping for <code>var</code> on field <code>fieldName</code> to <code>result</code>.
+     * 
+     * @param var the variable to analyze
+     * @param fieldName the field name to analyze
+     * @param result the mapping to be modified as a side effect
+     */
+    private static void addVariableMapping(IDecisionVariable var,  
+        String fieldName, RuntimeVariableMapping result) {
+        IDecisionVariable nested = VariableValueCopier.findVariable(var, fieldName);
+        if (null != nested) {
+            for (int n = 0; n < nested.getNestedElementsCount(); n++) {
+                IDecisionVariable tmp = nested.getNestedElement(n);
+                Value tmpValue = tmp.getValue();
+                if (tmpValue instanceof ReferenceValue) {
+                    ReferenceValue rValue = (ReferenceValue) tmpValue;
+                    IDecisionVariable referenced = var.getConfiguration().getDecision(rValue.getValue());
+                    if (null != referenced) {
+                        result.addReferencedBy(referenced, var);
+                    }
+                }
+            }
+        }
     }
     
     /**

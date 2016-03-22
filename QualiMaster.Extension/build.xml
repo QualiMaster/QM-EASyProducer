@@ -45,6 +45,7 @@
                 <pathelement location="lib/slf4j-api-1.7.5.jar"/>
                 <pathelement location="${de.uni_hildesheim.sse.easyProducer.runtime:EASy:jar}"/>
                 <pathelement location="${org.apache.storm:storm-core:jar}"/>
+            	<pathelement location="${eu.qualimaster:SpassMeterIntegration:jar}"/>
             </classpath>
         </java>
     </target>
