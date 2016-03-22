@@ -41,6 +41,7 @@ import de.uni_hildesheim.sse.easy_producer.instantiator.model.rtVil.VariableValu
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.rtVil.VariableValueCopier.IAssignmentListener;
 
 import static eu.qualimaster.easy.extension.QmConstants.*;
+import static eu.qualimaster.easy.extension.internal.Utils.*;
 
 import java.util.Iterator;
 
@@ -106,7 +107,7 @@ public class ConfigurationInitializer {
     @Invisible
     public static RuntimeVariableMapping createVariableMapping(
         de.uni_hildesheim.sse.model.confModel.Configuration config) throws ModelQueryException {
-        Project project = config.getProject();
+        /*Project project = config.getProject();
         Compound sourceType = findCompound(project, TYPE_SOURCE);
         Compound familyElementType = findCompound(project, TYPE_FAMILYELEMENT);
         Compound sinkType = findCompound(project, TYPE_SINK);
@@ -120,7 +121,8 @@ public class ConfigurationInitializer {
                 addVariableMapping(var, SLOT_AVAILABLE, result);
             }
         }
-        return result;
+        return result;*/
+        return null;
     }
     
     /**
@@ -130,7 +132,7 @@ public class ConfigurationInitializer {
      * @param fieldName the field name to analyze
      * @param result the mapping to be modified as a side effect
      */
-    private static void addVariableMapping(IDecisionVariable var,  
+    /*private static void addVariableMapping(IDecisionVariable var,  
         String fieldName, RuntimeVariableMapping result) {
         IDecisionVariable nested = VariableValueCopier.findVariable(var, fieldName);
         if (null != nested) {
@@ -146,18 +148,6 @@ public class ConfigurationInitializer {
                 }
             }
         }
-    }
-    
-    /**
-     * Finds a compound type.
-     * 
-     * @param project the project to start searching
-     * @param name the name of the compound
-     * @return the compound type or <b>null</b> if none was found
-     * @throws ModelQueryException in case of violated project access restrictions
-     */
-    public static Compound findCompound(Project project, String name) throws ModelQueryException {
-        return (Compound) ModelQuery.findType(project, name, Compound.class);
-    }
+    }*/
 
 }

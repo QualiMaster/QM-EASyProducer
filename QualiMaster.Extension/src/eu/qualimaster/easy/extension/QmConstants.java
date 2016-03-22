@@ -49,6 +49,7 @@ public class QmConstants {
     // -------------------------------- infrastructure --------------------------
     
     public static final String PROJECT_INFRASTRUCTURE = "Infrastructure";
+    public static final String PROJECT_INFRASTRUCTURECFG = PROJECT_INFRASTRUCTURE + CFG_POSTFIX;
     public static final String VAR_INFRASTRUCTURE_ACTIVEPIPELINES = "activePipelines";
     public static final String VAR_INFRASTRUCTURE_REPOSITORY_URL = "repositoryURL";
     public static final String VAR_INFRASTRUCTURE_DEPLOYMENT_URL = "deploymentURL";
@@ -56,6 +57,7 @@ public class QmConstants {
     // -------------------------- pipelines --------------------------------
 
     public static final String PROJECT_PIPELINES = "Pipelines";
+    public static final String PROJECT_PIPELINESCFG = PROJECT_PIPELINES + CFG_POSTFIX;
 
     public static final String TYPE_PIPELINE_ELEMENT = "PipelineElement";
     public static final String SLOT_PIPELINE_ELEMENT_ISVALID = SLOT_ISVALID;
@@ -113,6 +115,7 @@ public class QmConstants {
     // -------------------------- families  ---------------------------------
 
     public static final String PROJECT_FAMILIES = "Families";
+    public static final String PROJECT_FAMILIESCFG = PROJECT_FAMILIES + CFG_POSTFIX;
     public static final String TYPE_FAMILY = "Family";
     public static final String SLOT_FAMILY_MEMBERS = "members";
     public static final String SLOT_FAMILY_INPUT = SLOT_INPUT;
@@ -123,7 +126,8 @@ public class QmConstants {
     // -------------------------- algorithms  -------------------------------
 
     public static final String PROJECT_ALGORITHMS = "Algorithms";
-
+    public static final String PROJECT_ALGORITHMSCFG = PROJECT_ALGORITHMS + CFG_POSTFIX;
+    
     public static final String TYPE_ALGORITHM = "Algorithm";
     public static final String SLOT_ALGORITHM_INPUT = SLOT_INPUT;
     public static final String SLOT_ALGORITHM_OUTPUT = SLOT_OUTPUT;
@@ -137,7 +141,8 @@ public class QmConstants {
     // ------------------------ data management -----------------------------
 
     public static final String PROJECT_DATAMGT = "DataManagement";
-
+    public static final String PROJECT_DATAMGTCFG = PROJECT_DATAMGT + CFG_POSTFIX;
+    
     public static final String TYPE_DATAELEMENT = "DataElement";
     
     public static final String TYPE_DATASOURCE = "DataSource";
