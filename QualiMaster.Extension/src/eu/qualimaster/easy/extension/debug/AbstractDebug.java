@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package eu.qualimaster.easy.extension;
+package eu.qualimaster.easy.extension.debug;
 
 import java.lang.reflect.Method;
 
@@ -62,4 +62,16 @@ public abstract class AbstractDebug {
         initialize(eu.qualimaster.easy.extension.internal.Registration.class);
     }
     
+    /**
+     * Sleeps a certain time.
+     * 
+     * @param ms the ms to sleep
+     */
+    protected static void sleep(int ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+        }
+    }
+
 }

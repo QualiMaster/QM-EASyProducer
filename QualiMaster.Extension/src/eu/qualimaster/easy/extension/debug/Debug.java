@@ -1,4 +1,4 @@
-package eu.qualimaster.easy.extension;
+package eu.qualimaster.easy.extension.debug;
 
 import java.io.File;
 import java.io.IOException;

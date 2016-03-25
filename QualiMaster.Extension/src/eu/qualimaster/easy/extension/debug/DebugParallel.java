@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package eu.qualimaster.easy.extension;
+package eu.qualimaster.easy.extension.debug;
 
 import java.io.File;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -122,18 +122,6 @@ public class DebugParallel extends AbstractDebug {
             while (count.get() > 0) {
                 sleep(500);
             }
-        }
-    }
-
-    /**
-     * Sleeps a certain time.
-     * 
-     * @param ms the ms to sleep
-     */
-    private static void sleep(int ms) {
-        try {
-            Thread.sleep(ms);
-        } catch (InterruptedException e) {
         }
     }
 
