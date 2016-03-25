@@ -25,6 +25,7 @@ import de.uni_hildesheim.sse.model.cst.Variable;
 import de.uni_hildesheim.sse.model.varModel.Constraint;
 import de.uni_hildesheim.sse.model.varModel.ContainableModelElement;
 import de.uni_hildesheim.sse.model.varModel.DecisionVariableDeclaration;
+import de.uni_hildesheim.sse.model.varModel.FreezeBlock;
 import de.uni_hildesheim.sse.model.varModel.IFreezable;
 import de.uni_hildesheim.sse.model.varModel.IvmlKeyWords;
 import de.uni_hildesheim.sse.model.varModel.ModelQuery;
@@ -32,8 +33,10 @@ import de.uni_hildesheim.sse.model.varModel.ModelQueryException;
 import de.uni_hildesheim.sse.model.varModel.Project;
 import de.uni_hildesheim.sse.model.varModel.ProjectImport;
 import de.uni_hildesheim.sse.model.varModel.datatypes.Compound;
+import de.uni_hildesheim.sse.model.varModel.datatypes.ConstraintType;
 import de.uni_hildesheim.sse.model.varModel.datatypes.Container;
 import de.uni_hildesheim.sse.model.varModel.datatypes.IDatatype;
+import de.uni_hildesheim.sse.model.varModel.values.Value;
 import de.uni_hildesheim.sse.model.varModel.values.ValueDoesNotMatchTypeException;
 import de.uni_hildesheim.sse.model.varModel.values.ValueFactory;
 import de.uni_hildesheim.sse.utils.modelManagement.ModelManagementException;
@@ -62,28 +65,54 @@ public class AlgorithmProfileHelper {
         PROJECT_OBSERVABLESCFG, PROJECT_ADAPTIVITYCFG, PROJECT_ALGORITHMSCFG, PROJECT_FAMILIESCFG};
     
     /**
-     * Profiles the given algorithm.
+     * Profiles the given algorithm. Create a specific pipeline with data source, specific family holding
+     * only the test algorithm.
      * 
      * @param config the configuration to be used as basis for creating a profiling pipeline
      * @param familyName the name of the family to test
+     * @param algorithmName the name of the algorithm within <code>family</code> to test
      * @throws ModelQueryException in case of model query problems
      * @throws ModelManagementException in case of model management problems
      * @throws CSTSemanticException in case of CST errors
      * @throws ValueDoesNotMatchTypeException in case of unmatching values
      */
     @QMInternal
-    public static void profile(de.uni_hildesheim.sse.model.confModel.Configuration config, String familyName) 
-        throws ModelQueryException, ModelManagementException, ValueDoesNotMatchTypeException, CSTSemanticException {
+    public static void profile(de.uni_hildesheim.sse.model.confModel.Configuration config, String familyName, 
+        String algorithmName) throws ModelQueryException, ModelManagementException, ValueDoesNotMatchTypeException, 
+        CSTSemanticException {
+        
+        Project qm = createNewRoot(config, familyName, algorithmName);
+        @SuppressWarnings("unused")
+        Configuration cfg = new Configuration(qm);
+        
+        // instantiate and package pipeline
+        // set pipeline options -> family member, configure generic source
+        // start pipeline
+    }
+    
+    /**
+     * Creates a new QM model root leaving the real one as it is.
+     * 
+     * @param config the configuration to be used as basis for creation
+     * @param familyName the name of the family to test
+     * @param algorithmName the name of the algorithm within <code>family</code> to test
+     * @return the new model root project
+     * @throws ModelQueryException in case of model query problems
+     * @throws ModelManagementException in case of model management problems
+     * @throws CSTSemanticException in case of CST errors
+     * @throws ValueDoesNotMatchTypeException in case of unmatching values
+     */
+    private static Project createNewRoot(de.uni_hildesheim.sse.model.confModel.Configuration config, String familyName, 
+        String algorithmName) throws ModelQueryException, ModelManagementException, ValueDoesNotMatchTypeException, 
+        CSTSemanticException {
         Project cfgProject = config.getProject();
         Project cfgInfra = ModelQuery.findProject(cfgProject, PROJECT_INFRASTRUCTURE);
         
         Compound familyType = findCompound(cfgProject, TYPE_FAMILY);
-        IDecisionVariable testFamily = VariableHelper.findNamedVariable(config, familyType, familyName);
-        if (null == testFamily) {
-            throw new ModelQueryException("family '" + familyName + "' not found", ModelQueryException.ACCESS_ERROR);
-        }
+        IDecisionVariable testFamily = findNamedVariable(config, familyType, familyName);
+        IDecisionVariable testAlgorithm = findAlgorithm(testFamily, algorithmName, true);
         
-        Project pip = new Project("ProfilingTestPipeline" + CFG_POSTFIX);
+        Project pip = createQmProject("ProfilingTestPipeline" + CFG_POSTFIX, cfgProject);
         addImports(cfgProject, PIPELINE_IMPORTS, pip);
 
         Compound dataSourceType = findCompound(pip, TYPE_DATASOURCE);
@@ -100,12 +129,18 @@ public class AlgorithmProfileHelper {
             SLOT_DATASOURCE_DATAMANAGEMENTSTRATEGY, CONST_DATAMANAGEMENTSTRATEGY_NONE,
             //SLOT_DATASOURCE_PARAMETERS,
             SLOT_DATASOURCE_SOURCECLS, "eu.qualimaster.genericSource.Source");
-        DecisionVariableDeclaration familyVar = createDecisionVariable("prFamily0", familyElementType, pip, 
+        DecisionVariableDeclaration familyVar = createDecisionVariable("prFamily0", familyType, pip, 
+            SLOT_FAMILY_NAME, getValue(testFamily, SLOT_FAMILY_NAME),
+            SLOT_FAMILY_INPUT, getValue(testFamily, SLOT_FAMILY_INPUT),
+            SLOT_FAMILY_OUTPUT, getValue(testFamily, SLOT_FAMILY_OUTPUT),
+            SLOT_FAMILY_PARAMETERS, getValue(testFamily, SLOT_FAMILY_PARAMETERS),
+            SLOT_FAMILY_MEMBERS, new Object[] {testAlgorithm.getValue()});
+        DecisionVariableDeclaration familyEltVar = createDecisionVariable("prFamilyElt0", familyElementType, pip, 
             SLOT_FAMILYELEMENT_NAME, "family",
-            SLOT_FAMILYELEMENT_FAMILY, testFamily.getDeclaration());
+            SLOT_FAMILYELEMENT_FAMILY, familyVar);
         DecisionVariableDeclaration flowVar = createDecisionVariable("prFlow0", flowType, pip,
             SLOT_FLOW_NAME, "f1",
-            SLOT_FLOW_DESTINATION, familyVar,
+            SLOT_FLOW_DESTINATION, familyEltVar,
             SLOT_FLOW_GROUPING, CONST_GROUPING_SHUFFLEGROUPING);
         DecisionVariableDeclaration sourceVar = createDecisionVariable("prSource0", sourceType, pip,
             SLOT_SOURCE_NAME, "source",
@@ -115,28 +150,147 @@ public class AlgorithmProfileHelper {
             SLOT_PIPELINE_NAME, "ProfilingTestPip", 
             SLOT_PIPELINE_SOURCES, new Object[]{sourceVar},
             SLOT_PIPELINE_NUMWORKERS, 1);
-        createFreezeBlock(pip);
-        
-        Project pipelines = new Project(PROJECT_PIPELINESCFG);
+        Utils.createFreezeBlock(pip);
+
+        Project pipelines = createQmProject(PROJECT_PIPELINESCFG, cfgProject);
         addImports(cfgProject, PIPELINES_IMPORTS, pipelines, pip);
         DecisionVariableDeclaration pipelinesVar = setPipelines(pipelines, VAR_PIPELINES_PIPELINES, pipVar);
         createFreezeBlock(new IFreezable[]{pipelinesVar}, pipelines, pipelines);
         
-        Project infra = new Project(PROJECT_INFRASTRUCTURECFG);
+        Project infra = createQmProject(PROJECT_INFRASTRUCTURECFG, cfgProject);
         addImports(cfgProject, INFRASTRUCTURE_IMPORTS, infra, pipelines);
         List<IFreezable> freezes = addTopLevelValues(config, cfgInfra, infra, VAR_INFRASTRUCTURE_ACTIVEPIPELINES);
-        freezes.add(setPipelines(pipelines, VAR_INFRASTRUCTURE_ACTIVEPIPELINES, pipVar));
+        freezes.add(setPipelines(infra, VAR_INFRASTRUCTURE_ACTIVEPIPELINES, pipVar));
         createFreezeBlock(freezes, infra, infra);
         
-        Project qm = new Project(PROJECT_TOP_LEVEL);
-        addImports(cfgProject, TOP_IMPORTS, pipelines, infra);
-        
-        @SuppressWarnings("unused")
-        Configuration cfg = new Configuration(qm);
-        
-        // instantiate and package pipeline
-        // set pipeline options -> family member, configure generic source
-        // start pipeline
+        Project qm = createQmProject(PROJECT_TOP_LEVEL, cfgProject);
+        addImports(cfgProject, TOP_IMPORTS, qm, infra);
+
+        return qm;
+    }
+
+    /**
+     * Creates a freeze block for <code>project</code> and adds it to <code>project</code>.
+     * 
+     * @param freezables the freezables
+     * @param project the IVML project to add to (may be <b>null</b> if failed)
+     * @param fallbackForType in case that <code>project</code> is being written the first time, may be <b>null</b>
+     * @return the created freeze block
+     * @throws CSTSemanticException in case of CST errors
+     * @throws ValueDoesNotMatchTypeException in case of unmatching values
+     * @throws ModelQueryException in case of model access problems
+     */
+    private static FreezeBlock createFreezeBlock(IFreezable[] freezables, Project project, Project fallbackForType) 
+        throws CSTSemanticException, ValueDoesNotMatchTypeException, ModelQueryException {
+        FreezeBlock result = Utils.createFreezeBlock(freezables, project, fallbackForType);
+        project.add(result);
+        return result;
+    }
+    
+    /**
+     * Creates a freeze block for <code>project</code> and adds it to <code>project</code>.
+     * 
+     * @param freezables the freezables
+     * @param project the IVML project to add to (may be <b>null</b> if failed)
+     * @param fallbackForType in case that <code>project</code> is being written the first time, may be <b>null</b>
+     * @return the created freeze block
+     * @throws CSTSemanticException in case of CST errors
+     * @throws ValueDoesNotMatchTypeException in case of unmatching values
+     * @throws ModelQueryException in case of model access problems
+     */
+    public static FreezeBlock createFreezeBlock(List<IFreezable> freezables, Project project, Project fallbackForType) 
+        throws CSTSemanticException, ValueDoesNotMatchTypeException, ModelQueryException {
+        FreezeBlock result = Utils.createFreezeBlock(freezables, project, fallbackForType);
+        project.add(result);
+        return result;
+    }
+    
+    /**
+     * Finds a named variable and throws an exception if not found.
+     * 
+     * @param config the configuration to search within
+     * @param type the type of the variable
+     * @param name the name of the variable
+     * @return the variable
+     * @throws ModelQueryException if not found
+     */
+    private static IDecisionVariable findNamedVariable(Configuration config, IDatatype type, String name) 
+        throws ModelQueryException {
+        IDecisionVariable result = VariableHelper.findNamedVariable(config, type, name);
+        if (null == result) {
+            throw new ModelQueryException(type.getName() + " '" + name + "' not found", 
+                ModelQueryException.ACCESS_ERROR);
+        }
+        return result;
+    }
+
+    /**
+     * Finds an algorithm in <code>family</code>.
+     * 
+     * @param family the family
+     * @param name the name of the algorithm
+     * @param asReference return the reference to the algorithm or the algorithm itself
+     * @return the algorithm or its reference (depending on <code>asReference</code>)
+     * @throws ModelQueryException if the algorithm cannot be found
+     */
+    private static IDecisionVariable findAlgorithm(IDecisionVariable family, String name, boolean asReference) 
+        throws ModelQueryException {
+        IDecisionVariable result = null;
+        IDecisionVariable members = family.getNestedElement(SLOT_FAMILY_MEMBERS);
+        if (null == members) {
+            throw new ModelQueryException("'" + SLOT_FAMILY_MEMBERS + "' not found in variable '" 
+                + family.getDeclaration().getName() + "'", ModelQueryException.ACCESS_ERROR);
+        }
+        for (int n = 0; null == result && n < members.getNestedElementsCount(); n++) {
+            IDecisionVariable algoRef = members.getNestedElement(n);
+            IDecisionVariable algorithm = Configuration.dereference(algoRef);
+            if (VariableHelper.hasName(algorithm, name)) {
+                if (asReference) {
+                    result = algoRef;
+                } else {
+                    result = algorithm;
+                }
+            }
+        }
+        if (null == result) {
+            throw new ModelQueryException("algorithm '" + name + "' not found in variable '" 
+                + family.getDeclaration().getName() + "'", ModelQueryException.ACCESS_ERROR);
+        }
+        return result;
+    }
+
+    /**
+     * Creates a project with basic settings for QM.
+     * 
+     * @param name the name of the project
+     * @param typeFallback a project acting as type fallback (may be <b>null</b>)
+     * @return the created project
+     * @throws ModelQueryException in case of model query problems
+     * @throws CSTSemanticException in case of CST errors
+     * @throws ValueDoesNotMatchTypeException in case of unmatching values
+     */
+    private static Project createQmProject(String name, Project typeFallback) throws CSTSemanticException, 
+        ValueDoesNotMatchTypeException, ModelQueryException {
+        Project result = new Project(name);
+        addRuntimeAttributeToProject(result, typeFallback);
+        return result;
+    }
+    
+    /**
+     * Returns (a copy) of the value of the <code>slot</code> in <code>var</code>.
+     * 
+     * @param var the variable to look into
+     * @param slot the slot name
+     * @return the (copied) value
+     * @throws ModelQueryException if the given slot does not exist
+     */
+    private static Value getValue(IDecisionVariable var, String slot) throws ModelQueryException {
+        IDecisionVariable nested = var.getNestedElement(slot);
+        if (null == nested) {
+            throw new ModelQueryException("cannot find slot '" + slot + "' in '" + var.getDeclaration().getName() 
+                + "'", ModelQueryException.ACCESS_ERROR);
+        }
+        return nested.getValue().clone();
     }
     
     /**
@@ -158,12 +312,15 @@ public class AlgorithmProfileHelper {
                 DecisionVariableDeclaration decl = (DecisionVariableDeclaration) elt;
                 if (!Arrays.contains(exclude, decl.getName())) {
                     IDecisionVariable decVar = cfg.getDecision(decl);
-                    ConstraintSyntaxTree cst = new OCLFeatureCall(new Variable(decl), IvmlKeyWords.ASSIGN, 
-                        new ConstantValue(decVar.getValue().clone()));
-                    cst.inferDatatype();
-                    Constraint constraint = new Constraint(cst, target);
-                    target.addConstraint(constraint);
-                    result.add(decl);
+                    Value value = decVar.getValue();
+                    if (null != value && !ConstraintType.isConstraint(decVar.getDeclaration().getType())) {
+                        ConstraintSyntaxTree cst = new OCLFeatureCall(new Variable(decl), IvmlKeyWords.ASSIGNMENT, 
+                            new ConstantValue(decVar.getValue().clone()));
+                        cst.inferDatatype();
+                        Constraint constraint = new Constraint(cst, target);
+                        target.addConstraint(constraint);
+                        result.add(decl);
+                    }
                 }
             }
         }
@@ -234,8 +391,8 @@ public class AlgorithmProfileHelper {
             varName, DecisionVariableDeclaration.class);
         if (null != pipelinesVar && pipelinesVar.getType() instanceof Container) {
             Container cType = (Container) pipelinesVar.getType();
-            ConstraintSyntaxTree cst = new OCLFeatureCall(new Variable(pipelinesVar), IvmlKeyWords.ASSIGN, 
-                new ConstantValue(ValueFactory.createValue(cType.getContainedType(), pipeline)));
+            ConstraintSyntaxTree cst = new OCLFeatureCall(new Variable(pipelinesVar), IvmlKeyWords.ASSIGNMENT, 
+                new ConstantValue(ValueFactory.createValue(cType, pipeline)));
             cst.inferDatatype();
             Constraint constraint = new Constraint(cst, prj);
             prj.addConstraint(constraint);

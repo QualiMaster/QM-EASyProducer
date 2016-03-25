@@ -103,12 +103,33 @@ public class VariableHelper {
         IDecisionVariable result = null;
         Iterator<IDecisionVariable> iter = config.iterator();
         while (null == result && iter.hasNext()) {
-            IDecisionVariable var = iter.next();
+            IDecisionVariable var = Configuration.dereference(iter.next());
             if ((null == type || type.isAssignableFrom(var.getDeclaration().getType())) && hasName(var, name)) {
                 result = var;
             }
         }
         return result;
     }
+    
+    /**
+     * Finds a named variable of given <code>type</code> in <code>variable</code>.
+     * 
+     * @param variable the variable to search for
+     * @param type the type to search for (ignored if <b>null</b>)
+     * @param name the (logical) name
+     * @return the decision variable
+     */
+    public static final IDecisionVariable findNamedVariable(IDecisionVariable variable, IDatatype type, String name) {
+        IDecisionVariable result = null;
+        for (int n = 0; null == result && n < variable.getNestedElementsCount(); n++) {
+            IDecisionVariable var = Configuration.dereference(variable.getNestedElement(n));
+            if ((null == type || type.isAssignableFrom(var.getDeclaration().getType())) && hasName(var, name)) {
+                result = var;
+            }
+        }
+        return result;
+    }
+    
+    
 
 }

@@ -129,6 +129,7 @@ public class QmConstants {
     public static final String PROJECT_FAMILIES = "Families";
     public static final String PROJECT_FAMILIESCFG = PROJECT_FAMILIES + CFG_POSTFIX;
     public static final String TYPE_FAMILY = "Family";
+    public static final String SLOT_FAMILY_NAME = SLOT_NAME;
     public static final String SLOT_FAMILY_MEMBERS = "members";
     public static final String SLOT_FAMILY_INPUT = SLOT_INPUT;
     public static final String SLOT_FAMILY_OUTPUT = SLOT_OUTPUT;

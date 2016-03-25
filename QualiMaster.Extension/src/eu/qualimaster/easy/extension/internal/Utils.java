@@ -24,6 +24,7 @@ import de.uni_hildesheim.sse.model.cst.ConstantValue;
 import de.uni_hildesheim.sse.model.cst.ConstraintSyntaxTree;
 import de.uni_hildesheim.sse.model.cst.OCLFeatureCall;
 import de.uni_hildesheim.sse.model.cst.Variable;
+import de.uni_hildesheim.sse.model.varModel.Attribute;
 import de.uni_hildesheim.sse.model.varModel.ContainableModelElement;
 import de.uni_hildesheim.sse.model.varModel.DecisionVariableDeclaration;
 import de.uni_hildesheim.sse.model.varModel.FreezeBlock;
@@ -59,7 +60,7 @@ public class Utils {
     }
 
     /**
-     * Creates a freeze block for project.
+     * Creates a freeze block for project. [legacy style, does not add to project]
      * 
      * @param freezables the freezables
      * @param project the IVML project to add to (may be <b>null</b> if failed)
@@ -77,7 +78,7 @@ public class Utils {
     }
     
     /**
-     * Creates a freeze block for project.
+     * Creates a freeze block for project. [legacy style, does not add to project]
      * 
      * @param freezables the freezables
      * @param project the IVML project to add to (may be <b>null</b> if failed)
@@ -131,6 +132,28 @@ public class Utils {
         FreezeBlock result = createFreezeBlock(freezables, project, project);
         project.add(result);
         return result;
+    }
+    
+    /**
+     * Adds the binding time attribute to <code>project</code>.
+     * 
+     * @param project the IVML project to add the attribute to
+     * @param fallbackForType in case that <code>project</code> is being written the first time, may be <b>null</b>
+     * @throws CSTSemanticException in case of CST errors
+     * @throws ValueDoesNotMatchTypeException in case of unmatching values
+     * @throws ModelQueryException in case of model access problems
+     */
+    public static void addRuntimeAttributeToProject(Project project, Project fallbackForType) 
+        throws CSTSemanticException, ValueDoesNotMatchTypeException, ModelQueryException {
+        //attribute BindingTime bindingTime = BindingTime.compile to PriorityPipCfg;
+        de.uni_hildesheim.sse.model.varModel.datatypes.Enum type = ModelQuery.findEnum(project, TYPE_BINDING_TIME);
+        if (null == type && null != fallbackForType) {
+            type = ModelQuery.findEnum(fallbackForType, TYPE_BINDING_TIME);
+        }
+        EnumLiteral literal = type.get(CONST_BINDING_TIME_COMPILE);
+        Attribute attr = new Attribute(ANNOTATION_BINDING_TIME, type, project, project);
+        attr.setValue(new ConstantValue(ValueFactory.createValue(type, literal)));
+        project.add(attr);
     }
 
 }
