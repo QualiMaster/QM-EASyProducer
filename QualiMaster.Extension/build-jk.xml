@@ -8,8 +8,8 @@
 	
 	<!-- Einstellungen fuer dieses Projekt -->
 	<property name="src.dir" value="src"/>
-	<property name="javacSource" value="1.5"/>
-	<property name="javacTarget" value="1.5"/>
+	<property name="javacSource" value="1.7"/>
+	<property name="javacTarget" value="1.7"/>
 
 	   <!-- Check - no typedef shall be required as installed in ANT/lib -->
     <path id="maven-ant-tasks.classpath" path="${ant-maven.lib}" />
