@@ -15,6 +15,8 @@
  */
 package eu.qualimaster.easy.extension.internal;
 
+import de.uni_hildesheim.sse.easy_producer.instantiator.model.common.VilException;
+import de.uni_hildesheim.sse.easy_producer.instantiator.model.execution.Executor;
 import de.uni_hildesheim.sse.model.confModel.Configuration;
 import de.uni_hildesheim.sse.model.confModel.IDecisionVariable;
 import de.uni_hildesheim.sse.model.cst.CSTSemanticException;
@@ -45,6 +47,7 @@ import eu.qualimaster.common.QMInternal;
 import static eu.qualimaster.easy.extension.QmConstants.*;
 import static eu.qualimaster.easy.extension.internal.Utils.*;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,6 +66,7 @@ public class AlgorithmProfileHelper {
     private static final String[] INFRASTRUCTURE_IMPORTS = {PROJECT_INFRASTRUCTURE};
     private static final String[] TOP_IMPORTS = {PROJECT_HARDWARECFG, PROJECT_RECONFHWCFG, PROJECT_DATAMGTCFG, 
         PROJECT_OBSERVABLESCFG, PROJECT_ADAPTIVITYCFG, PROJECT_ALGORITHMSCFG, PROJECT_FAMILIESCFG};
+    private static final String PIP_NAME = "ProfilingTestPip";
     
     /**
      * Profiles the given algorithm. Create a specific pipeline with data source, specific family holding
@@ -71,23 +75,36 @@ public class AlgorithmProfileHelper {
      * @param config the configuration to be used as basis for creating a profiling pipeline
      * @param familyName the name of the family to test
      * @param algorithmName the name of the algorithm within <code>family</code> to test
-     * @throws ModelQueryException in case of model query problems
-     * @throws ModelManagementException in case of model management problems
-     * @throws CSTSemanticException in case of CST errors
-     * @throws ValueDoesNotMatchTypeException in case of unmatching values
+     * @param targetFolder the target folder for the instantiation
+     * @throws VilException in case of model query problems, model management problems, CST errors, unmatching IVML 
+     *     values or VIL execution errors
      */
     @QMInternal
     public static void profile(de.uni_hildesheim.sse.model.confModel.Configuration config, String familyName, 
-        String algorithmName) throws ModelQueryException, ModelManagementException, ValueDoesNotMatchTypeException, 
-        CSTSemanticException {
+        String algorithmName, File targetFolder) throws VilException {
         
-        Project qm = createNewRoot(config, familyName, algorithmName);
-        @SuppressWarnings("unused")
-        Configuration cfg = new Configuration(qm);
+        try {
+            Project qm = createNewRoot(config, familyName, algorithmName);
+            Configuration cfg = new Configuration(qm);
+            
+            QmProjectDescriptor source = new QmProjectDescriptor(targetFolder);
+            QmProjectDescriptor target = new QmProjectDescriptor(source, targetFolder);
+            Executor executor = new Executor(source.getMainVilScript())
+                .addSource(source).addTarget(target)
+                .addConfiguration(cfg)
+                .addCustomArgument("pipelineName", PIP_NAME);
+            String startRuleName = "pipelines";
+            if (null != startRuleName) {
+                executor.addStartRuleName(startRuleName);
+            }
+            executor.execute();
+        } catch (ModelQueryException | ModelManagementException | ValueDoesNotMatchTypeException 
+            | CSTSemanticException e) {
+            throw new VilException(e.getMessage(), VilException.ID_RUNTIME);
+        }
         
-        // instantiate and package pipeline
-        // set pipeline options -> family member, configure generic source
-        // start pipeline
+        // TODO set pipeline options -> family member, configure generic source, no adaptation
+        // TODO start pipeline
     }
     
     /**
@@ -147,7 +164,7 @@ public class AlgorithmProfileHelper {
             SLOT_SOURCE_OUTPUT, new Object[]{flowVar},
             SLOT_SOURCE_SOURCE, dataSourceVar);
         DecisionVariableDeclaration pipVar = createDecisionVariable("prPipeline0", pipelineType, pip, 
-            SLOT_PIPELINE_NAME, "ProfilingTestPip", 
+            SLOT_PIPELINE_NAME, PIP_NAME, 
             SLOT_PIPELINE_SOURCES, new Object[]{sourceVar},
             SLOT_PIPELINE_NUMWORKERS, 1);
         Utils.createFreezeBlock(pip);

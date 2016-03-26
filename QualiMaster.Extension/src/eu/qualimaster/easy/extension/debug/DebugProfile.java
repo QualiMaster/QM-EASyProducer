@@ -16,13 +16,14 @@
 package eu.qualimaster.easy.extension.debug;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
+import de.uni_hildesheim.sse.easy_producer.instantiator.model.common.VilException;
 import de.uni_hildesheim.sse.model.confModel.Configuration;
-import de.uni_hildesheim.sse.model.cst.CSTSemanticException;
 import de.uni_hildesheim.sse.model.management.VarModel;
-import de.uni_hildesheim.sse.model.varModel.ModelQueryException;
 import de.uni_hildesheim.sse.model.varModel.Project;
-import de.uni_hildesheim.sse.model.varModel.values.ValueDoesNotMatchTypeException;
 import de.uni_hildesheim.sse.utils.modelManagement.ModelInitializer;
 import de.uni_hildesheim.sse.utils.modelManagement.ModelManagementException;
 import de.uni_hildesheim.sse.utils.progress.ProgressObserver;
@@ -60,13 +61,11 @@ public class DebugProfile extends AbstractDebug {
             ModelInitializer.removeLocation(modelLocation, ProgressObserver.NO_OBSERVER);
 
             try {
-                AlgorithmProfileHelper.profile(monConfig, "fCorrelationFinancial", "TopoSoftwareCorrelationFinancial");
+                Path path = Files.createTempDirectory("qmDebugProfile");
+                AlgorithmProfileHelper.profile(monConfig, "fCorrelationFinancial", "TopoSoftwareCorrelationFinancial", 
+                    path.toFile());
                 System.out.println("Creation successful.");
-            } catch (CSTSemanticException e) {
-                e.printStackTrace();
-            } catch (ModelQueryException e) {
-                e.printStackTrace();
-            } catch (ValueDoesNotMatchTypeException e) {
+            } catch (VilException | IOException e) {
                 e.printStackTrace();
             }
         }

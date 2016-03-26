@@ -21,7 +21,8 @@ Require-Bundle: de.uni-hildesheim.sse.easy.instantiatorCore;bundle-version="0.11
  de.uni_hildesheim.sse.vil.templatelang;bundle-version="1.0.0",
  de.uni_hildesheim.sse.reasoning.reasoner;bundle-version="1.0.0",
  de.uni_hildesheim.sse.ivml;bundle-version="1.0.0",
- de.uni_hildesheim.sse.varModel;bundle-version="0.11.3"
+ de.uni_hildesheim.sse.varModel;bundle-version="0.11.3",
+ de.uni_hildesheim.sse.easy_producer.core;bundle-version="1.1.0"
 EASyLoader-BundleClassPath: false
 Service-Component: OSGI-INF/qualimaster.xml
 Bundle-ClassPath: .,

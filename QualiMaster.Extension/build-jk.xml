@@ -31,7 +31,10 @@
         <pathelement path="${libs.instantiator.core}"/>
         <pathelement path="${libs.instantiator.velocity}"/>
         <pathelement path="${libs.instantiatorCore.rt.core}"/>
-        
+        <!-- EASy Core -->
+        <pathelement path="${libs.easy.PLugin}"/>
+        <pathelement path="${libs.easy.persistence}"/>
+        <pathelement path="${libs.easy.persistence.eclipse}"/>
         <!-- IVML Core -->
         <pathelement path="${libs.ivml}"/>
         <!-- reasonerCore -->
