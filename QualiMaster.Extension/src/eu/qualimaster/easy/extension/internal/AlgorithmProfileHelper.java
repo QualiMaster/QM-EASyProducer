@@ -15,8 +15,12 @@
  */
 package eu.qualimaster.easy.extension.internal;
 
+import de.uni_hildesheim.sse.easy_producer.core.persistence.standard.StandaloneProjectDescriptor;
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.common.VilException;
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.execution.Executor;
+import de.uni_hildesheim.sse.easy_producer.instantiator.model.execution.TracerFactory;
+import de.uni_hildesheim.sse.easy_producer.instantiator.model.tracing.ConsoleTracerFactory;
+import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.IProjectDescriptor;
 import de.uni_hildesheim.sse.model.confModel.Configuration;
 import de.uni_hildesheim.sse.model.confModel.IDecisionVariable;
 import de.uni_hildesheim.sse.model.cst.CSTSemanticException;
@@ -47,7 +51,6 @@ import eu.qualimaster.common.QMInternal;
 import static eu.qualimaster.easy.extension.QmConstants.*;
 import static eu.qualimaster.easy.extension.internal.Utils.*;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,6 +70,7 @@ public class AlgorithmProfileHelper {
     private static final String[] TOP_IMPORTS = {PROJECT_HARDWARECFG, PROJECT_RECONFHWCFG, PROJECT_DATAMGTCFG, 
         PROJECT_OBSERVABLESCFG, PROJECT_ADAPTIVITYCFG, PROJECT_ALGORITHMSCFG, PROJECT_FAMILIESCFG};
     private static final String PIP_NAME = "ProfilingTestPip";
+    private static final String SRC_NAME = "TestSource";
     
     /**
      * Profiles the given algorithm. Create a specific pipeline with data source, specific family holding
@@ -75,28 +79,26 @@ public class AlgorithmProfileHelper {
      * @param config the configuration to be used as basis for creating a profiling pipeline
      * @param familyName the name of the family to test
      * @param algorithmName the name of the algorithm within <code>family</code> to test
-     * @param targetFolder the target folder for the instantiation
+     * @param source the source project descriptor, also to be used as target folder for instantiation (the folder may 
+     *     be empty)
      * @throws VilException in case of model query problems, model management problems, CST errors, unmatching IVML 
      *     values or VIL execution errors
      */
     @QMInternal
     public static void profile(de.uni_hildesheim.sse.model.confModel.Configuration config, String familyName, 
-        String algorithmName, File targetFolder) throws VilException {
+        String algorithmName, IProjectDescriptor source) throws VilException {
         
         try {
             Project qm = createNewRoot(config, familyName, algorithmName);
             Configuration cfg = new Configuration(qm);
             
-            QmProjectDescriptor source = new QmProjectDescriptor(targetFolder);
-            QmProjectDescriptor target = new QmProjectDescriptor(source, targetFolder);
+            TracerFactory.setInstance(ConsoleTracerFactory.INSTANCE);
+            StandaloneProjectDescriptor target = new StandaloneProjectDescriptor(source, source.getBase());
             Executor executor = new Executor(source.getMainVilScript())
                 .addSource(source).addTarget(target)
                 .addConfiguration(cfg)
-                .addCustomArgument("pipelineName", PIP_NAME);
-            String startRuleName = "pipelines";
-            if (null != startRuleName) {
-                executor.addStartRuleName(startRuleName);
-            }
+                .addCustomArgument("pipelineName", PIP_NAME)
+                .addStartRuleName("pipeline");
             executor.execute();
         } catch (ModelQueryException | ModelManagementException | ValueDoesNotMatchTypeException 
             | CSTSemanticException e) {
@@ -139,13 +141,14 @@ public class AlgorithmProfileHelper {
         Compound familyElementType = findCompound(pip, TYPE_FAMILYELEMENT);
         
         DecisionVariableDeclaration dataSourceVar = createDecisionVariable("prDataSource0", dataSourceType, pip, 
-            SLOT_DATASOURCE_NAME, "testSource",
+            SLOT_DATASOURCE_NAME, SRC_NAME,
             SLOT_DATASOURCE_TUPLES, testFamily.getNestedElement(SLOT_FAMILY_INPUT).getValue().clone(),
             SLOT_DATASOURCE_ARTIFACT, "eu.qualimaster:genericSource:0.5.0-SNAPSHOT",
             SLOT_DATASOURCE_STORAGELOCATION, "null",
+            SLOT_DATASOURCE_PROFILINGSOURCE, true,
             SLOT_DATASOURCE_DATAMANAGEMENTSTRATEGY, CONST_DATAMANAGEMENTSTRATEGY_NONE,
             //SLOT_DATASOURCE_PARAMETERS,
-            SLOT_DATASOURCE_SOURCECLS, "eu.qualimaster.genericSource.Source");
+            SLOT_DATASOURCE_SOURCECLS, "eu.qualimaster." + PIP_NAME + ".topology.imp." + SRC_NAME);
         DecisionVariableDeclaration familyVar = createDecisionVariable("prFamily0", familyType, pip, 
             SLOT_FAMILY_NAME, getValue(testFamily, SLOT_FAMILY_NAME),
             SLOT_FAMILY_INPUT, getValue(testFamily, SLOT_FAMILY_INPUT),
@@ -154,6 +157,7 @@ public class AlgorithmProfileHelper {
             SLOT_FAMILY_MEMBERS, new Object[] {testAlgorithm.getValue()});
         DecisionVariableDeclaration familyEltVar = createDecisionVariable("prFamilyElt0", familyElementType, pip, 
             SLOT_FAMILYELEMENT_NAME, "family",
+            SLOT_FAMILYELEMENT_PARALLELISM, 1, 
             SLOT_FAMILYELEMENT_FAMILY, familyVar);
         DecisionVariableDeclaration flowVar = createDecisionVariable("prFlow0", flowType, pip,
             SLOT_FLOW_NAME, "f1",
@@ -161,10 +165,13 @@ public class AlgorithmProfileHelper {
             SLOT_FLOW_GROUPING, CONST_GROUPING_SHUFFLEGROUPING);
         DecisionVariableDeclaration sourceVar = createDecisionVariable("prSource0", sourceType, pip,
             SLOT_SOURCE_NAME, "source",
+            SLOT_SOURCE_PARALLELISM, 1, 
+            // #TASKS
             SLOT_SOURCE_OUTPUT, new Object[]{flowVar},
             SLOT_SOURCE_SOURCE, dataSourceVar);
         DecisionVariableDeclaration pipVar = createDecisionVariable("prPipeline0", pipelineType, pip, 
             SLOT_PIPELINE_NAME, PIP_NAME, 
+            SLOT_PIPELINE_ARTIFACT, "eu.qualimaster:" + PIP_NAME + ":0.0.1-SNAPSHOT",
             SLOT_PIPELINE_SOURCES, new Object[]{sourceVar},
             SLOT_PIPELINE_NUMWORKERS, 1);
         Utils.createFreezeBlock(pip);

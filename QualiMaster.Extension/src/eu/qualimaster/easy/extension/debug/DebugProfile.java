@@ -17,8 +17,8 @@ package eu.qualimaster.easy.extension.debug;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+
+import org.apache.commons.io.FileUtils;
 
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.common.VilException;
 import de.uni_hildesheim.sse.model.confModel.Configuration;
@@ -29,6 +29,7 @@ import de.uni_hildesheim.sse.utils.modelManagement.ModelManagementException;
 import de.uni_hildesheim.sse.utils.progress.ProgressObserver;
 import eu.qualimaster.coordination.RepositoryHelper;
 import eu.qualimaster.easy.extension.internal.AlgorithmProfileHelper;
+import eu.qualimaster.easy.extension.internal.QmProjectDescriptor;
 
 /**
  * Debugs creating profiling pipelines.
@@ -42,8 +43,9 @@ public class DebugProfile extends AbstractDebug {
      * 
      * @param args the first argument shall be the model location
      * @throws ModelManagementException in case that obtaining the models fails
+     * @throws IOException if file operations fail
      */
-    public static void main(String[] args) throws ModelManagementException {
+    public static void main(String[] args) throws ModelManagementException, IOException {
         if (0 == args.length) {
             System.out.println("qualimaster.profile: <model location>");
             System.exit(0);
@@ -57,17 +59,21 @@ public class DebugProfile extends AbstractDebug {
             ModelInitializer.registerLoader(ProgressObserver.NO_OBSERVER);
             ModelInitializer.addLocation(modelLocation, ProgressObserver.NO_OBSERVER);
             Project project = RepositoryHelper.obtainModel(VarModel.INSTANCE, "QM", null);
+            
+            // create descriptor before clearing the location - in infrastructure pass vil directly/resolve VIL
             Configuration monConfig = RepositoryHelper.createConfiguration(project, "MONITORING", null);
-            ModelInitializer.removeLocation(modelLocation, ProgressObserver.NO_OBSERVER);
-
+            File tmp = new File(FileUtils.getTempDirectory(), "qmDebugProfile");
+            FileUtils.deleteDirectory(tmp);
+            tmp.mkdirs();
+            QmProjectDescriptor source = new QmProjectDescriptor(tmp);
             try {
-                Path path = Files.createTempDirectory("qmDebugProfile");
                 AlgorithmProfileHelper.profile(monConfig, "fCorrelationFinancial", "TopoSoftwareCorrelationFinancial", 
-                    path.toFile());
+                    source);
                 System.out.println("Creation successful.");
-            } catch (VilException | IOException e) {
+            } catch (VilException e) {
                 e.printStackTrace();
             }
+            ModelInitializer.removeLocation(modelLocation, ProgressObserver.NO_OBSERVER);
         }
     }
 

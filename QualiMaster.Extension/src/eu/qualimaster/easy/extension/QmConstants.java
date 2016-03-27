@@ -72,6 +72,7 @@ public class QmConstants {
     public static final String SLOT_SOURCE_ACTUAL = SLOT_ACTUAL;
     public static final String SLOT_SOURCE_NAME = SLOT_NAME;
     public static final String SLOT_SOURCE_OUTPUT = "output";
+    public static final String SLOT_SOURCE_PARALLELISM = "parallelism";
 
     public static final String TYPE_SINK = "Sink";
     public static final String SLOT_SINK_ISVALID = SLOT_ISVALID;
@@ -79,6 +80,7 @@ public class QmConstants {
     public static final String SLOT_SINK_AVAILABLE = SLOT_AVAILABLE;
     public static final String SLOT_SINK_ACTUAL = SLOT_ACTUAL;
     public static final String SLOT_SINK_NAME = SLOT_NAME;
+    public static final String SLOT_SINK_PARALLELISM = "parallelism";
     
     public static final String TYPE_FLOW = "Flow";
     public static final String SLOT_FLOW_NAME = SLOT_NAME;
@@ -100,6 +102,7 @@ public class QmConstants {
     public static final String SLOT_FAMILYELEMENT_FAMILY = "family";
     public static final String SLOT_FAMILYELEMENT_DEFAULT = "default";
     public static final String SLOT_FAMILYELEMENT_ISVALID = SLOT_ISVALID;
+    public static final String SLOT_FAMILYELEMENT_PARALLELISM = "parallelism";
     
     public static final String TYPE_PIPELINE = "Pipeline";
     public static final String SLOT_PIPELINE_NAME = SLOT_NAME;
@@ -167,6 +170,7 @@ public class QmConstants {
     public static final String SLOT_DATASOURCE_STORAGELOCATION = "storageLocation";
     public static final String SLOT_DATASOURCE_DATAMANAGEMENTSTRATEGY = "strategy";
     public static final String SLOT_DATASOURCE_SOURCECLS = "sourceCls";
+    public static final String SLOT_DATASOURCE_PROFILINGSOURCE = "profilingSource";
     
     public static final String CONST_DATAMANAGEMENTSTRATEGY_NONE = "None";
     
