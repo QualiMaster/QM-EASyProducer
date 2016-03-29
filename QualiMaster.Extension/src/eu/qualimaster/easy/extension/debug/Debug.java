@@ -6,15 +6,15 @@ import java.io.IOException;
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.rtVil.Executor;
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.rtVil.RtVilModel;
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.rtVil.Script;
-import de.uni_hildesheim.sse.reasoning.core.frontend.ReasonerFrontend;
-import de.uni_hildesheim.sse.reasoning.core.reasoner.ReasonerConfiguration;
-import de.uni_hildesheim.sse.reasoning.core.reasoner.ReasonerConfiguration.IAdditionalInformationLogger;
 import eu.qualimaster.adaptation.events.AdaptationEvent;
 import eu.qualimaster.coordination.RepositoryHelper;
 import eu.qualimaster.monitoring.events.FrozenSystemState;
 import net.ssehub.easy.basics.modelManagement.ModelInitializer;
 import net.ssehub.easy.basics.modelManagement.ModelManagementException;
 import net.ssehub.easy.basics.progress.ProgressObserver;
+import net.ssehub.easy.reasoning.core.frontend.ReasonerFrontend;
+import net.ssehub.easy.reasoning.core.reasoner.ReasonerConfiguration;
+import net.ssehub.easy.reasoning.core.reasoner.ReasonerConfiguration.IAdditionalInformationLogger;
 import net.ssehub.easy.varModel.confModel.Configuration;
 import net.ssehub.easy.varModel.management.VarModel;
 import net.ssehub.easy.varModel.model.Project;
@@ -74,25 +74,25 @@ public class Debug extends AbstractDebug {
             File stateFile = new File("files", prefix + file);
             System.out.println("Checking " + stateFile.getAbsolutePath());            
             if (stateFile.exists()) {
-                try {
-                    FrozenSystemState state = new FrozenSystemState(stateFile);
-                    Executor exec = RepositoryHelper.createExecutor(rtVilModel, tmp, config, event, state);
-                    exec.stopAfterBindValues();
-                    try {
-                        exec.execute();
-                        ReasonerFrontend.getInstance().check(config.getProject(), config, CONFIGURATION, 
-                            ProgressObserver.NO_OBSERVER);
-                    } catch (Exception e) { // be extremely careful
-                        System.err.println("During value binding: " + e.getMessage());
-                        e.printStackTrace();
-                    }
-                
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (Throwable t) {
-                    t.printStackTrace();
-                    break;
-                }
+//                try {
+//                    FrozenSystemState state = new FrozenSystemState(stateFile);
+//                    Executor exec = RepositoryHelper.createExecutor(rtVilModel, tmp, config, event, state);
+//                    exec.stopAfterBindValues();
+//                    try {
+//                        exec.execute();
+//                        ReasonerFrontend.getInstance().check(config.getProject(), config, CONFIGURATION,
+//                                ProgressObserver.NO_OBSERVER);
+//                    } catch (Exception e) { // be extremely careful
+//                        System.err.println("During value binding: " + e.getMessage());
+//                        e.printStackTrace();
+//                    }
+//
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                } catch (Throwable t) {
+//                    t.printStackTrace();
+//                    break;
+//                }
                 file++;
             } else {
                 break;
@@ -110,37 +110,37 @@ public class Debug extends AbstractDebug {
      * @throws ModelManagementException shall not occur
      */
     public static void main(String[] args) throws ModelManagementException {
-        if (0 == args.length) {
-            System.out.println("qualimaster.debug: <model location> [monitor|adapt]");
-            System.exit(0);
-        } else {
-            File modelLocation = new File(args[0]);
-            if (!modelLocation.exists()) {
-                System.out.println("model location " + modelLocation + " does not exist");
-                System.exit(0);
-            }
-            String prefix = null;
-            if (args.length > 1) {
-                if ("monitor".equals(args[1])) {
-                    prefix = "monitoring_";     
-                } else if ("adapt".equals(args[1])) {
-                    prefix = "adaptation_";
-                }
-            }
-
-            initialize();
-            
-            ModelInitializer.registerLoader(ProgressObserver.NO_OBSERVER);
-            ModelInitializer.addLocation(modelLocation, ProgressObserver.NO_OBSERVER);
-            Project project = RepositoryHelper.obtainModel(VarModel.INSTANCE, "QM", null);
-            Script rtVilModel = RepositoryHelper.obtainModel(RtVilModel.INSTANCE, "QM", null);
-            Configuration config = RepositoryHelper.createConfiguration(project, "TESTING", null);
-            System.out.println("Model loaded...");
-            
-            if (null != prefix) {
-                process(prefix, config, rtVilModel);
-            }
-        }
+//        if (0 == args.length) {
+//            System.out.println("qualimaster.debug: <model location> [monitor|adapt]");
+//            System.exit(0);
+//        } else {
+//            File modelLocation = new File(args[0]);
+//            if (!modelLocation.exists()) {
+//                System.out.println("model location " + modelLocation + " does not exist");
+//                System.exit(0);
+//            }
+//            String prefix = null;
+//            if (args.length > 1) {
+//                if ("monitor".equals(args[1])) {
+//                    prefix = "monitoring_";     
+//                } else if ("adapt".equals(args[1])) {
+//                    prefix = "adaptation_";
+//                }
+//            }
+//
+//            initialize();
+//            
+//            ModelInitializer.registerLoader(ProgressObserver.NO_OBSERVER);
+//            ModelInitializer.addLocation(modelLocation, ProgressObserver.NO_OBSERVER);
+//            Project project = RepositoryHelper.obtainModel(VarModel.INSTANCE, "QM", null);
+//            Script rtVilModel = RepositoryHelper.obtainModel(RtVilModel.INSTANCE, "QM", null);
+//            Configuration config = RepositoryHelper.createConfiguration(project, "TESTING", null);
+//            System.out.println("Model loaded...");
+//            
+//            if (null != prefix) {
+//                process(prefix, config, rtVilModel);
+//            }
+//        }
         
     }
 
