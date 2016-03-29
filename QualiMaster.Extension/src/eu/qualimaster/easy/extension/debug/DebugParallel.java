@@ -18,15 +18,15 @@ package eu.qualimaster.easy.extension.debug;
 import java.io.File;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import de.uni_hildesheim.sse.model.confModel.Configuration;
-import de.uni_hildesheim.sse.model.management.VarModel;
-import de.uni_hildesheim.sse.model.varModel.Project;
 import de.uni_hildesheim.sse.reasoning.core.frontend.ReasonerFrontend;
 import de.uni_hildesheim.sse.reasoning.core.reasoner.ReasonerConfiguration;
-import de.uni_hildesheim.sse.utils.modelManagement.ModelInitializer;
-import de.uni_hildesheim.sse.utils.modelManagement.ModelManagementException;
-import de.uni_hildesheim.sse.utils.progress.ProgressObserver;
 import eu.qualimaster.coordination.RepositoryHelper;
+import net.ssehub.easy.basics.modelManagement.ModelInitializer;
+import net.ssehub.easy.basics.modelManagement.ModelManagementException;
+import net.ssehub.easy.basics.progress.ProgressObserver;
+import net.ssehub.easy.varModel.confModel.Configuration;
+import net.ssehub.easy.varModel.management.VarModel;
+import net.ssehub.easy.varModel.model.Project;
 
 /**
  * Debugs reasoning on the QM model in parallel.

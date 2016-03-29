@@ -17,13 +17,13 @@ package eu.qualimaster.easy.extension.internal;
 
 import java.util.Iterator;
 
-import de.uni_hildesheim.sse.model.confModel.Configuration;
-import de.uni_hildesheim.sse.model.confModel.IDecisionVariable;
-import de.uni_hildesheim.sse.model.varModel.datatypes.IDatatype;
-import de.uni_hildesheim.sse.model.varModel.values.BooleanValue;
-import de.uni_hildesheim.sse.model.varModel.values.StringValue;
-import de.uni_hildesheim.sse.model.varModel.values.Value;
 import eu.qualimaster.easy.extension.QmConstants;
+import net.ssehub.easy.varModel.confModel.Configuration;
+import net.ssehub.easy.varModel.confModel.IDecisionVariable;
+import net.ssehub.easy.varModel.model.datatypes.IDatatype;
+import net.ssehub.easy.varModel.model.values.BooleanValue;
+import net.ssehub.easy.varModel.model.values.StringValue;
+import net.ssehub.easy.varModel.model.values.Value;
 
 /**
  * Some utility functions for IVML variables.

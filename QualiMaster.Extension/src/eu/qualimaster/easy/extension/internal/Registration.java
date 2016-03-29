@@ -46,13 +46,13 @@ import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.Operation
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.ReflectionResolver;
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.TypeDescriptor;
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.TypeRegistry;
-import de.uni_hildesheim.sse.utils.logger.EASyLoggerFactory;
-import de.uni_hildesheim.sse.utils.logger.EASyLoggerFactory.EASyLogger;
 import eu.qualimaster.common.QMInternal;
 import eu.qualimaster.common.QMSupport;
 import eu.qualimaster.coordination.commands.CoordinationCommand;
 import eu.qualimaster.events.IEvent;
 import eu.qualimaster.observables.IObservable;
+import net.ssehub.easy.basics.logger.EASyLoggerFactory;
+import net.ssehub.easy.basics.logger.EASyLoggerFactory.EASyLogger;
 
 /**
  * Registers QM Java additions to EASy-Producer, in particular to rt-VIL. Unless configured otherwise, it reads a list 

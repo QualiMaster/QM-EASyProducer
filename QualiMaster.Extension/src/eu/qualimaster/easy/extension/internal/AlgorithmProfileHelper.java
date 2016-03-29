@@ -21,32 +21,32 @@ import de.uni_hildesheim.sse.easy_producer.instantiator.model.execution.Executor
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.execution.TracerFactory;
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.tracing.ConsoleTracerFactory;
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.IProjectDescriptor;
-import de.uni_hildesheim.sse.model.confModel.Configuration;
-import de.uni_hildesheim.sse.model.confModel.IDecisionVariable;
-import de.uni_hildesheim.sse.model.cst.CSTSemanticException;
-import de.uni_hildesheim.sse.model.cst.ConstantValue;
-import de.uni_hildesheim.sse.model.cst.ConstraintSyntaxTree;
-import de.uni_hildesheim.sse.model.cst.OCLFeatureCall;
-import de.uni_hildesheim.sse.model.cst.Variable;
-import de.uni_hildesheim.sse.model.varModel.Constraint;
-import de.uni_hildesheim.sse.model.varModel.ContainableModelElement;
-import de.uni_hildesheim.sse.model.varModel.DecisionVariableDeclaration;
-import de.uni_hildesheim.sse.model.varModel.FreezeBlock;
-import de.uni_hildesheim.sse.model.varModel.IFreezable;
-import de.uni_hildesheim.sse.model.varModel.IvmlKeyWords;
-import de.uni_hildesheim.sse.model.varModel.ModelQuery;
-import de.uni_hildesheim.sse.model.varModel.ModelQueryException;
-import de.uni_hildesheim.sse.model.varModel.Project;
-import de.uni_hildesheim.sse.model.varModel.ProjectImport;
-import de.uni_hildesheim.sse.model.varModel.datatypes.Compound;
-import de.uni_hildesheim.sse.model.varModel.datatypes.ConstraintType;
-import de.uni_hildesheim.sse.model.varModel.datatypes.Container;
-import de.uni_hildesheim.sse.model.varModel.datatypes.IDatatype;
-import de.uni_hildesheim.sse.model.varModel.values.Value;
-import de.uni_hildesheim.sse.model.varModel.values.ValueDoesNotMatchTypeException;
-import de.uni_hildesheim.sse.model.varModel.values.ValueFactory;
-import de.uni_hildesheim.sse.utils.modelManagement.ModelManagementException;
 import eu.qualimaster.common.QMInternal;
+import net.ssehub.easy.basics.modelManagement.ModelManagementException;
+import net.ssehub.easy.varModel.confModel.Configuration;
+import net.ssehub.easy.varModel.confModel.IDecisionVariable;
+import net.ssehub.easy.varModel.cst.CSTSemanticException;
+import net.ssehub.easy.varModel.cst.ConstantValue;
+import net.ssehub.easy.varModel.cst.ConstraintSyntaxTree;
+import net.ssehub.easy.varModel.cst.OCLFeatureCall;
+import net.ssehub.easy.varModel.cst.Variable;
+import net.ssehub.easy.varModel.model.Constraint;
+import net.ssehub.easy.varModel.model.ContainableModelElement;
+import net.ssehub.easy.varModel.model.DecisionVariableDeclaration;
+import net.ssehub.easy.varModel.model.FreezeBlock;
+import net.ssehub.easy.varModel.model.IFreezable;
+import net.ssehub.easy.varModel.model.IvmlKeyWords;
+import net.ssehub.easy.varModel.model.ModelQuery;
+import net.ssehub.easy.varModel.model.ModelQueryException;
+import net.ssehub.easy.varModel.model.Project;
+import net.ssehub.easy.varModel.model.ProjectImport;
+import net.ssehub.easy.varModel.model.datatypes.Compound;
+import net.ssehub.easy.varModel.model.datatypes.ConstraintType;
+import net.ssehub.easy.varModel.model.datatypes.Container;
+import net.ssehub.easy.varModel.model.datatypes.IDatatype;
+import net.ssehub.easy.varModel.model.values.Value;
+import net.ssehub.easy.varModel.model.values.ValueDoesNotMatchTypeException;
+import net.ssehub.easy.varModel.model.values.ValueFactory;
 
 import static eu.qualimaster.easy.extension.QmConstants.*;
 import static eu.qualimaster.easy.extension.internal.Utils.*;
@@ -85,7 +85,7 @@ public class AlgorithmProfileHelper {
      *     values or VIL execution errors
      */
     @QMInternal
-    public static void profile(de.uni_hildesheim.sse.model.confModel.Configuration config, String familyName, 
+    public static void profile(net.ssehub.easy.varModel.confModel.Configuration config, String familyName, 
         String algorithmName, IProjectDescriptor source) throws VilException {
         
         try {
@@ -121,7 +121,7 @@ public class AlgorithmProfileHelper {
      * @throws CSTSemanticException in case of CST errors
      * @throws ValueDoesNotMatchTypeException in case of unmatching values
      */
-    private static Project createNewRoot(de.uni_hildesheim.sse.model.confModel.Configuration config, String familyName, 
+    private static Project createNewRoot(net.ssehub.easy.varModel.confModel.Configuration config, String familyName, 
         String algorithmName) throws ModelQueryException, ModelManagementException, ValueDoesNotMatchTypeException, 
         CSTSemanticException {
         Project cfgProject = config.getProject();

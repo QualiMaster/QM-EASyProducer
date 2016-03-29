@@ -18,25 +18,25 @@ package eu.qualimaster.easy.extension.internal;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uni_hildesheim.sse.model.cst.AttributeVariable;
-import de.uni_hildesheim.sse.model.cst.CSTSemanticException;
-import de.uni_hildesheim.sse.model.cst.ConstantValue;
-import de.uni_hildesheim.sse.model.cst.ConstraintSyntaxTree;
-import de.uni_hildesheim.sse.model.cst.OCLFeatureCall;
-import de.uni_hildesheim.sse.model.cst.Variable;
-import de.uni_hildesheim.sse.model.varModel.Attribute;
-import de.uni_hildesheim.sse.model.varModel.ContainableModelElement;
-import de.uni_hildesheim.sse.model.varModel.DecisionVariableDeclaration;
-import de.uni_hildesheim.sse.model.varModel.FreezeBlock;
-import de.uni_hildesheim.sse.model.varModel.IFreezable;
-import de.uni_hildesheim.sse.model.varModel.ModelQuery;
-import de.uni_hildesheim.sse.model.varModel.ModelQueryException;
-import de.uni_hildesheim.sse.model.varModel.Project;
-import de.uni_hildesheim.sse.model.varModel.datatypes.Compound;
-import de.uni_hildesheim.sse.model.varModel.datatypes.EnumLiteral;
-import de.uni_hildesheim.sse.model.varModel.datatypes.FreezeVariableType;
-import de.uni_hildesheim.sse.model.varModel.values.ValueDoesNotMatchTypeException;
-import de.uni_hildesheim.sse.model.varModel.values.ValueFactory;
+import net.ssehub.easy.varModel.cst.AttributeVariable;
+import net.ssehub.easy.varModel.cst.CSTSemanticException;
+import net.ssehub.easy.varModel.cst.ConstantValue;
+import net.ssehub.easy.varModel.cst.ConstraintSyntaxTree;
+import net.ssehub.easy.varModel.cst.OCLFeatureCall;
+import net.ssehub.easy.varModel.cst.Variable;
+import net.ssehub.easy.varModel.model.Attribute;
+import net.ssehub.easy.varModel.model.ContainableModelElement;
+import net.ssehub.easy.varModel.model.DecisionVariableDeclaration;
+import net.ssehub.easy.varModel.model.FreezeBlock;
+import net.ssehub.easy.varModel.model.IFreezable;
+import net.ssehub.easy.varModel.model.ModelQuery;
+import net.ssehub.easy.varModel.model.ModelQueryException;
+import net.ssehub.easy.varModel.model.Project;
+import net.ssehub.easy.varModel.model.datatypes.Compound;
+import net.ssehub.easy.varModel.model.datatypes.EnumLiteral;
+import net.ssehub.easy.varModel.model.datatypes.FreezeVariableType;
+import net.ssehub.easy.varModel.model.values.ValueDoesNotMatchTypeException;
+import net.ssehub.easy.varModel.model.values.ValueFactory;
 
 import static eu.qualimaster.easy.extension.QmConstants.*;
 
@@ -93,7 +93,7 @@ public class Utils {
         FreezeBlock result = null;
         FreezeVariableType iterType = new FreezeVariableType(freezables, project);
         DecisionVariableDeclaration iter = new DecisionVariableDeclaration("f", iterType, project);
-        de.uni_hildesheim.sse.model.varModel.datatypes.Enum type = ModelQuery.findEnum(project, TYPE_BINDING_TIME);
+        net.ssehub.easy.varModel.model.datatypes.Enum type = ModelQuery.findEnum(project, TYPE_BINDING_TIME);
         if (null == type && null != fallbackForType) {
             type = ModelQuery.findEnum(fallbackForType, TYPE_BINDING_TIME);
         }
@@ -146,7 +146,7 @@ public class Utils {
     public static void addRuntimeAttributeToProject(Project project, Project fallbackForType) 
         throws CSTSemanticException, ValueDoesNotMatchTypeException, ModelQueryException {
         //attribute BindingTime bindingTime = BindingTime.compile to PriorityPipCfg;
-        de.uni_hildesheim.sse.model.varModel.datatypes.Enum type = ModelQuery.findEnum(project, TYPE_BINDING_TIME);
+        net.ssehub.easy.varModel.model.datatypes.Enum type = ModelQuery.findEnum(project, TYPE_BINDING_TIME);
         if (null == type && null != fallbackForType) {
             type = ModelQuery.findEnum(fallbackForType, TYPE_BINDING_TIME);
         }

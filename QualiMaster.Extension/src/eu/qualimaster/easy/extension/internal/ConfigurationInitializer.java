@@ -17,23 +17,23 @@ package eu.qualimaster.easy.extension.internal;
 
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.rtVil.VariableValueCopier.IFreezeProvider;
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.Invisible;
-import de.uni_hildesheim.sse.model.confModel.ConfigurationException;
-import de.uni_hildesheim.sse.model.confModel.IDecisionVariable;
-import de.uni_hildesheim.sse.model.cst.CSTSemanticException;
-import de.uni_hildesheim.sse.model.varModel.Attribute;
-import de.uni_hildesheim.sse.model.varModel.IvmlKeyWords;
-import de.uni_hildesheim.sse.model.varModel.ModelQuery;
-import de.uni_hildesheim.sse.model.varModel.ModelQueryException;
-import de.uni_hildesheim.sse.model.varModel.Project;
-import de.uni_hildesheim.sse.model.varModel.datatypes.Compound;
-import de.uni_hildesheim.sse.model.varModel.datatypes.Enum;
-import de.uni_hildesheim.sse.model.varModel.datatypes.IDatatype;
-import de.uni_hildesheim.sse.model.varModel.datatypes.OclKeyWords;
-import de.uni_hildesheim.sse.model.varModel.values.ReferenceValue;
-import de.uni_hildesheim.sse.model.varModel.values.Value;
-import de.uni_hildesheim.sse.model.varModel.values.ValueDoesNotMatchTypeException;
 import eu.qualimaster.common.QMInternal;
 import eu.qualimaster.coordination.RuntimeVariableMapping;
+import net.ssehub.easy.varModel.confModel.ConfigurationException;
+import net.ssehub.easy.varModel.confModel.IDecisionVariable;
+import net.ssehub.easy.varModel.cst.CSTSemanticException;
+import net.ssehub.easy.varModel.model.Attribute;
+import net.ssehub.easy.varModel.model.IvmlKeyWords;
+import net.ssehub.easy.varModel.model.ModelQuery;
+import net.ssehub.easy.varModel.model.ModelQueryException;
+import net.ssehub.easy.varModel.model.Project;
+import net.ssehub.easy.varModel.model.datatypes.Compound;
+import net.ssehub.easy.varModel.model.datatypes.Enum;
+import net.ssehub.easy.varModel.model.datatypes.IDatatype;
+import net.ssehub.easy.varModel.model.datatypes.OclKeyWords;
+import net.ssehub.easy.varModel.model.values.ReferenceValue;
+import net.ssehub.easy.varModel.model.values.Value;
+import net.ssehub.easy.varModel.model.values.ValueDoesNotMatchTypeException;
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.common.VilException;
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.rtVil.VariableValueCopier;
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.rtVil.VariableValueCopier.CopySpec;
@@ -61,7 +61,7 @@ public class ConfigurationInitializer {
      * @throws VilException in case that initialization fails
      */
     @QMInternal
-    public static void initializeConfiguration(de.uni_hildesheim.sse.model.confModel.Configuration config, 
+    public static void initializeConfiguration(net.ssehub.easy.varModel.confModel.Configuration config, 
         String newVariablePrefix, IAssignmentListener copyListener) throws VilException {
         Project project = config.getProject();
         try {
@@ -106,7 +106,7 @@ public class ConfigurationInitializer {
      */
     @Invisible
     public static RuntimeVariableMapping createVariableMapping(
-        de.uni_hildesheim.sse.model.confModel.Configuration config) throws ModelQueryException {
+        net.ssehub.easy.varModel.confModel.Configuration config) throws ModelQueryException {
         Project project = config.getProject();
         Compound sourceType = findCompound(project, TYPE_SOURCE);
         Compound familyElementType = findCompound(project, TYPE_FAMILYELEMENT);

@@ -18,19 +18,19 @@ package test.eu.qualimaster.easy.extension.internal;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.uni_hildesheim.sse.model.confModel.Configuration;
-import de.uni_hildesheim.sse.model.confModel.IDecisionVariable;
-import de.uni_hildesheim.sse.model.cst.CSTSemanticException;
-import de.uni_hildesheim.sse.model.cst.ConstantValue;
-import de.uni_hildesheim.sse.model.varModel.DecisionVariableDeclaration;
-import de.uni_hildesheim.sse.model.varModel.Project;
-import de.uni_hildesheim.sse.model.varModel.datatypes.BooleanType;
-import de.uni_hildesheim.sse.model.varModel.datatypes.Compound;
-import de.uni_hildesheim.sse.model.varModel.datatypes.StringType;
-import de.uni_hildesheim.sse.model.varModel.values.ValueDoesNotMatchTypeException;
-import de.uni_hildesheim.sse.model.varModel.values.ValueFactory;
 import eu.qualimaster.easy.extension.QmConstants;
 import eu.qualimaster.easy.extension.internal.VariableHelper;
+import net.ssehub.easy.varModel.confModel.Configuration;
+import net.ssehub.easy.varModel.confModel.IDecisionVariable;
+import net.ssehub.easy.varModel.cst.CSTSemanticException;
+import net.ssehub.easy.varModel.cst.ConstantValue;
+import net.ssehub.easy.varModel.model.DecisionVariableDeclaration;
+import net.ssehub.easy.varModel.model.Project;
+import net.ssehub.easy.varModel.model.datatypes.BooleanType;
+import net.ssehub.easy.varModel.model.datatypes.Compound;
+import net.ssehub.easy.varModel.model.datatypes.StringType;
+import net.ssehub.easy.varModel.model.values.ValueDoesNotMatchTypeException;
+import net.ssehub.easy.varModel.model.values.ValueFactory;
 
 /**
  * Tests {@link VariableHelper}.

@@ -6,9 +6,9 @@ import java.util.List;
 import de.uni_hildesheim.sse.easy_producer.core.persistence.standard.StandaloneProjectDescriptor;
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.buildlangModel.BuildModel;
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.buildlangModel.Script;
-import de.uni_hildesheim.sse.utils.modelManagement.ModelInfo;
-import de.uni_hildesheim.sse.utils.modelManagement.ModelManagementException;
 import eu.qualimaster.easy.extension.QmConstants;
+import net.ssehub.easy.basics.modelManagement.ModelInfo;
+import net.ssehub.easy.basics.modelManagement.ModelManagementException;
 
 /**
  * Implements a descriptor for the source and target VIL project locations.

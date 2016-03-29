@@ -20,8 +20,8 @@ import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.IVilType;
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.Instantiator;
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.configuration.Configuration;
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.configuration.DecisionVariable;
-import de.uni_hildesheim.sse.model.confModel.IDecisionVariable;
-import de.uni_hildesheim.sse.model.varModel.IvmlKeyWords;
+import net.ssehub.easy.varModel.confModel.IDecisionVariable;
+import net.ssehub.easy.varModel.model.IvmlKeyWords;
 
 /**
  * Helper functions on pipeline element level.
@@ -65,7 +65,7 @@ public class PipelineElementHelper implements IVilType {
             }
             if (null != tmp) { // top-level var
                 // better: config.findVariable
-                result = config.getByName(de.uni_hildesheim.sse.model.confModel.Configuration.getInstanceName(tmp));
+                result = config.getByName(net.ssehub.easy.varModel.confModel.Configuration.getInstanceName(tmp));
             }
         }
         return result;

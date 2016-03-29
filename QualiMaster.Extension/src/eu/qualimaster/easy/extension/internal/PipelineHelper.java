@@ -28,19 +28,19 @@ import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.Set;
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.SetSet;
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.configuration.Configuration;
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.configuration.DecisionVariable;
-import de.uni_hildesheim.sse.model.confModel.IDecisionVariable;
-import de.uni_hildesheim.sse.model.varModel.AbstractVariable;
-import de.uni_hildesheim.sse.model.varModel.ContainableModelElement;
-import de.uni_hildesheim.sse.model.varModel.DecisionVariableDeclaration;
-import de.uni_hildesheim.sse.model.varModel.IModelElement;
-import de.uni_hildesheim.sse.model.varModel.ModelQuery;
-import de.uni_hildesheim.sse.model.varModel.ModelQueryException;
-import de.uni_hildesheim.sse.model.varModel.Project;
-import de.uni_hildesheim.sse.model.varModel.datatypes.IDatatype;
-import de.uni_hildesheim.sse.model.varModel.datatypes.IResolutionScope;
 import eu.qualimaster.adaptation.events.ViolatingClause;
 import eu.qualimaster.common.QMInternal;
 import eu.qualimaster.easy.extension.QmConstants;
+import net.ssehub.easy.varModel.confModel.IDecisionVariable;
+import net.ssehub.easy.varModel.model.AbstractVariable;
+import net.ssehub.easy.varModel.model.ContainableModelElement;
+import net.ssehub.easy.varModel.model.DecisionVariableDeclaration;
+import net.ssehub.easy.varModel.model.IModelElement;
+import net.ssehub.easy.varModel.model.ModelQuery;
+import net.ssehub.easy.varModel.model.ModelQueryException;
+import net.ssehub.easy.varModel.model.Project;
+import net.ssehub.easy.varModel.model.datatypes.IDatatype;
+import net.ssehub.easy.varModel.model.datatypes.IResolutionScope;
 
 /**
  * Some pipeline helper functions mapped into rt-VIL.
@@ -74,7 +74,7 @@ public class PipelineHelper implements IVilType {
                     if (null != pipVar) { // top-level var
                         // better: config.findVariable                        
                         result = configuration.getByName(
-                            de.uni_hildesheim.sse.model.confModel.Configuration.getInstanceName(pipVar));
+                            net.ssehub.easy.varModel.confModel.Configuration.getInstanceName(pipVar));
                     }
                 } catch (ModelQueryException e) {
                     throw new VilException(e, VilException.ID_EXECUTION_ERROR);
@@ -119,7 +119,7 @@ public class PipelineHelper implements IVilType {
      * @throws ModelQueryException if accessing type information fails
      */
     @Invisible
-    public static IDecisionVariable obtainPipeline(de.uni_hildesheim.sse.model.confModel.Configuration configuration, 
+    public static IDecisionVariable obtainPipeline(net.ssehub.easy.varModel.confModel.Configuration configuration, 
         IDecisionVariable element) throws ModelQueryException {
         IDecisionVariable result = null;
         if (null != element) {
@@ -149,7 +149,7 @@ public class PipelineHelper implements IVilType {
      * @param type the type to search for
      * @return the decision or <b>null</b> if not found
      */
-    private static IDecisionVariable searchScope(de.uni_hildesheim.sse.model.confModel.Configuration configuration, 
+    private static IDecisionVariable searchScope(net.ssehub.easy.varModel.confModel.Configuration configuration, 
         IResolutionScope scope, IDatatype type) {
         IDecisionVariable result = null;
         DecisionVariableDeclaration decl = ModelQuery.findDeclaration(scope, 
@@ -214,7 +214,7 @@ public class PipelineHelper implements IVilType {
      * @return the pipeline or <b>null</b> if it does not exist
      */
     @QMInternal
-    public static IDecisionVariable obtainPipelineByName(de.uni_hildesheim.sse.model.confModel.Configuration config, 
+    public static IDecisionVariable obtainPipelineByName(net.ssehub.easy.varModel.confModel.Configuration config, 
         String name) {
         IDecisionVariable result = null;
         try {
@@ -223,7 +223,7 @@ public class PipelineHelper implements IVilType {
             IDecisionVariable pipsVar = config.getDecision(pips);
             if (null != pipsVar) {
                 for (int n = 0; null == result && n < pipsVar.getNestedElementsCount(); n++) {
-                    IDecisionVariable pip = de.uni_hildesheim.sse.model.confModel.Configuration.dereference(
+                    IDecisionVariable pip = net.ssehub.easy.varModel.confModel.Configuration.dereference(
                         pipsVar.getNestedElement(n));
                     if (VariableHelper.hasName(pip, name)) {
                         result = pip;
@@ -270,7 +270,7 @@ public class PipelineHelper implements IVilType {
     public static IDecisionVariable obtainPipelineElementByName(IDecisionVariable pipeline, IDatatype type, 
         String name) {
         IDecisionVariable result = null;
-        de.uni_hildesheim.sse.model.confModel.Configuration config = null;
+        net.ssehub.easy.varModel.confModel.Configuration config = null;
         Project project = null;
         if (null != pipeline) {
             config = pipeline.getConfiguration();
@@ -308,7 +308,7 @@ public class PipelineHelper implements IVilType {
             IDecisionVariable avail = family.getNestedElement(QmConstants.SLOT_FAMILYELEMENT_AVAILABLE);
             if (null != avail) {
                 for (int n = 0, c = avail.getNestedElementsCount(); null == result && n < c; n++) {
-                    IDecisionVariable alg = de.uni_hildesheim.sse.model.confModel.Configuration.dereference(
+                    IDecisionVariable alg = net.ssehub.easy.varModel.confModel.Configuration.dereference(
                         avail.getNestedElement(n));
                     if (VariableHelper.hasName(alg, name)) {
                         result = alg;

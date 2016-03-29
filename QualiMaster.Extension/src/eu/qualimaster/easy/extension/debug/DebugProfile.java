@@ -21,15 +21,15 @@ import java.io.IOException;
 import org.apache.commons.io.FileUtils;
 
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.common.VilException;
-import de.uni_hildesheim.sse.model.confModel.Configuration;
-import de.uni_hildesheim.sse.model.management.VarModel;
-import de.uni_hildesheim.sse.model.varModel.Project;
-import de.uni_hildesheim.sse.utils.modelManagement.ModelInitializer;
-import de.uni_hildesheim.sse.utils.modelManagement.ModelManagementException;
-import de.uni_hildesheim.sse.utils.progress.ProgressObserver;
 import eu.qualimaster.coordination.RepositoryHelper;
 import eu.qualimaster.easy.extension.internal.AlgorithmProfileHelper;
 import eu.qualimaster.easy.extension.internal.QmProjectDescriptor;
+import net.ssehub.easy.basics.modelManagement.ModelInitializer;
+import net.ssehub.easy.basics.modelManagement.ModelManagementException;
+import net.ssehub.easy.basics.progress.ProgressObserver;
+import net.ssehub.easy.varModel.confModel.Configuration;
+import net.ssehub.easy.varModel.management.VarModel;
+import net.ssehub.easy.varModel.model.Project;
 
 /**
  * Debugs creating profiling pipelines.

@@ -26,29 +26,30 @@ import org.junit.Test;
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.common.VilException;
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.configuration.Configuration;
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.configuration.DecisionVariable;
-import de.uni_hildesheim.sse.model.confModel.AllFreezeSelector;
-import de.uni_hildesheim.sse.model.confModel.AssignmentState;
-import de.uni_hildesheim.sse.model.confModel.ConfigurationException;
-import de.uni_hildesheim.sse.model.confModel.IDecisionVariable;
-import de.uni_hildesheim.sse.model.varModel.AbstractVariable;
-import de.uni_hildesheim.sse.model.varModel.DecisionVariableDeclaration;
-import de.uni_hildesheim.sse.model.varModel.IModelElement;
-import de.uni_hildesheim.sse.model.varModel.IvmlKeyWords;
-import de.uni_hildesheim.sse.model.varModel.ModelQueryException;
-import de.uni_hildesheim.sse.model.varModel.Project;
-import de.uni_hildesheim.sse.model.varModel.ProjectImport;
-import de.uni_hildesheim.sse.model.varModel.datatypes.Compound;
-import de.uni_hildesheim.sse.model.varModel.datatypes.IDatatype;
-import de.uni_hildesheim.sse.model.varModel.datatypes.Reference;
-import de.uni_hildesheim.sse.model.varModel.datatypes.Set;
-import de.uni_hildesheim.sse.model.varModel.datatypes.StringType;
-import de.uni_hildesheim.sse.model.varModel.values.ValueDoesNotMatchTypeException;
-import de.uni_hildesheim.sse.model.varModel.values.ValueFactory;
-import de.uni_hildesheim.sse.utils.modelManagement.ModelManagementException;
+
 import static eu.qualimaster.easy.extension.QmConstants.*;
 
 import eu.qualimaster.easy.extension.internal.PipelineElementHelper;
 import eu.qualimaster.easy.extension.internal.PipelineHelper;
+import net.ssehub.easy.basics.modelManagement.ModelManagementException;
+import net.ssehub.easy.varModel.confModel.AllFreezeSelector;
+import net.ssehub.easy.varModel.confModel.AssignmentState;
+import net.ssehub.easy.varModel.confModel.ConfigurationException;
+import net.ssehub.easy.varModel.confModel.IDecisionVariable;
+import net.ssehub.easy.varModel.model.AbstractVariable;
+import net.ssehub.easy.varModel.model.DecisionVariableDeclaration;
+import net.ssehub.easy.varModel.model.IModelElement;
+import net.ssehub.easy.varModel.model.IvmlKeyWords;
+import net.ssehub.easy.varModel.model.ModelQueryException;
+import net.ssehub.easy.varModel.model.Project;
+import net.ssehub.easy.varModel.model.ProjectImport;
+import net.ssehub.easy.varModel.model.datatypes.Compound;
+import net.ssehub.easy.varModel.model.datatypes.IDatatype;
+import net.ssehub.easy.varModel.model.datatypes.Reference;
+import net.ssehub.easy.varModel.model.datatypes.Set;
+import net.ssehub.easy.varModel.model.datatypes.StringType;
+import net.ssehub.easy.varModel.model.values.ValueDoesNotMatchTypeException;
+import net.ssehub.easy.varModel.model.values.ValueFactory;
 
 /**
  * Tests {@link PipelineHelper}. Currently no jUnit test as d
@@ -140,7 +141,7 @@ public class PipelineHelperTest {
      * @throws ValueDoesNotMatchTypeException in case that the value does not match the type of <code>var</code>
      * @throws ConfigurationException in case that configuring <code>var</code> fails
      */
-    private static IDecisionVariable configureAndFreeze(de.uni_hildesheim.sse.model.confModel.Configuration cfg, 
+    private static IDecisionVariable configureAndFreeze(net.ssehub.easy.varModel.confModel.Configuration cfg, 
         DecisionVariableDeclaration var, Object... values) throws ValueDoesNotMatchTypeException, 
         ConfigurationException {
         IDecisionVariable result = cfg.getDecision(var);
@@ -156,7 +157,7 @@ public class PipelineHelperTest {
      * @param name the name of the variable
      * @return the decision or <b>null</b> if not found
      */
-    private static IDecisionVariable getDecision(de.uni_hildesheim.sse.model.confModel.Configuration cfg, String name) {
+    private static IDecisionVariable getDecision(net.ssehub.easy.varModel.confModel.Configuration cfg, String name) {
         IDecisionVariable result = null;
         AbstractVariable var = VARIABLES.get(name);
         if (null != var) {
@@ -187,7 +188,7 @@ public class PipelineHelperTest {
         String result;
         IDecisionVariable var = getDecision(cfg, name);
         if (null != var) {
-            result = de.uni_hildesheim.sse.model.confModel.Configuration.getInstanceName(var, true);
+            result = net.ssehub.easy.varModel.confModel.Configuration.getInstanceName(var, true);
         } else {
             result = null;
         }
@@ -246,8 +247,8 @@ public class PipelineHelperTest {
         Project qm = new Project("QM");
         addProjectImport(pipelinesCfg, qm);
         
-        de.uni_hildesheim.sse.model.confModel.Configuration cfg 
-            = new de.uni_hildesheim.sse.model.confModel.Configuration(qm);
+        net.ssehub.easy.varModel.confModel.Configuration cfg 
+            = new net.ssehub.easy.varModel.confModel.Configuration(qm);
         configureAndFreeze(cfg, alg1, SLOT_NAME, VAR_ALG1);
         configureAndFreeze(cfg, alg2, SLOT_NAME, VAR_ALG2);
         configureAndFreeze(cfg, algs, alg1, alg2);
@@ -274,7 +275,7 @@ public class PipelineHelperTest {
      */
     @Test
     public void testGetPipelineIVML() throws ModelQueryException {
-        de.uni_hildesheim.sse.model.confModel.Configuration cfg = qmCfg.getConfiguration();
+        net.ssehub.easy.varModel.confModel.Configuration cfg = qmCfg.getConfiguration();
         IDecisionVariable pipeline = getDecision(cfg, VAR_PIP);
         Assert.assertNotNull(pipeline);
         Assert.assertTrue(pipeline == PipelineHelper.obtainPipeline(cfg, getDecision(cfg, VAR_FAM1)));
@@ -303,7 +304,7 @@ public class PipelineHelperTest {
         Assert.assertTrue(var.getNestedElementsCount() > 0);
         var = var.getNestedElement(0);
         
-        String instanceName = de.uni_hildesheim.sse.model.confModel.Configuration.getInstanceName(var, true);
+        String instanceName = net.ssehub.easy.varModel.confModel.Configuration.getInstanceName(var, true);
         Assert.assertTrue(getDecision(qmCfg, VAR_PIP) 
             == PipelineHelper.obtainPipeline(qmCfg, instanceName).getVariable());
     }
