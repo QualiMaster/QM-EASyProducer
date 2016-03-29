@@ -141,9 +141,9 @@ public class ConfigurationInitializer {
                 if (tmpValue instanceof ReferenceValue) {
                     ReferenceValue rValue = (ReferenceValue) tmpValue;
                     IDecisionVariable referenced = var.getConfiguration().getDecision(rValue.getValue());
-//                    if (null != referenced) {
-//                        result.addReferencedBy(referenced, var);
-//                    }
+                    if (null != referenced) {
+                        result.addReferencedBy(referenced, var);
+                    }
                 }
             }
         }
