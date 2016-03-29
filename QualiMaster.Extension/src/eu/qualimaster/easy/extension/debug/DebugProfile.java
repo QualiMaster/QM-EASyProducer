@@ -23,6 +23,7 @@ import org.apache.commons.io.FileUtils;
 import de.uni_hildesheim.sse.easy_producer.instantiator.model.common.VilException;
 import eu.qualimaster.coordination.RepositoryHelper;
 import eu.qualimaster.easy.extension.internal.AlgorithmProfileHelper;
+import eu.qualimaster.easy.extension.internal.AlgorithmProfileHelper.ProfileData;
 import eu.qualimaster.easy.extension.internal.QmProjectDescriptor;
 import net.ssehub.easy.basics.modelManagement.ModelInitializer;
 import net.ssehub.easy.basics.modelManagement.ModelManagementException;
@@ -67,9 +68,9 @@ public class DebugProfile extends AbstractDebug {
             tmp.mkdirs();
             QmProjectDescriptor source = new QmProjectDescriptor(tmp);
             try {
-                AlgorithmProfileHelper.profile(monConfig, "fCorrelationFinancial", "TopoSoftwareCorrelationFinancial", 
-                    source);
-                System.out.println("Creation successful.");
+                ProfileData data = AlgorithmProfileHelper.createProfilePipeline(monConfig, "ProfileTestPip", 
+                    "fCorrelationFinancial", "TopoSoftwareCorrelationFinancial", source);
+                System.out.println("Creation successful. " + data.getPipeline());
             } catch (VilException e) {
                 e.printStackTrace();
             }
