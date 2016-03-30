@@ -47,35 +47,35 @@ public class DebugProfile extends AbstractDebug {
      * @throws IOException if file operations fail
      */
     public static void main(String[] args) throws ModelManagementException, IOException {
-        if (0 == args.length) {
-            System.out.println("qualimaster.profile: <model location>");
-            System.exit(0);
-        } else {
-            File modelLocation = new File(args[0]);
-            if (!modelLocation.exists()) {
-                System.out.println("model location " + modelLocation + " does not exist");
-                System.exit(0);
-            }
-            initialize();
-            ModelInitializer.registerLoader(ProgressObserver.NO_OBSERVER);
-            ModelInitializer.addLocation(modelLocation, ProgressObserver.NO_OBSERVER);
-            Project project = RepositoryHelper.obtainModel(VarModel.INSTANCE, "QM", null);
-            
-            // create descriptor before clearing the location - in infrastructure pass vil directly/resolve VIL
-            Configuration monConfig = RepositoryHelper.createConfiguration(project, "MONITORING", null);
-            File tmp = new File(FileUtils.getTempDirectory(), "qmDebugProfile");
-            FileUtils.deleteDirectory(tmp);
-            tmp.mkdirs();
-            QmProjectDescriptor source = new QmProjectDescriptor(tmp);
-            try {
-                ProfileData data = AlgorithmProfileHelper.createProfilePipeline(monConfig, "ProfileTestPip", 
-                    "fCorrelationFinancial", "TopoSoftwareCorrelationFinancial", source);
-                System.out.println("Creation successful. " + data.getPipeline());
-            } catch (VilException e) {
-                e.printStackTrace();
-            }
-            ModelInitializer.removeLocation(modelLocation, ProgressObserver.NO_OBSERVER);
-        }
+                                    //        if (0 == args.length) {
+                                    //            System.out.println("qualimaster.profile: <model location>");
+                                    //            System.exit(0);
+                                    //        } else {
+                                    //            File modelLocation = new File(args[0]);
+                                    //            if (!modelLocation.exists()) {
+                                    //                System.out.println("model location " + modelLocation + " does not exist");
+                                    //                System.exit(0);
+                                    //            }
+                                    //            initialize();
+                                    //            ModelInitializer.registerLoader(ProgressObserver.NO_OBSERVER);
+                                    //            ModelInitializer.addLocation(modelLocation, ProgressObserver.NO_OBSERVER);
+                                    //            Project project = RepositoryHelper.obtainModel(VarModel.INSTANCE, "QM", null);
+                                    //            
+                                    //            // create descriptor before clearing the location - in infrastructure pass vil directly/resolve VIL
+                                    //            Configuration monConfig = RepositoryHelper.createConfiguration(project, "MONITORING", null);
+                                    //            File tmp = new File(FileUtils.getTempDirectory(), "qmDebugProfile");
+                                    //            FileUtils.deleteDirectory(tmp);
+                                    //            tmp.mkdirs();
+                                    //            QmProjectDescriptor source = new QmProjectDescriptor(tmp);
+                                    //            try {
+                                    //                ProfileData data = AlgorithmProfileHelper.createProfilePipeline(monConfig, "ProfileTestPip", 
+                                    //                    "fCorrelationFinancial", "TopoSoftwareCorrelationFinancial", source);
+                                    //                System.out.println("Creation successful. " + data.getPipeline());
+                                    //            } catch (VilException e) {
+                                    //                e.printStackTrace();
+                                    //            }
+                                    //            ModelInitializer.removeLocation(modelLocation, ProgressObserver.NO_OBSERVER);
+                                    //        }
     }
 
 }
