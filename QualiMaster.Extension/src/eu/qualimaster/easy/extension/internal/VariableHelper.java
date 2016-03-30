@@ -90,7 +90,29 @@ public class VariableHelper {
         }
         return result;
     }
-    
+
+    /**
+     * Returns the value of a string compound slot.
+     * 
+     * @param var the variable to look into (may be <b>null</b>)
+     * @param name the name of the slot
+     * @return the string value of the slot, <b>null</b> if there is no variable, no slot or no string value in 
+     *     the slot 
+     */
+    public static final String getString(IDecisionVariable var, String name) {
+        String result = null;
+        if (null != var) {
+            IDecisionVariable nested = var.getNestedElement(name);
+            if (null != nested) {
+                Value value = nested.getValue();
+                if (value instanceof StringValue) {
+                    result = ((StringValue) value).getValue();
+                }
+            }
+        }
+        return result;
+    }
+
     /**
      * Finds a named variable of given <code>type</code> in <code>config</code>.
      * 
