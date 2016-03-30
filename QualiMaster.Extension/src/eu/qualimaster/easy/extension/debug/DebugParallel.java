@@ -91,38 +91,38 @@ public class DebugParallel extends AbstractDebug {
      * @throws ModelManagementException in case that obtaining the models fails
      */
     public static void main(String[] args) throws ModelManagementException {
-                    //        if (0 == args.length) {
-                    //            System.out.println("qualimaster.debug: <model location> [monitor|adapt]");
-                    //            System.exit(0);
-                    //        } else {
-                    //            File modelLocation = new File(args[0]);
-                    //            if (!modelLocation.exists()) {
-                    //                System.out.println("model location " + modelLocation + " does not exist");
-                    //                System.exit(0);
-                    //            }
-                    //            initialize();
-                    //            ModelInitializer.registerLoader(ProgressObserver.NO_OBSERVER);
-                    //            ModelInitializer.addLocation(modelLocation, ProgressObserver.NO_OBSERVER);
-                    //            Project project = RepositoryHelper.obtainModel(VarModel.INSTANCE, "QM", null);
-                    //            Configuration monConfig = RepositoryHelper.createConfiguration(project, "MONITORING", null);
-                    //            ModelInitializer.removeLocation(modelLocation, ProgressObserver.NO_OBSERVER);
-                    //
-                    //            ModelInitializer.addLocation(modelLocation, ProgressObserver.NO_OBSERVER);
-                    //            project = RepositoryHelper.obtainModel(VarModel.INSTANCE, "QM", null);
-                    //            //Script rtVilModel = RepositoryHelper.obtainModel(RtVilModel.INSTANCE, "QM", null);
-                    //            Configuration adaptConfig = RepositoryHelper.createConfiguration(project, "ADAPTATION", null);
-                    //            ModelInitializer.removeLocation(modelLocation, ProgressObserver.NO_OBSERVER);
-                    //
-                    //            ReasoningRunnable r1 = new ReasoningRunnable("Monitoring", monConfig);
-                    //            ReasoningRunnable r2 = new ReasoningRunnable("Adaptation", adaptConfig);
-                    //            Thread t1 = new Thread(r1);
-                    //            Thread t2 = new Thread(r2);
-                    //            t1.start();
-                    //            t2.start();
-                    //            while (count.get() > 0) {
-                    //                sleep(500);
-                    //            }
-                    //        }
+        if (0 == args.length) {
+            System.out.println("qualimaster.debug: <model location> [monitor|adapt]");
+            System.exit(0);
+        } else {
+            File modelLocation = new File(args[0]);
+            if (!modelLocation.exists()) {
+                System.out.println("model location " + modelLocation + " does not exist");
+                System.exit(0);
+            }
+            initialize();
+            ModelInitializer.registerLoader(ProgressObserver.NO_OBSERVER);
+            ModelInitializer.addLocation(modelLocation, ProgressObserver.NO_OBSERVER);
+            Project project = RepositoryHelper.obtainModel(VarModel.INSTANCE, "QM", null);
+            Configuration monConfig = RepositoryHelper.createConfiguration(project, "MONITORING", null);
+            ModelInitializer.removeLocation(modelLocation, ProgressObserver.NO_OBSERVER);
+
+            ModelInitializer.addLocation(modelLocation, ProgressObserver.NO_OBSERVER);
+            project = RepositoryHelper.obtainModel(VarModel.INSTANCE, "QM", null);
+            //Script rtVilModel = RepositoryHelper.obtainModel(RtVilModel.INSTANCE, "QM", null);
+            Configuration adaptConfig = RepositoryHelper.createConfiguration(project, "ADAPTATION", null);
+            ModelInitializer.removeLocation(modelLocation, ProgressObserver.NO_OBSERVER);
+
+            ReasoningRunnable r1 = new ReasoningRunnable("Monitoring", monConfig);
+            ReasoningRunnable r2 = new ReasoningRunnable("Adaptation", adaptConfig);
+            Thread t1 = new Thread(r1);
+            Thread t2 = new Thread(r2);
+            t1.start();
+            t2.start();
+            while (count.get() > 0) {
+                sleep(500);
+            }
+        }
     }
 
 }
