@@ -16,6 +16,7 @@
 package eu.qualimaster.easy.extension.internal;
 
 import eu.qualimaster.common.QMInternal;
+import eu.qualimaster.coordination.RepositoryHelper;
 import net.ssehub.easy.basics.modelManagement.ModelManagementException;
 import net.ssehub.easy.instantiation.core.model.common.VilException;
 import net.ssehub.easy.instantiation.core.model.execution.Executor;
@@ -51,9 +52,16 @@ import net.ssehub.easy.varModel.model.values.ValueFactory;
 import static eu.qualimaster.easy.extension.QmConstants.*;
 import static eu.qualimaster.easy.extension.internal.Utils.*;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.log4j.LogManager;
 import org.eclipse.xtext.util.Arrays;
 
 /**
@@ -69,27 +77,83 @@ public class AlgorithmProfileHelper {
     private static final String[] INFRASTRUCTURE_IMPORTS = {PROJECT_INFRASTRUCTURE};
     private static final String[] TOP_IMPORTS = {PROJECT_HARDWARECFG, PROJECT_RECONFHWCFG, PROJECT_DATAMGTCFG, 
         PROJECT_OBSERVABLESCFG, PROJECT_ADAPTIVITYCFG, PROJECT_ALGORITHMSCFG, PROJECT_FAMILIESCFG};
-    private static final String PIP_NAME = "ProfilingTestPip";
+    private static final String PIP_VERSION = "0.0.1-SNAPSHOT";
     private static final String SRC_NAME = "TestSource";
+    private static final String DATA_FILE = "profile.data";
+    private static final String CTL_FILE = "profile.ctl";
+
+    /**
+     * Information describing a new profile pipeline.
+     * 
+     * @author Holger Eichelberger
+     */
+    public static class ProfileData {
+        private File pipeline;
+        private File dataFile;
+        private File controlFile;
+
+        /**
+         * Creates a profile data.
+         * 
+         * @param pipeline the pipeline file
+         * @param dataFile the data file
+         * @param controlFile the control file
+         */
+        private ProfileData(File pipeline, File dataFile, File controlFile) {
+            this.pipeline = pipeline;
+            this.dataFile = dataFile;
+            this.controlFile = controlFile;
+        }
+
+        /**
+         * Returns the pipeline Jar.
+         * 
+         * @return the pipeline Jar
+         */
+        public File getPipeline() {
+            return pipeline;
+        }
+
+        /**
+         * Returns the pipeline Jar.
+         * 
+         * @return the pipeline Jar
+         */
+        public File getDataFile() {
+            return dataFile;
+        }
+
+        /**
+         * Returns the control file.
+         * 
+         * @return the control file
+         */
+        public File getControlFile() {
+            return controlFile;
+        }
+        
+    }
     
     /**
      * Profiles the given algorithm. Create a specific pipeline with data source, specific family holding
      * only the test algorithm.
      * 
      * @param config the configuration to be used as basis for creating a profiling pipeline
+     * @param pipelineName the name of the pipeline to be created (must be a valid Java identifier)
      * @param familyName the name of the family to test
      * @param algorithmName the name of the algorithm within <code>family</code> to test
      * @param source the source project descriptor, also to be used as target folder for instantiation (the folder may 
      *     be empty)
+     * @return pipeline information
      * @throws VilException in case of model query problems, model management problems, CST errors, unmatching IVML 
      *     values or VIL execution errors
      */
     @QMInternal
-    public static void profile(net.ssehub.easy.varModel.confModel.Configuration config, String familyName, 
-        String algorithmName, IProjectDescriptor source) throws VilException {
-        
+    public static ProfileData createProfilePipeline(net.ssehub.easy.varModel.confModel.Configuration config, 
+        String pipelineName, String familyName, String algorithmName, IProjectDescriptor source) throws VilException {
+        ProfileData result = null;
         try {
-            Project qm = createNewRoot(config, familyName, algorithmName);
+            Project qm = createNewRoot(config, pipelineName, familyName, algorithmName);
             Configuration cfg = new Configuration(qm);
             
             TracerFactory.setInstance(ConsoleTracerFactory.INSTANCE);
@@ -97,22 +161,71 @@ public class AlgorithmProfileHelper {
             Executor executor = new Executor(source.getMainVilScript())
                 .addSource(source).addTarget(target)
                 .addConfiguration(cfg)
-                .addCustomArgument("pipelineName", PIP_NAME)
+                .addCustomArgument("pipelineName", pipelineName)
                 .addStartRuleName("pipeline");
             executor.execute();
+
+            File base = source.getBase();
+            Compound familyType = findCompound(qm, TYPE_FAMILY);
+            IDecisionVariable testFamily = findNamedVariable(config, familyType, familyName);
+            IDecisionVariable testAlgorithm = findAlgorithm(testFamily, algorithmName, true);
+            String algArtifact = VariableHelper.getString(testAlgorithm, SLOT_ALGORITHM_ARTIFACT);
+            if (null != algArtifact) {
+                File dataArtifact = RepositoryHelper.obtainArtifact(algArtifact, "algorithm", "data", base);
+                if (null != dataArtifact) {
+                    extractDataArtifact(dataArtifact, base);
+                }
+            }
+            File pipFile = new File(base, "eu/qualimaster/" + pipelineName + "/target/" + pipelineName 
+                + ":" + PIP_VERSION + ".jar");
+            File dataFile = new File(base, DATA_FILE);
+            File controlFile = new File(base, CTL_FILE);
+            result = new ProfileData(pipFile, dataFile, controlFile);
         } catch (ModelQueryException | ModelManagementException | ValueDoesNotMatchTypeException 
             | CSTSemanticException e) {
             throw new VilException(e.getMessage(), VilException.ID_RUNTIME);
         }
-        
-        // TODO set pipeline options -> family member, configure generic source, no adaptation
-        // TODO start pipeline
+        return result;
+    }
+    
+    /**
+     * Extracts the data artifact to <code>base</code>.
+     * 
+     * @param file the file to extract
+     * @param base the base folder to extract to
+     */
+    private static void extractDataArtifact(File file, File base) {
+        ZipInputStream zis = null;
+        try {
+            zis = new ZipInputStream(new FileInputStream(file));
+            ZipEntry entry;
+            do {
+                entry = zis.getNextEntry();
+                if (null != entry) {
+                    String name = entry.getName();
+                    if (name.equals(DATA_FILE) || name.equals(CTL_FILE)) {
+                        FileUtils.copyInputStreamToFile(zis, new File(base, name));
+                    }
+                }
+            } while (null != entry);
+            zis.close();
+        } catch (IOException e) {
+            LogManager.getLogger(AlgorithmProfileHelper.class).error(
+                "Extracting algorithm data artifact: " + e.getMessage());
+            if (null != zis) {
+                try {
+                    zis.close();
+                } catch (IOException e1) {
+                }
+            }
+        }
     }
     
     /**
      * Creates a new QM model root leaving the real one as it is.
      * 
      * @param config the configuration to be used as basis for creation
+     * @param pipelineName the pipeline name (here a valid Java identifier)
      * @param familyName the name of the family to test
      * @param algorithmName the name of the algorithm within <code>family</code> to test
      * @return the new model root project
@@ -121,9 +234,9 @@ public class AlgorithmProfileHelper {
      * @throws CSTSemanticException in case of CST errors
      * @throws ValueDoesNotMatchTypeException in case of unmatching values
      */
-    private static Project createNewRoot(net.ssehub.easy.varModel.confModel.Configuration config, String familyName, 
-        String algorithmName) throws ModelQueryException, ModelManagementException, ValueDoesNotMatchTypeException, 
-        CSTSemanticException {
+    private static Project createNewRoot(net.ssehub.easy.varModel.confModel.Configuration config, String pipelineName, 
+        String familyName, String algorithmName) throws ModelQueryException, ModelManagementException, 
+        ValueDoesNotMatchTypeException, CSTSemanticException {
         Project cfgProject = config.getProject();
         Project cfgInfra = ModelQuery.findProject(cfgProject, PROJECT_INFRASTRUCTURE);
         
@@ -148,7 +261,7 @@ public class AlgorithmProfileHelper {
             SLOT_DATASOURCE_PROFILINGSOURCE, true,
             SLOT_DATASOURCE_DATAMANAGEMENTSTRATEGY, CONST_DATAMANAGEMENTSTRATEGY_NONE,
             //SLOT_DATASOURCE_PARAMETERS,
-            SLOT_DATASOURCE_SOURCECLS, "eu.qualimaster." + PIP_NAME + ".topology.imp." + SRC_NAME);
+            SLOT_DATASOURCE_SOURCECLS, "eu.qualimaster." + pipelineName + ".topology.imp." + SRC_NAME);
         DecisionVariableDeclaration familyVar = createDecisionVariable("prFamily0", familyType, pip, 
             SLOT_FAMILY_NAME, getValue(testFamily, SLOT_FAMILY_NAME),
             SLOT_FAMILY_INPUT, getValue(testFamily, SLOT_FAMILY_INPUT),
@@ -170,8 +283,8 @@ public class AlgorithmProfileHelper {
             SLOT_SOURCE_OUTPUT, new Object[]{flowVar},
             SLOT_SOURCE_SOURCE, dataSourceVar);
         DecisionVariableDeclaration pipVar = createDecisionVariable("prPipeline0", pipelineType, pip, 
-            SLOT_PIPELINE_NAME, PIP_NAME, 
-            SLOT_PIPELINE_ARTIFACT, "eu.qualimaster:" + PIP_NAME + ":0.0.1-SNAPSHOT",
+            SLOT_PIPELINE_NAME, pipelineName, 
+            SLOT_PIPELINE_ARTIFACT, "eu.qualimaster:" + pipelineName + ":" + PIP_VERSION,
             SLOT_PIPELINE_SOURCES, new Object[]{sourceVar},
             SLOT_PIPELINE_NUMWORKERS, 1);
         Utils.createFreezeBlock(pip);

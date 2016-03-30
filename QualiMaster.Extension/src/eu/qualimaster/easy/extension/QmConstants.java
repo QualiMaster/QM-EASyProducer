@@ -150,6 +150,7 @@ public class QmConstants {
     public static final String SLOT_ALGORITHM_PARAMETERS = SLOT_PARAMETERS;
     public static final String SLOT_ALGORITHM_TOPOLOGYCLASS = "algTopologyClass";
     public static final String SLOT_ALGORITHM_DESCRIPTION = "description";
+    public static final String SLOT_ALGORITHM_ARTIFACT = "artifact";
     public static final String SLOT_ALGORITHM_ISVALID = SLOT_ISVALID;
     
     public static final String VAR_ALGORITHMS_ALGORITHMS = "algorithms";

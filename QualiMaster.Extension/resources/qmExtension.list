@@ -11,6 +11,7 @@ eu.qualimaster.coordination.commands.MonitoringChangeCommand
 eu.qualimaster.coordination.commands.ParallelismChangeCommand
 eu.qualimaster.coordination.commands.ParameterChangeCommand
 eu.qualimaster.coordination.commands.PipelineCommand
+eu.qualimaster.coordination.commands.ProfileAlgorithmCommand
 eu.qualimaster.coordination.commands.ScheduleWavefrontAdaptationCommand
 eu.qualimaster.adaptation.events.AdaptationEvent
 eu.qualimaster.adaptation.events.AdaptationEventResponse
@@ -26,6 +27,7 @@ eu.qualimaster.infrastructure.InfrastructureEvent
 eu.qualimaster.infrastructure.InfrastructurePart
 eu.qualimaster.infrastructure.PipelineLifecycleEvent
 eu.qualimaster.monitoring.events.FrozenSystemState
+eu.qualimaster.monitoring.events.IEnactmentCompletedMonitoringEvent
 eu.qualimaster.monitoring.events.PlatformMultiObservationHostMonitoringEvent
 eu.qualimaster.observables.AnalysisObservables
 eu.qualimaster.observables.FunctionalSuitability
