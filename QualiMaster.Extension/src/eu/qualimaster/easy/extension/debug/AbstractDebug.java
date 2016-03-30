@@ -57,9 +57,9 @@ public abstract class AbstractDebug {
         initialize(de.uni_hildesheim.sse.vil.templatelang.VtlExpressionParser.class);
         initialize(net.ssehub.easy.reasoning.sseReasoner.Reasoner.class);
         initialize(de.uni_hildesheim.sse.vil.rt.RtVilExpressionParser.class);
-        initialize(de.uni_hildesheim.sse.easy_producer.instantiator.model.BuiltIn.class);
-        initialize(de.uni_hildesheim.sse.easy_producer.instantiator.model.rtVil.BuiltIn.class);
-        initialize(de.uni_hildesheim.sse.easy.maven.Registration.class);
+        initialize(net.ssehub.easy.instantiation.core.model.BuiltIn.class);
+        initialize(net.ssehub.easy.instantiation.rt.core.model.rtVil.BuiltIn.class);
+        initialize(net.ssehub.easy.instantiation.maven.Registration.class);
         initialize(eu.qualimaster.easy.extension.internal.Registration.class);
     }
     

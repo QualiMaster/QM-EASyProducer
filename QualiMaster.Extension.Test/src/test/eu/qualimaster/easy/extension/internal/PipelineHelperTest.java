@@ -23,15 +23,14 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.uni_hildesheim.sse.easy_producer.instantiator.model.common.VilException;
-import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.configuration.Configuration;
-import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.configuration.DecisionVariable;
-
 import static eu.qualimaster.easy.extension.QmConstants.*;
 
 import eu.qualimaster.easy.extension.internal.PipelineElementHelper;
 import eu.qualimaster.easy.extension.internal.PipelineHelper;
 import net.ssehub.easy.basics.modelManagement.ModelManagementException;
+import net.ssehub.easy.instantiation.core.model.common.VilException;
+import net.ssehub.easy.instantiation.core.model.vilTypes.configuration.Configuration;
+import net.ssehub.easy.instantiation.core.model.vilTypes.configuration.DecisionVariable;
 import net.ssehub.easy.varModel.confModel.AllFreezeSelector;
 import net.ssehub.easy.varModel.confModel.AssignmentState;
 import net.ssehub.easy.varModel.confModel.ConfigurationException;

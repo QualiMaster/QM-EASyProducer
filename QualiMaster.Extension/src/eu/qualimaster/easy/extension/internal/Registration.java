@@ -36,16 +36,6 @@ import org.osgi.service.component.ComponentContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uni_hildesheim.sse.easy_producer.instantiator.model.common.VilException;
-import de.uni_hildesheim.sse.easy_producer.instantiator.model.rtVil.RtVilStorage;
-import de.uni_hildesheim.sse.easy_producer.instantiator.model.rtVil.types.RtVilTypeRegistry;
-import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.BuiltIn;
-import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.FieldDescriptor;
-import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.IRegistration;
-import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.OperationDescriptor;
-import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.ReflectionResolver;
-import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.TypeDescriptor;
-import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.TypeRegistry;
 import eu.qualimaster.common.QMInternal;
 import eu.qualimaster.common.QMSupport;
 import eu.qualimaster.coordination.commands.CoordinationCommand;
@@ -53,6 +43,16 @@ import eu.qualimaster.events.IEvent;
 import eu.qualimaster.observables.IObservable;
 import net.ssehub.easy.basics.logger.EASyLoggerFactory;
 import net.ssehub.easy.basics.logger.EASyLoggerFactory.EASyLogger;
+import net.ssehub.easy.instantiation.core.model.common.VilException;
+import net.ssehub.easy.instantiation.core.model.vilTypes.BuiltIn;
+import net.ssehub.easy.instantiation.core.model.vilTypes.FieldDescriptor;
+import net.ssehub.easy.instantiation.core.model.vilTypes.IRegistration;
+import net.ssehub.easy.instantiation.core.model.vilTypes.OperationDescriptor;
+import net.ssehub.easy.instantiation.core.model.vilTypes.ReflectionResolver;
+import net.ssehub.easy.instantiation.core.model.vilTypes.TypeDescriptor;
+import net.ssehub.easy.instantiation.core.model.vilTypes.TypeRegistry;
+import net.ssehub.easy.instantiation.rt.core.model.rtVil.RtVilStorage;
+import net.ssehub.easy.instantiation.rt.core.model.rtVil.types.RtVilTypeRegistry;
 
 /**
  * Registers QM Java additions to EASy-Producer, in particular to rt-VIL. Unless configured otherwise, it reads a list 
@@ -462,7 +462,7 @@ public class Registration implements IRegistration {
      */
     public static void main(String[] args) {
         BuiltIn.initialize();
-        de.uni_hildesheim.sse.easy_producer.instantiator.model.rtVil.BuiltIn.initialize();
+        net.ssehub.easy.instantiation.rt.core.model.rtVil.BuiltIn.initialize();
         debug = true;
 
         // fixed according to the structure of this projects, shall be on classpath but not be deployed

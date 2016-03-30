@@ -15,11 +15,11 @@
  */
 package eu.qualimaster.easy.extension.internal;
 
-import de.uni_hildesheim.sse.easy_producer.instantiator.model.common.VilException;
-import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.IVilType;
-import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.Instantiator;
-import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.configuration.Configuration;
-import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.configuration.DecisionVariable;
+import net.ssehub.easy.instantiation.core.model.common.VilException;
+import net.ssehub.easy.instantiation.core.model.vilTypes.IVilType;
+import net.ssehub.easy.instantiation.core.model.vilTypes.Instantiator;
+import net.ssehub.easy.instantiation.core.model.vilTypes.configuration.Configuration;
+import net.ssehub.easy.instantiation.core.model.vilTypes.configuration.DecisionVariable;
 import net.ssehub.easy.varModel.confModel.IDecisionVariable;
 import net.ssehub.easy.varModel.model.IvmlKeyWords;
 

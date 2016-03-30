@@ -20,13 +20,13 @@ import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
 
-import de.uni_hildesheim.sse.easy_producer.instantiator.model.common.VilException;
 import eu.qualimaster.coordination.RepositoryHelper;
 import eu.qualimaster.easy.extension.internal.AlgorithmProfileHelper;
 import eu.qualimaster.easy.extension.internal.QmProjectDescriptor;
 import net.ssehub.easy.basics.modelManagement.ModelInitializer;
 import net.ssehub.easy.basics.modelManagement.ModelManagementException;
 import net.ssehub.easy.basics.progress.ProgressObserver;
+import net.ssehub.easy.instantiation.core.model.common.VilException;
 import net.ssehub.easy.varModel.confModel.Configuration;
 import net.ssehub.easy.varModel.management.VarModel;
 import net.ssehub.easy.varModel.model.Project;

@@ -24,18 +24,18 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-import de.uni_hildesheim.sse.easy_producer.instantiator.model.common.VilException;
-import de.uni_hildesheim.sse.easy_producer.instantiator.model.rtVil.types.ITypeAnalyzer;
-import de.uni_hildesheim.sse.easy_producer.instantiator.model.rtVil.types.RtVilTypeRegistry;
-import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.IRegisteredStringValueProvider;
-import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.IStringValueProvider.StringComparator;
-import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.TypeDescriptor;
-import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.TypeHelper;
-import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.TypeRegistry;
 import eu.qualimaster.common.QMGenerics;
 import eu.qualimaster.common.QMInternal;
 import eu.qualimaster.common.QMName;
 import eu.qualimaster.common.QMNoSimulation;
+import net.ssehub.easy.instantiation.core.model.common.VilException;
+import net.ssehub.easy.instantiation.core.model.vilTypes.IRegisteredStringValueProvider;
+import net.ssehub.easy.instantiation.core.model.vilTypes.TypeDescriptor;
+import net.ssehub.easy.instantiation.core.model.vilTypes.TypeHelper;
+import net.ssehub.easy.instantiation.core.model.vilTypes.TypeRegistry;
+import net.ssehub.easy.instantiation.core.model.vilTypes.IStringValueProvider.StringComparator;
+import net.ssehub.easy.instantiation.rt.core.model.rtVil.types.ITypeAnalyzer;
+import net.ssehub.easy.instantiation.rt.core.model.rtVil.types.RtVilTypeRegistry;
 
 /**
  * A QualiMaster specific type analyzer for reflective descriptor building in rt-VIL.

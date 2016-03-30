@@ -15,9 +15,9 @@
  */
 package eu.qualimaster.easy.extension.internal;
 
-import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.IVilType;
-import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.Instantiator;
 import eu.qualimaster.observables.IObservable;
+import net.ssehub.easy.instantiation.core.model.vilTypes.IVilType;
+import net.ssehub.easy.instantiation.core.model.vilTypes.Instantiator;
 
 /**
  * Performs observation predictions for pipeline elements.

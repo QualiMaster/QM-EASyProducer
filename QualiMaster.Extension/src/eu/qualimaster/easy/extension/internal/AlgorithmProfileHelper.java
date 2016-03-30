@@ -15,14 +15,14 @@
  */
 package eu.qualimaster.easy.extension.internal;
 
-import de.uni_hildesheim.sse.easy_producer.core.persistence.standard.StandaloneProjectDescriptor;
-import de.uni_hildesheim.sse.easy_producer.instantiator.model.common.VilException;
-import de.uni_hildesheim.sse.easy_producer.instantiator.model.execution.Executor;
-import de.uni_hildesheim.sse.easy_producer.instantiator.model.execution.TracerFactory;
-import de.uni_hildesheim.sse.easy_producer.instantiator.model.tracing.ConsoleTracerFactory;
-import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.IProjectDescriptor;
 import eu.qualimaster.common.QMInternal;
 import net.ssehub.easy.basics.modelManagement.ModelManagementException;
+import net.ssehub.easy.instantiation.core.model.common.VilException;
+import net.ssehub.easy.instantiation.core.model.execution.Executor;
+import net.ssehub.easy.instantiation.core.model.execution.TracerFactory;
+import net.ssehub.easy.instantiation.core.model.tracing.ConsoleTracerFactory;
+import net.ssehub.easy.instantiation.core.model.vilTypes.IProjectDescriptor;
+import net.ssehub.easy.producer.core.persistence.standard.StandaloneProjectDescriptor;
 import net.ssehub.easy.varModel.confModel.Configuration;
 import net.ssehub.easy.varModel.confModel.IDecisionVariable;
 import net.ssehub.easy.varModel.cst.CSTSemanticException;

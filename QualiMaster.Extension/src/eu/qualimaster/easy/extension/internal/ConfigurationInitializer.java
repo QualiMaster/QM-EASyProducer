@@ -15,10 +15,15 @@
  */
 package eu.qualimaster.easy.extension.internal;
 
-import de.uni_hildesheim.sse.easy_producer.instantiator.model.rtVil.VariableValueCopier.IFreezeProvider;
-import de.uni_hildesheim.sse.easy_producer.instantiator.model.vilTypes.Invisible;
 import eu.qualimaster.common.QMInternal;
 import eu.qualimaster.coordination.RuntimeVariableMapping;
+import net.ssehub.easy.instantiation.core.model.common.VilException;
+import net.ssehub.easy.instantiation.core.model.vilTypes.Invisible;
+import net.ssehub.easy.instantiation.rt.core.model.rtVil.VariableValueCopier;
+import net.ssehub.easy.instantiation.rt.core.model.rtVil.VariableValueCopier.CopySpec;
+import net.ssehub.easy.instantiation.rt.core.model.rtVil.VariableValueCopier.EnumAttributeFreezeProvider;
+import net.ssehub.easy.instantiation.rt.core.model.rtVil.VariableValueCopier.IAssignmentListener;
+import net.ssehub.easy.instantiation.rt.core.model.rtVil.VariableValueCopier.IFreezeProvider;
 import net.ssehub.easy.varModel.confModel.ConfigurationException;
 import net.ssehub.easy.varModel.confModel.IDecisionVariable;
 import net.ssehub.easy.varModel.cst.CSTSemanticException;
@@ -34,11 +39,6 @@ import net.ssehub.easy.varModel.model.datatypes.OclKeyWords;
 import net.ssehub.easy.varModel.model.values.ReferenceValue;
 import net.ssehub.easy.varModel.model.values.Value;
 import net.ssehub.easy.varModel.model.values.ValueDoesNotMatchTypeException;
-import de.uni_hildesheim.sse.easy_producer.instantiator.model.common.VilException;
-import de.uni_hildesheim.sse.easy_producer.instantiator.model.rtVil.VariableValueCopier;
-import de.uni_hildesheim.sse.easy_producer.instantiator.model.rtVil.VariableValueCopier.CopySpec;
-import de.uni_hildesheim.sse.easy_producer.instantiator.model.rtVil.VariableValueCopier.EnumAttributeFreezeProvider;
-import de.uni_hildesheim.sse.easy_producer.instantiator.model.rtVil.VariableValueCopier.IAssignmentListener;
 
 import static eu.qualimaster.easy.extension.QmConstants.*;
 import static eu.qualimaster.easy.extension.internal.Utils.*;

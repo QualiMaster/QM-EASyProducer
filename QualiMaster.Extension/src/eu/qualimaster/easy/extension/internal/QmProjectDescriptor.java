@@ -3,12 +3,12 @@ package eu.qualimaster.easy.extension.internal;
 import java.io.File;
 import java.util.List;
 
-import de.uni_hildesheim.sse.easy_producer.core.persistence.standard.StandaloneProjectDescriptor;
-import de.uni_hildesheim.sse.easy_producer.instantiator.model.buildlangModel.BuildModel;
-import de.uni_hildesheim.sse.easy_producer.instantiator.model.buildlangModel.Script;
 import eu.qualimaster.easy.extension.QmConstants;
 import net.ssehub.easy.basics.modelManagement.ModelInfo;
 import net.ssehub.easy.basics.modelManagement.ModelManagementException;
+import net.ssehub.easy.instantiation.core.model.buildlangModel.BuildModel;
+import net.ssehub.easy.instantiation.core.model.buildlangModel.Script;
+import net.ssehub.easy.producer.core.persistence.standard.StandaloneProjectDescriptor;
 
 /**
  * Implements a descriptor for the source and target VIL project locations.
