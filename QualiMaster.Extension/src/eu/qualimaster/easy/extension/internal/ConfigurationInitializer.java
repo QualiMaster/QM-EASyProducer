@@ -22,7 +22,6 @@ import net.ssehub.easy.instantiation.core.model.vilTypes.Invisible;
 import net.ssehub.easy.instantiation.rt.core.model.rtVil.VariableValueCopier;
 import net.ssehub.easy.instantiation.rt.core.model.rtVil.VariableValueCopier.CopySpec;
 import net.ssehub.easy.instantiation.rt.core.model.rtVil.VariableValueCopier.EnumAttributeFreezeProvider;
-import net.ssehub.easy.instantiation.rt.core.model.rtVil.VariableValueCopier.IAssignmentListener;
 import net.ssehub.easy.instantiation.rt.core.model.rtVil.VariableValueCopier.IFreezeProvider;
 import net.ssehub.easy.varModel.confModel.ConfigurationException;
 import net.ssehub.easy.varModel.confModel.IDecisionVariable;
@@ -57,12 +56,11 @@ public class ConfigurationInitializer {
      * 
      * @param config the configuration
      * @param newVariablePrefix the prefix for the new variables
-     * @param copyListener the copy listener
      * @throws VilException in case that initialization fails
      */
     @QMInternal
     public static void initializeConfiguration(net.ssehub.easy.varModel.confModel.Configuration config, 
-        String newVariablePrefix, IAssignmentListener copyListener) throws VilException {
+        String newVariablePrefix) throws VilException {
         Project project = config.getProject();
         try {
             // did not want to introduce an IVML copy operation by now
@@ -84,7 +82,6 @@ public class ConfigurationInitializer {
             CopySpec specSink = new CopySpec(sinkType, SLOT_SINK_SINK, freezeProvider, SLOT_SINK_AVAILABLE, 
                 SLOT_SINK_ACTUAL);
             VariableValueCopier copier = new VariableValueCopier(newVariablePrefix, specSource, specFamily, specSink);
-            copier.setAssignmentListener(copyListener);
             copier.process(config);
         } catch (ConfigurationException e1) {
             throw new VilException(e1, VilException.ID_RUNTIME);
