@@ -98,7 +98,7 @@ public class PipelineElementHelper implements IVilType {
      * @return the element or <b>null</b> if it does not exist for some reason
      */
     @QMInternal
-    public static IDecisionVariable obtainPipelineElement(net.ssehub.easy.varModel.confModel.Configuration config, 
+    public static IDecisionVariable findPipelineElement(net.ssehub.easy.varModel.confModel.Configuration config, 
         String variableName) {
         IDecisionVariable pip = null;
         if (null != variableName && null != config) {

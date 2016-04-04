@@ -380,7 +380,7 @@ public class PipelineHelperTest {
                 actualVar = actual.getVariable();
             }
         } else {
-            actualVar = PipelineElementHelper.obtainPipelineElement(qmCfg.getConfiguration(), givenVarName);
+            actualVar = PipelineElementHelper.findPipelineElement(qmCfg.getConfiguration(), givenVarName);
         }
         
         if (null == expectedVarName) {
