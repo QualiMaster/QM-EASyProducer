@@ -21,7 +21,11 @@ import net.ssehub.easy.instantiation.core.model.vilTypes.Instantiator;
 import net.ssehub.easy.instantiation.core.model.vilTypes.configuration.Configuration;
 import net.ssehub.easy.instantiation.core.model.vilTypes.configuration.DecisionVariable;
 import net.ssehub.easy.varModel.confModel.IDecisionVariable;
+import net.ssehub.easy.varModel.model.AbstractVariable;
 import net.ssehub.easy.varModel.model.IvmlKeyWords;
+import net.ssehub.easy.varModel.model.ModelQuery;
+import net.ssehub.easy.varModel.model.ModelQueryException;
+import net.ssehub.easy.varModel.model.Project;
 
 /**
  * Helper functions on pipeline element level.
@@ -49,26 +53,79 @@ public class PipelineElementHelper implements IVilType {
             pip = PipelineHelper.obtainPipeline(config, variableName);
         }
         if (null != pip) {
-            String scopeName = pip.getDecisionVariable().getDeclaration().getParent().getName();
-            String tmpName = cutPrefix(variableName, scopeName);
-            tmpName = cutPrefix(tmpName, IvmlKeyWords.NAMESPACE_SEPARATOR);
-            IDecisionVariable tmp = PipelineHelper.obtainPipelineElementByName(pip.getDecisionVariable(), null, 
-                tmpName);
-            int pos = 0;
-            while (null == tmp && pos >= 0) {
-                pos = tmpName.lastIndexOf(IvmlKeyWords.NAMESPACE_SEPARATOR);
-                if (pos > 0) {
-                    tmpName = tmpName.substring(0, pos);
-                    tmp = PipelineHelper.obtainPipelineElementByName(pip.getDecisionVariable(), null, tmpName);
-                }
-                pos--;
-            }
+            IDecisionVariable tmp = obtainPipelineElement(pip.getDecisionVariable(), variableName);
             if (null != tmp) { // top-level var
                 // better: config.findVariable
                 result = config.getByName(net.ssehub.easy.varModel.confModel.Configuration.getInstanceName(tmp));
             }
         }
         return result;
+    }
+    
+    /**
+     * Obtains a pipeline element.
+     * 
+     * @param pip the pipeline
+     * @param variableName the name of the (element) variable
+     * @return the element or <b>null</b> if it does not exist for some reason
+     */
+    private static IDecisionVariable obtainPipelineElement(IDecisionVariable pip, String variableName) {
+        IDecisionVariable tmp = null;
+        if (null != pip) {
+            String scopeName = pip.getDeclaration().getParent().getName();
+            String tmpName = cutPrefix(variableName, scopeName);
+            tmpName = cutPrefix(tmpName, IvmlKeyWords.NAMESPACE_SEPARATOR);
+            tmp = PipelineHelper.obtainPipelineElementByName(pip, null, tmpName);
+            int pos = 0;
+            while (null == tmp && pos >= 0) {
+                pos = tmpName.lastIndexOf(IvmlKeyWords.NAMESPACE_SEPARATOR);
+                if (pos > 0) {
+                    tmpName = tmpName.substring(0, pos);
+                    tmp = PipelineHelper.obtainPipelineElementByName(pip, null, tmpName);
+                }
+                pos--;
+            }
+        }
+        return tmp;
+    }
+
+    /**
+     * Obtains a pipeline element.
+     * 
+     * @param config the configuration
+     * @param variableName the name of the (element) variable
+     * @return the element or <b>null</b> if it does not exist for some reason
+     */
+    public static IDecisionVariable obtainPipelineElement(net.ssehub.easy.varModel.confModel.Configuration config, 
+        String variableName) {
+        IDecisionVariable pip = null;
+        if (null != variableName && null != config) {
+            variableName = variableName.replace(String.valueOf(IvmlKeyWords.COMPOUND_ACCESS), 
+                IvmlKeyWords.NAMESPACE_SEPARATOR); // compensate instanceName
+            String vName = variableName;
+            Project prj = config.getProject();
+            int pos = vName.indexOf(IvmlKeyWords.NAMESPACE_SEPARATOR);
+            if (pos > 0) {
+                prj = ModelQuery.findProject(config.getProject(), vName.substring(0, pos));
+                vName = vName.substring(pos + IvmlKeyWords.NAMESPACE_SEPARATOR.length());
+            }
+            if (null != prj) {
+                AbstractVariable var;
+                pos = vName.indexOf(IvmlKeyWords.NAMESPACE_SEPARATOR);
+                if (pos > 0) {
+                    vName = vName.substring(0, pos);
+                }
+                try {
+                    var = ModelQuery.findVariable(prj, vName, null);
+                } catch (ModelQueryException e) {
+                    var = null;
+                }
+                if (null != var) {
+                    pip = config.getDecision(var);
+                }
+            }
+        }
+        return obtainPipelineElement(pip, variableName);
     }
 
     /**

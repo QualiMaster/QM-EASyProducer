@@ -309,56 +309,86 @@ public class PipelineHelperTest {
     }
 
     /**
-     * Tests {@link PipelineElementHelper#obtainPipelineElement(Configuration, String)}.
+     * Tests {@link PipelineElementHelper#obtainPipelineElement(
+     *    net.ssehub.easy.varModel.confModel.Configuration, String)}.
      * 
      * @throws VilException in case that accessing the pipeline or a type fails
      */
     @Test
     public void testObtainPipelineElementVIL() throws VilException {
-        assertVarEquals(VAR_FAM1, VAR_FAM1);
+        testObtainPipelineElement(true);
+    }
+    
+    /**
+     * Tests {@link PipelineElementHelper#obtainPipelineElement(Configuration, String)}.
+     * 
+     * @throws VilException in case that accessing the pipeline or a type fails
+     */
+    @Test
+    public void testObtainPipelineElementIVML() throws VilException {
+        testObtainPipelineElement(false);
+    }
+
+    /**
+     * Tests to obtain a pipeline element.
+     * 
+     * @param vil use VIL or IVML access
+     * @throws VilException in case that accessing the pipeline or a type fails
+     */
+    private void testObtainPipelineElement(boolean vil) throws VilException {
+        assertVarEquals(VAR_FAM1, VAR_FAM1, vil);
         String varName = getDecision(qmCfg, VAR_FAM1).getDeclaration().getName();
-        assertVarEquals(VAR_FAM1, varName);
+        assertVarEquals(VAR_FAM1, varName, vil);
 
         // qualified with cfg name
-        assertVarEquals(VAR_FAM1, PRJ_MYPIP_CFG + IvmlKeyWords.NAMESPACE_SEPARATOR + VAR_FAM1);
-        assertVarEquals(VAR_FAM1, PRJ_MYPIP_CFG + IvmlKeyWords.NAMESPACE_SEPARATOR + varName);
+        assertVarEquals(VAR_FAM1, PRJ_MYPIP_CFG + IvmlKeyWords.NAMESPACE_SEPARATOR + VAR_FAM1, vil);
+        assertVarEquals(VAR_FAM1, PRJ_MYPIP_CFG + IvmlKeyWords.NAMESPACE_SEPARATOR + varName, vil);
 
         assertVarEquals(VAR_FAM1, PRJ_MYPIP_CFG + IvmlKeyWords.NAMESPACE_SEPARATOR + VAR_FAM1 
-            + IvmlKeyWords.NAMESPACE_SEPARATOR + "name");
+            + IvmlKeyWords.NAMESPACE_SEPARATOR + "name", vil);
         
         assertVarEquals(VAR_FAM1, PRJ_MYPIP_CFG + IvmlKeyWords.NAMESPACE_SEPARATOR + varName
-            + IvmlKeyWords.NAMESPACE_SEPARATOR + "name");
+            + IvmlKeyWords.NAMESPACE_SEPARATOR + "name", vil);
         
         assertVarEquals(VAR_FAM1, PRJ_MYPIP_CFG + IvmlKeyWords.NAMESPACE_SEPARATOR + VAR_FAM1 
-            + IvmlKeyWords.COMPOUND_ACCESS + "name");
+            + IvmlKeyWords.COMPOUND_ACCESS + "name", vil);
 
         assertVarEquals(VAR_FAM1, PRJ_MYPIP_CFG + IvmlKeyWords.NAMESPACE_SEPARATOR + varName 
-            + IvmlKeyWords.COMPOUND_ACCESS + "name");
+            + IvmlKeyWords.COMPOUND_ACCESS + "name", vil);
 
-        assertVarEquals(null, null);
+        assertVarEquals(null, null, vil);
         assertVarEquals(null, PRJ_MYPIP_CFG + IvmlKeyWords.NAMESPACE_SEPARATOR + "?bla?" 
-            + IvmlKeyWords.COMPOUND_ACCESS + "name");
-    }
+            + IvmlKeyWords.COMPOUND_ACCESS + "name", vil);
+    }    
 
     /**
      * Asserts variable equality.
      * 
      * @param expectedVarName the name of the expected variable (may be <b>null</b>)
      * @param givenVarName the name of the actual variable (may be <b>null</b>)
+     * @param vil use VIL or IVML way
      * @throws VilException in case that accessing the pipeline or a type fails
      */
-    private void assertVarEquals(String expectedVarName, String givenVarName) throws VilException {
+    private void assertVarEquals(String expectedVarName, String givenVarName, boolean vil) throws VilException {
         if (null != givenVarName && givenVarName.indexOf(IvmlKeyWords.NAMESPACE_SEPARATOR) < 0) {
             givenVarName = getVariableInstanceName(qmCfg, givenVarName);
         } 
-        DecisionVariable actual = PipelineElementHelper.obtainPipelineElement(qmCfg, givenVarName);
+        IDecisionVariable actualVar = null;
+        if (vil) {
+            DecisionVariable actual = PipelineElementHelper.obtainPipelineElement(qmCfg, givenVarName);
+            if (null != actual) {
+                actualVar = actual.getVariable();
+            }
+        } else {
+            actualVar = PipelineElementHelper.obtainPipelineElement(qmCfg.getConfiguration(), givenVarName);
+        }
+        
         if (null == expectedVarName) {
-            Assert.assertNull(actual);
+            Assert.assertNull(actualVar);
         } else {
             IDecisionVariable expected = getDecision(qmCfg, expectedVarName);
-            Assert.assertNotNull(actual);
-            Assert.assertNotNull(actual.getVariable());
-            Assert.assertTrue(expected == actual.getVariable());
+            Assert.assertNotNull(actualVar);
+            Assert.assertTrue(expected == actualVar);
         }
     }
 
