@@ -15,6 +15,7 @@
  */
 package eu.qualimaster.easy.extension.internal;
 
+import eu.qualimaster.common.QMInternal;
 import net.ssehub.easy.instantiation.core.model.common.VilException;
 import net.ssehub.easy.instantiation.core.model.vilTypes.IVilType;
 import net.ssehub.easy.instantiation.core.model.vilTypes.Instantiator;
@@ -96,6 +97,7 @@ public class PipelineElementHelper implements IVilType {
      * @param variableName the name of the (element) variable
      * @return the element or <b>null</b> if it does not exist for some reason
      */
+    @QMInternal
     public static IDecisionVariable obtainPipelineElement(net.ssehub.easy.varModel.confModel.Configuration config, 
         String variableName) {
         IDecisionVariable pip = null;
