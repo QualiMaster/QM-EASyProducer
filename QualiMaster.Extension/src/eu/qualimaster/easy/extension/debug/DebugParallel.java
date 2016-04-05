@@ -104,13 +104,13 @@ public class DebugParallel extends AbstractDebug {
             ModelInitializer.registerLoader(ProgressObserver.NO_OBSERVER);
             ModelInitializer.addLocation(modelLocation, ProgressObserver.NO_OBSERVER);
             Project project = RepositoryHelper.obtainModel(VarModel.INSTANCE, "QM", null);
-            Configuration monConfig = RepositoryHelper.createConfiguration(project, "MONITORING", null);
+            Configuration monConfig = RepositoryHelper.createConfiguration(project, "MONITORING");
             ModelInitializer.removeLocation(modelLocation, ProgressObserver.NO_OBSERVER);
 
             ModelInitializer.addLocation(modelLocation, ProgressObserver.NO_OBSERVER);
             project = RepositoryHelper.obtainModel(VarModel.INSTANCE, "QM", null);
             //Script rtVilModel = RepositoryHelper.obtainModel(RtVilModel.INSTANCE, "QM", null);
-            Configuration adaptConfig = RepositoryHelper.createConfiguration(project, "ADAPTATION", null);
+            Configuration adaptConfig = RepositoryHelper.createConfiguration(project, "ADAPTATION");
             ModelInitializer.removeLocation(modelLocation, ProgressObserver.NO_OBSERVER);
 
             ReasoningRunnable r1 = new ReasoningRunnable("Monitoring", monConfig);

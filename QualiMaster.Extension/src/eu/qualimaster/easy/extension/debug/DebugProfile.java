@@ -62,7 +62,7 @@ public class DebugProfile extends AbstractDebug {
             Project project = RepositoryHelper.obtainModel(VarModel.INSTANCE, "QM", null);
             
             // create descriptor before clearing the location - in infrastructure pass vil directly/resolve VIL
-            Configuration monConfig = RepositoryHelper.createConfiguration(project, "MONITORING", null);
+            Configuration monConfig = RepositoryHelper.createConfiguration(project, "MONITORING");
             File tmp = new File(FileUtils.getTempDirectory(), "qmDebugProfile");
             FileUtils.deleteDirectory(tmp);
             tmp.mkdirs();

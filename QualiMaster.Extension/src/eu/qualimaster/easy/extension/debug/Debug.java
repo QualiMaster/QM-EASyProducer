@@ -134,7 +134,7 @@ public class Debug extends AbstractDebug {
             ModelInitializer.addLocation(modelLocation, ProgressObserver.NO_OBSERVER);
             Project project = RepositoryHelper.obtainModel(VarModel.INSTANCE, "QM", null);
             Script rtVilModel = RepositoryHelper.obtainModel(RtVilModel.INSTANCE, "QM", null);
-            Configuration config = RepositoryHelper.createConfiguration(project, "TESTING", null);
+            Configuration config = RepositoryHelper.createConfiguration(project, "TESTING");
             System.out.println("Model loaded...");
             
             if (null != prefix) {
