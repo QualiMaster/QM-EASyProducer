@@ -51,6 +51,10 @@ public class DebugProfile extends AbstractDebug {
             System.out.println("qualimaster.profile: <model location>");
             System.exit(0);
         } else {
+            File tmp = new File(FileUtils.getTempDirectory(), "qmDebugProfile");
+            FileUtils.deleteDirectory(tmp);
+            tmp.mkdirs();
+
             File modelLocation = new File(args[0]);
             if (!modelLocation.exists()) {
                 System.out.println("model location " + modelLocation + " does not exist");
@@ -63,9 +67,6 @@ public class DebugProfile extends AbstractDebug {
             
             // create descriptor before clearing the location - in infrastructure pass vil directly/resolve VIL
             Configuration monConfig = RepositoryHelper.createConfiguration(project, "MONITORING");
-            File tmp = new File(FileUtils.getTempDirectory(), "qmDebugProfile");
-            FileUtils.deleteDirectory(tmp);
-            tmp.mkdirs();
             QmProjectDescriptor source = new QmProjectDescriptor(tmp);
             try {
                 ProfileData data = AlgorithmProfileHelper.createProfilePipeline(monConfig, "ProfileTestPip", 

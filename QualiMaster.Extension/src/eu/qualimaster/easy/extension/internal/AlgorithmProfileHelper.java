@@ -71,6 +71,10 @@ import org.eclipse.xtext.util.Arrays;
  */
 public class AlgorithmProfileHelper {
 
+    public static final String PARAM_HDFS_DATAFILE = "hdfsDataFile";
+    public static final String PARAM_DATAFILE = "dataFile";
+    public static final String PARAM_REPLAYSPEED = "replaySpeed";
+    
     private static final String[] PIPELINE_IMPORTS = {PROJECT_BASICS, PROJECT_PIPELINES, PROJECT_FAMILIESCFG, 
         PROJECT_DATAMGTCFG};
     private static final String[] PIPELINES_IMPORTS = {PROJECT_BASICS, PROJECT_PIPELINES};
@@ -321,9 +325,9 @@ public class AlgorithmProfileHelper {
 
         Object[] result = new Object[3];
         result[0] = ValueFactory.createValue(stringParameterType, 
-            new Object[]{SLOT_STRINGPARAMETER_NAME, "dataFile"});
+            new Object[]{SLOT_STRINGPARAMETER_NAME, PARAM_DATAFILE, SLOT_STRINGPARAMETER_DEFAULTVALUE, ""});
         result[1] = ValueFactory.createValue(stringParameterType, 
-            new Object[]{SLOT_STRINGPARAMETER_NAME, "hdfsDataFile"});
+            new Object[]{SLOT_STRINGPARAMETER_NAME, PARAM_HDFS_DATAFILE, SLOT_STRINGPARAMETER_DEFAULTVALUE, ""});
         result[2] = ValueFactory.createValue(intParameterType, 
             new Object[]{SLOT_STRINGPARAMETER_NAME, "replaySpeed"});
         return result;
