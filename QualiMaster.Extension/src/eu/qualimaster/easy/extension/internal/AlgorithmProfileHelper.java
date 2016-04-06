@@ -260,7 +260,7 @@ public class AlgorithmProfileHelper {
             SLOT_DATASOURCE_STORAGELOCATION, "null",
             SLOT_DATASOURCE_PROFILINGSOURCE, true,
             SLOT_DATASOURCE_DATAMANAGEMENTSTRATEGY, CONST_DATAMANAGEMENTSTRATEGY_NONE,
-            //SLOT_DATASOURCE_PARAMETERS,
+            SLOT_DATASOURCE_PARAMETERS, createDataSourceParameters(cfgProject),
             SLOT_DATASOURCE_SOURCECLS, "eu.qualimaster." + pipelineName + ".topology.imp." + SRC_NAME);
         DecisionVariableDeclaration familyVar = createDecisionVariable("prFamily0", familyType, pip, 
             SLOT_FAMILY_NAME, getValue(testFamily, SLOT_FAMILY_NAME),
@@ -304,6 +304,29 @@ public class AlgorithmProfileHelper {
         addImports(cfgProject, TOP_IMPORTS, qm, infra);
 
         return qm;
+    }
+    
+    /**
+     * Creates the default adaptable parameters for a data source.
+     * 
+     * @param cfgProject the project used to query for types
+     * @return the parameters
+     * @throws ModelQueryException in case that types cannot be resolved
+     * @throws ValueDoesNotMatchTypeException in case that the value cannot be created due to type mismatches
+     */
+    private static Object[] createDataSourceParameters(Project cfgProject) throws ModelQueryException, 
+        ValueDoesNotMatchTypeException {
+        Compound stringParameterType = findCompound(cfgProject, TYPE_STRINGPARAMETER);
+        Compound intParameterType = findCompound(cfgProject, TYPE_INTEGERPARAMETER);
+
+        Object[] result = new Object[3];
+        result[0] = ValueFactory.createValue(stringParameterType, 
+            new Object[]{SLOT_STRINGPARAMETER_NAME, "dataFile"});
+        result[1] = ValueFactory.createValue(stringParameterType, 
+            new Object[]{SLOT_STRINGPARAMETER_NAME, "hdfsDataFile"});
+        result[2] = ValueFactory.createValue(intParameterType, 
+            new Object[]{SLOT_STRINGPARAMETER_NAME, "replaySpeed"});
+        return result;
     }
 
     /**
