@@ -61,9 +61,12 @@ public class QmConstants {
 
     public static final String TYPE_PIPELINE_ELEMENT = "PipelineElement";
     public static final String SLOT_PIPELINE_ELEMENT_ISVALID = SLOT_ISVALID;
+    public static final String TYPE_PIPELINE_ELEMENT_NAME = "name";
     
     public static final String TYPE_PIPELINE_NODE = "PipelineNode";
     public static final String SLOT_PIPELINE_NODE_ISVALID = SLOT_ISVALID;
+    public static final String SLOT_PIPELINE_NODE_NUMBER_OF_TAKS = "numtasks";
+    public static final String SLOT_PIPELINE_NODE_PARALLELISM = "parallelism";
     
     public static final String TYPE_SOURCE = "Source";
     public static final String SLOT_SOURCE_ISVALID = SLOT_ISVALID;
@@ -72,7 +75,12 @@ public class QmConstants {
     public static final String SLOT_SOURCE_ACTUAL = SLOT_ACTUAL;
     public static final String SLOT_SOURCE_NAME = SLOT_NAME;
     public static final String SLOT_SOURCE_OUTPUT = "output";
-    public static final String SLOT_SOURCE_PARALLELISM = "parallelism";
+   /**
+     * Inherited parallelism slot from pipeline node.
+     * @deprecated Use {@link #SLOT_PIPELINE_NODE_PARALLELISM} instead, as since slot is inherited from there
+     */
+    @Deprecated
+    public static final String SLOT_SOURCE_PARALLELISM = SLOT_PIPELINE_NODE_PARALLELISM;
 
     public static final String TYPE_SINK = "Sink";
     public static final String SLOT_SINK_ISVALID = SLOT_ISVALID;
@@ -80,7 +88,12 @@ public class QmConstants {
     public static final String SLOT_SINK_AVAILABLE = SLOT_AVAILABLE;
     public static final String SLOT_SINK_ACTUAL = SLOT_ACTUAL;
     public static final String SLOT_SINK_NAME = SLOT_NAME;
-    public static final String SLOT_SINK_PARALLELISM = "parallelism";
+    /**
+     * Inherited parallelism slot from pipeline node.
+     * @deprecated Use {@link #SLOT_PIPELINE_NODE_PARALLELISM} instead, as since slot is inherited from there
+     */
+    @Deprecated
+    public static final String SLOT_SINK_PARALLELISM = SLOT_PIPELINE_NODE_PARALLELISM;
     
     public static final String TYPE_FLOW = "Flow";
     public static final String SLOT_FLOW_NAME = SLOT_NAME;
@@ -102,7 +115,12 @@ public class QmConstants {
     public static final String SLOT_FAMILYELEMENT_FAMILY = "family";
     public static final String SLOT_FAMILYELEMENT_DEFAULT = "default";
     public static final String SLOT_FAMILYELEMENT_ISVALID = SLOT_ISVALID;
-    public static final String SLOT_FAMILYELEMENT_PARALLELISM = "parallelism";
+    /**
+     * Inherited parallelism slot from pipeline node.
+     * @deprecated Use {@link #SLOT_PIPELINE_NODE_PARALLELISM} instead, as since slot is inherited from there
+     */
+    @Deprecated
+    public static final String SLOT_FAMILYELEMENT_PARALLELISM = SLOT_PIPELINE_NODE_PARALLELISM;
     
     public static final String TYPE_PIPELINE = "Pipeline";
     public static final String SLOT_PIPELINE_NAME = SLOT_NAME;
