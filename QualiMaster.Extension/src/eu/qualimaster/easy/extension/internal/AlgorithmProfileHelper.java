@@ -274,7 +274,7 @@ public class AlgorithmProfileHelper {
             SLOT_FAMILY_MEMBERS, new Object[] {testAlgorithm.getValue()});
         DecisionVariableDeclaration familyEltVar = createDecisionVariable("prFamilyElt0", familyElementType, pip, 
             SLOT_FAMILYELEMENT_NAME, "family",
-            SLOT_FAMILYELEMENT_PARALLELISM, 1, 
+            SLOT_PIPELINE_NODE_PARALLELISM, 1, 
             SLOT_FAMILYELEMENT_FAMILY, familyVar);
         DecisionVariableDeclaration flowVar = createDecisionVariable("prFlow0", flowType, pip,
             SLOT_FLOW_NAME, "f1",
@@ -282,7 +282,7 @@ public class AlgorithmProfileHelper {
             SLOT_FLOW_GROUPING, CONST_GROUPING_SHUFFLEGROUPING);
         DecisionVariableDeclaration sourceVar = createDecisionVariable("prSource0", sourceType, pip,
             SLOT_SOURCE_NAME, "source",
-            SLOT_SOURCE_PARALLELISM, 1, 
+            SLOT_PIPELINE_NODE_PARALLELISM, 1, 
             // #TASKS
             SLOT_SOURCE_OUTPUT, new Object[]{flowVar},
             SLOT_SOURCE_SOURCE, dataSourceVar);
