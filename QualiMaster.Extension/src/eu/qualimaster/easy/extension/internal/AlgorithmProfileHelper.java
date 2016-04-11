@@ -140,7 +140,7 @@ public class AlgorithmProfileHelper {
     
     /**
      * Profiles the given algorithm. Create a specific pipeline with data source, specific family holding
-     * only the test algorithm.
+     * only the test algorithm. Stores data and control file into <code>source</code>.
      * 
      * @param config the configuration to be used as basis for creating a profiling pipeline
      * @param pipelineName the name of the pipeline to be created (must be a valid Java identifier)
@@ -366,60 +366,6 @@ public class AlgorithmProfileHelper {
         throws CSTSemanticException, ValueDoesNotMatchTypeException, ModelQueryException {
         FreezeBlock result = Utils.createFreezeBlock(freezables, project, fallbackForType);
         project.add(result);
-        return result;
-    }
-    
-    /**
-     * Finds a named variable and throws an exception if not found.
-     * 
-     * @param config the configuration to search within
-     * @param type the type of the variable
-     * @param name the name of the variable
-     * @return the variable
-     * @throws ModelQueryException if not found
-     */
-    private static IDecisionVariable findNamedVariable(Configuration config, IDatatype type, String name) 
-        throws ModelQueryException {
-        IDecisionVariable result = VariableHelper.findNamedVariable(config, type, name);
-        if (null == result) {
-            throw new ModelQueryException(type.getName() + " '" + name + "' not found", 
-                ModelQueryException.ACCESS_ERROR);
-        }
-        return result;
-    }
-
-    /**
-     * Finds an algorithm in <code>family</code>.
-     * 
-     * @param family the family
-     * @param name the name of the algorithm
-     * @param asReference return the reference to the algorithm or the algorithm itself
-     * @return the algorithm or its reference (depending on <code>asReference</code>)
-     * @throws ModelQueryException if the algorithm cannot be found
-     */
-    private static IDecisionVariable findAlgorithm(IDecisionVariable family, String name, boolean asReference) 
-        throws ModelQueryException {
-        IDecisionVariable result = null;
-        IDecisionVariable members = family.getNestedElement(SLOT_FAMILY_MEMBERS);
-        if (null == members) {
-            throw new ModelQueryException("'" + SLOT_FAMILY_MEMBERS + "' not found in variable '" 
-                + family.getDeclaration().getName() + "'", ModelQueryException.ACCESS_ERROR);
-        }
-        for (int n = 0; null == result && n < members.getNestedElementsCount(); n++) {
-            IDecisionVariable algoRef = members.getNestedElement(n);
-            IDecisionVariable algorithm = Configuration.dereference(algoRef);
-            if (VariableHelper.hasName(algorithm, name)) {
-                if (asReference) {
-                    result = algoRef;
-                } else {
-                    result = algorithm;
-                }
-            }
-        }
-        if (null == result) {
-            throw new ModelQueryException("algorithm '" + name + "' not found in variable '" 
-                + family.getDeclaration().getName() + "'", ModelQueryException.ACCESS_ERROR);
-        }
         return result;
     }
 

@@ -18,6 +18,8 @@ package eu.qualimaster.easy.extension.internal;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.ssehub.easy.varModel.confModel.Configuration;
+import net.ssehub.easy.varModel.confModel.IDecisionVariable;
 import net.ssehub.easy.varModel.cst.AttributeVariable;
 import net.ssehub.easy.varModel.cst.CSTSemanticException;
 import net.ssehub.easy.varModel.cst.ConstantValue;
@@ -35,6 +37,7 @@ import net.ssehub.easy.varModel.model.Project;
 import net.ssehub.easy.varModel.model.datatypes.Compound;
 import net.ssehub.easy.varModel.model.datatypes.EnumLiteral;
 import net.ssehub.easy.varModel.model.datatypes.FreezeVariableType;
+import net.ssehub.easy.varModel.model.datatypes.IDatatype;
 import net.ssehub.easy.varModel.model.values.ValueDoesNotMatchTypeException;
 import net.ssehub.easy.varModel.model.values.ValueFactory;
 
@@ -58,6 +61,61 @@ public class Utils {
     public static Compound findCompound(Project project, String name) throws ModelQueryException {
         return (Compound) ModelQuery.findType(project, name, Compound.class);
     }
+    
+    /**
+     * Finds a named variable and throws an exception if not found.
+     * 
+     * @param config the configuration to search within
+     * @param type the type of the variable
+     * @param name the name of the variable
+     * @return the variable
+     * @throws ModelQueryException if not found
+     */
+    public static IDecisionVariable findNamedVariable(Configuration config, IDatatype type, String name) 
+        throws ModelQueryException {
+        IDecisionVariable result = VariableHelper.findNamedVariable(config, type, name);
+        if (null == result) {
+            throw new ModelQueryException(type.getName() + " '" + name + "' not found", 
+                ModelQueryException.ACCESS_ERROR);
+        }
+        return result;
+    }
+
+    /**
+     * Finds an algorithm in <code>family</code>.
+     * 
+     * @param family the family
+     * @param name the name of the algorithm
+     * @param asReference return the reference to the algorithm or the algorithm itself
+     * @return the algorithm or its reference (depending on <code>asReference</code>)
+     * @throws ModelQueryException if the algorithm cannot be found
+     */
+    public static IDecisionVariable findAlgorithm(IDecisionVariable family, String name, boolean asReference) 
+        throws ModelQueryException {
+        IDecisionVariable result = null;
+        IDecisionVariable members = family.getNestedElement(SLOT_FAMILY_MEMBERS);
+        if (null == members) {
+            throw new ModelQueryException("'" + SLOT_FAMILY_MEMBERS + "' not found in variable '" 
+                + family.getDeclaration().getName() + "'", ModelQueryException.ACCESS_ERROR);
+        }
+        for (int n = 0; null == result && n < members.getNestedElementsCount(); n++) {
+            IDecisionVariable algoRef = members.getNestedElement(n);
+            IDecisionVariable algorithm = Configuration.dereference(algoRef);
+            if (VariableHelper.hasName(algorithm, name)) {
+                if (asReference) {
+                    result = algoRef;
+                } else {
+                    result = algorithm;
+                }
+            }
+        }
+        if (null == result) {
+            throw new ModelQueryException("algorithm '" + name + "' not found in variable '" 
+                + family.getDeclaration().getName() + "'", ModelQueryException.ACCESS_ERROR);
+        }
+        return result;
+    }
+
 
     /**
      * Creates a freeze block for project. [legacy style, does not add to project]
