@@ -174,22 +174,53 @@ public class AlgorithmProfileHelper {
             IDecisionVariable testFamily = findNamedVariable(config, familyType, familyName);
             IDecisionVariable testAlgorithm = findAlgorithm(testFamily, algorithmName, true);
             String algArtifact = VariableHelper.getString(testAlgorithm, SLOT_ALGORITHM_ARTIFACT);
-            if (null != algArtifact) {
-                File dataArtifact = RepositoryHelper.obtainArtifact(algArtifact, "algorithm", "data", base);
-                if (null != dataArtifact) {
-                    extractDataArtifact(dataArtifact, base);
-                }
-            }
+            extractProfilingArtifact(algArtifact, algorithmName, base);
             File pipFile = new File(base, "eu/qualimaster/" + pipelineName + "/target/" + pipelineName 
                 + ":" + PIP_VERSION + ".jar");
-            File dataFile = new File(base, DATA_FILE);
-            File controlFile = new File(base, CTL_FILE);
+            File dataFile = getDataFile(base);
+            File controlFile = getControlFile(base);
             result = new ProfileData(pipFile, dataFile, controlFile);
         } catch (ModelQueryException | ModelManagementException | ValueDoesNotMatchTypeException 
             | CSTSemanticException e) {
             throw new VilException(e.getMessage(), VilException.ID_RUNTIME);
         }
         return result;
+    }
+    
+    /**
+     * Just returns a file instance pointing to the data file.
+     * 
+     * @param base the base folder
+     * @return the file instance (regardless whether it exists)
+     */
+    public static File getDataFile(File base) {
+        return new File(base, DATA_FILE);
+    }
+
+    /**
+     * Just returns a file instance pointing to the control file.
+     * 
+     * @param base the base folder
+     * @return the file instance (regardless whether it exists)
+     */
+    public static File getControlFile(File base) {
+        return new File(base, CTL_FILE);
+    }
+
+    /**
+     * Extracts the profiling artifact.
+     * 
+     * @param artifactSpec the artifact specification
+     * @param name the logical name of the artifact
+     * @param base the base folder where to extract to
+     */
+    public static void extractProfilingArtifact(String artifactSpec, String name, File base) {
+        if (null != artifactSpec) {
+            File dataArtifact = RepositoryHelper.obtainArtifact(artifactSpec, name, "-profiling.zip", base);
+            if (null != dataArtifact) {
+                extractDataArtifact(dataArtifact, base);
+            }
+        }
     }
     
     /**
