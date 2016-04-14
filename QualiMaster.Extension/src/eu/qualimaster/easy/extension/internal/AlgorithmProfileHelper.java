@@ -93,23 +93,35 @@ public class AlgorithmProfileHelper {
      * @author Holger Eichelberger
      */
     public static class ProfileData {
+        private String pipelineName;
         private File pipeline;
         private File dataFile;
         private File controlFile;
 
         /**
-         * Creates a profile data.
+         * Creates a profile data instance (public for testing).
          * 
+         * @param pipelineName the name of the pipeline
          * @param pipeline the pipeline file
          * @param dataFile the data file
          * @param controlFile the control file
          */
-        private ProfileData(File pipeline, File dataFile, File controlFile) {
+        public ProfileData(String pipelineName, File pipeline, File dataFile, File controlFile) {
+            this.pipelineName = pipelineName;
             this.pipeline = pipeline;
             this.dataFile = dataFile;
             this.controlFile = controlFile;
         }
 
+        /**
+         * Returns the pipeline name.
+         * 
+         * @return the pipeline name
+         */
+        public String getPipelineName() {
+            return pipelineName;
+        }
+        
         /**
          * Returns the pipeline Jar.
          * 
@@ -180,7 +192,7 @@ public class AlgorithmProfileHelper {
                 + ":" + PIP_VERSION + ".jar");
             File dataFile = getDataFile(base);
             File controlFile = getControlFile(base);
-            result = new ProfileData(pipFile, dataFile, controlFile);
+            result = new ProfileData(pipelineName, pipFile, dataFile, controlFile);
         } catch (ModelQueryException | ModelManagementException | ValueDoesNotMatchTypeException 
             | CSTSemanticException e) {
             throw new VilException(e.getMessage(), VilException.ID_RUNTIME);
