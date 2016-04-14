@@ -30,6 +30,7 @@ eu.qualimaster.monitoring.events.FrozenSystemState
 eu.qualimaster.monitoring.events.IEnactmentCompletedMonitoringEvent
 eu.qualimaster.monitoring.events.PlatformMultiObservationHostMonitoringEvent
 eu.qualimaster.observables.AnalysisObservables
+eu.qualimaster.observables.CloudResourceUsage
 eu.qualimaster.observables.FunctionalSuitability
 eu.qualimaster.observables.IForwardedCoordinationCommand
 eu.qualimaster.observables.IObservable

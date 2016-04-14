@@ -74,6 +74,8 @@ public class AlgorithmProfileHelper {
     public static final String PARAM_HDFS_DATAFILE = "hdfsDataFile";
     public static final String PARAM_DATAFILE = "dataFile";
     public static final String PARAM_REPLAYSPEED = "replaySpeed";
+    public static final String SRC_NAME = "TestSource";
+    public static final String FAM_NAME = "TestFamily";
     
     private static final String[] PIPELINE_IMPORTS = {PROJECT_BASICS, PROJECT_PIPELINES, PROJECT_FAMILIESCFG, 
         PROJECT_DATAMGTCFG};
@@ -82,7 +84,6 @@ public class AlgorithmProfileHelper {
     private static final String[] TOP_IMPORTS = {PROJECT_HARDWARECFG, PROJECT_RECONFHWCFG, PROJECT_DATAMGTCFG, 
         PROJECT_OBSERVABLESCFG, PROJECT_ADAPTIVITYCFG, PROJECT_ALGORITHMSCFG, PROJECT_FAMILIESCFG};
     private static final String PIP_VERSION = "0.0.1-SNAPSHOT";
-    private static final String SRC_NAME = "TestSource";
     private static final String DATA_FILE = "profile.data";
     private static final String CTL_FILE = "profile.ctl";
 
@@ -304,7 +305,7 @@ public class AlgorithmProfileHelper {
             SLOT_FAMILY_PARAMETERS, getValue(testFamily, SLOT_FAMILY_PARAMETERS),
             SLOT_FAMILY_MEMBERS, new Object[] {testAlgorithm.getValue()});
         DecisionVariableDeclaration familyEltVar = createDecisionVariable("prFamilyElt0", familyElementType, pip, 
-            SLOT_FAMILYELEMENT_NAME, "family",
+            SLOT_FAMILYELEMENT_NAME, FAM_NAME,
             SLOT_PIPELINE_NODE_PARALLELISM, 1, 
             SLOT_FAMILYELEMENT_FAMILY, familyVar);
         DecisionVariableDeclaration flowVar = createDecisionVariable("prFlow0", flowType, pip,
