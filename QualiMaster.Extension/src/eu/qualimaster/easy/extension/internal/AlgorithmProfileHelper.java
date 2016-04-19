@@ -287,70 +287,71 @@ public class AlgorithmProfileHelper {
         ValueDoesNotMatchTypeException, CSTSemanticException {
         Project cfgProject = config.getProject();
         Project cfgInfra = ModelQuery.findProject(cfgProject, PROJECT_INFRASTRUCTURE);
-        
         Compound familyType = findCompound(cfgProject, TYPE_FAMILY);
         IDecisionVariable testFamily = findNamedVariable(config, familyType, familyName);
         IDecisionVariable testAlgorithm = findAlgorithm(testFamily, algorithmName, true);
-        
-        Project pip = createQmProject("ProfilingTestPipeline" + CFG_POSTFIX, cfgProject);
-        addImports(cfgProject, PIPELINE_IMPORTS, pip);
-
-        Compound dataSourceType = findCompound(pip, TYPE_DATASOURCE);
-        Compound flowType = findCompound(pip, TYPE_FLOW);
-        Compound pipelineType = findCompound(pip, TYPE_PIPELINE);
-        Compound sourceType = findCompound(pip, TYPE_SOURCE);
-        Compound familyElementType = findCompound(pip, TYPE_FAMILYELEMENT);
-        
-        DecisionVariableDeclaration dataSourceVar = createDecisionVariable("prDataSource0", dataSourceType, pip, 
-            SLOT_DATASOURCE_NAME, SRC_NAME,
-            SLOT_DATASOURCE_TUPLES, testFamily.getNestedElement(SLOT_FAMILY_INPUT).getValue().clone(),
-            SLOT_DATASOURCE_ARTIFACT, "eu.qualimaster:genericSource:0.5.0-SNAPSHOT",
-            SLOT_DATASOURCE_STORAGELOCATION, "null",
-            SLOT_DATASOURCE_PROFILINGSOURCE, true,
-            SLOT_DATASOURCE_DATAMANAGEMENTSTRATEGY, CONST_DATAMANAGEMENTSTRATEGY_NONE,
-            SLOT_DATASOURCE_PARAMETERS, createDataSourceParameters(cfgProject),
-            SLOT_DATASOURCE_SOURCECLS, "eu.qualimaster." + pipelineName + ".topology.imp." + SRC_NAME);
-        DecisionVariableDeclaration familyVar = createDecisionVariable("prFamily0", familyType, pip, 
-            SLOT_FAMILY_NAME, getValue(testFamily, SLOT_FAMILY_NAME),
-            SLOT_FAMILY_INPUT, getValue(testFamily, SLOT_FAMILY_INPUT),
-            SLOT_FAMILY_OUTPUT, getValue(testFamily, SLOT_FAMILY_OUTPUT),
-            SLOT_FAMILY_PARAMETERS, getValue(testFamily, SLOT_FAMILY_PARAMETERS),
-            SLOT_FAMILY_MEMBERS, new Object[] {testAlgorithm.getValue()});
-        DecisionVariableDeclaration familyEltVar = createDecisionVariable("prFamilyElt0", familyElementType, pip, 
-            SLOT_FAMILYELEMENT_NAME, FAM_NAME,
-            SLOT_PIPELINE_NODE_PARALLELISM, 1, 
-            SLOT_FAMILYELEMENT_FAMILY, familyVar);
-        DecisionVariableDeclaration flowVar = createDecisionVariable("prFlow0", flowType, pip,
-            SLOT_FLOW_NAME, "f1",
-            SLOT_FLOW_DESTINATION, familyEltVar,
-            SLOT_FLOW_GROUPING, CONST_GROUPING_SHUFFLEGROUPING);
-        DecisionVariableDeclaration sourceVar = createDecisionVariable("prSource0", sourceType, pip,
-            SLOT_SOURCE_NAME, "source",
-            SLOT_PIPELINE_NODE_PARALLELISM, 1, 
-            // #TASKS
-            SLOT_SOURCE_OUTPUT, new Object[]{flowVar},
-            SLOT_SOURCE_SOURCE, dataSourceVar);
-        DecisionVariableDeclaration pipVar = createDecisionVariable("prPipeline0", pipelineType, pip, 
-            SLOT_PIPELINE_NAME, pipelineName, 
-            SLOT_PIPELINE_ARTIFACT, "eu.qualimaster:" + pipelineName + ":" + PIP_VERSION,
-            SLOT_PIPELINE_SOURCES, new Object[]{sourceVar},
-            SLOT_PIPELINE_NUMWORKERS, 1);
-        Utils.createFreezeBlock(pip);
-
-        Project pipelines = createQmProject(PROJECT_PIPELINESCFG, cfgProject);
-        addImports(cfgProject, PIPELINES_IMPORTS, pipelines, pip);
-        DecisionVariableDeclaration pipelinesVar = setPipelines(pipelines, VAR_PIPELINES_PIPELINES, pipVar);
-        createFreezeBlock(new IFreezable[]{pipelinesVar}, pipelines, pipelines);
-        
-        Project infra = createQmProject(PROJECT_INFRASTRUCTURECFG, cfgProject);
-        addImports(cfgProject, INFRASTRUCTURE_IMPORTS, infra, pipelines);
-        List<IFreezable> freezes = addTopLevelValues(config, cfgInfra, infra, VAR_INFRASTRUCTURE_ACTIVEPIPELINES);
-        freezes.add(setPipelines(infra, VAR_INFRASTRUCTURE_ACTIVEPIPELINES, pipVar));
-        createFreezeBlock(freezes, infra, infra);
-        
-        Project qm = createQmProject(PROJECT_TOP_LEVEL, cfgProject);
-        addImports(cfgProject, TOP_IMPORTS, qm, infra);
-
+        Project qm;
+        if (null != testFamily && null != testAlgorithm) { // allow for testing
+            Project pip = createQmProject("ProfilingTestPipeline" + CFG_POSTFIX, cfgProject);
+            addImports(cfgProject, PIPELINE_IMPORTS, pip);
+    
+            Compound dataSourceType = findCompound(pip, TYPE_DATASOURCE);
+            Compound flowType = findCompound(pip, TYPE_FLOW);
+            Compound pipelineType = findCompound(pip, TYPE_PIPELINE);
+            Compound sourceType = findCompound(pip, TYPE_SOURCE);
+            Compound familyElementType = findCompound(pip, TYPE_FAMILYELEMENT);
+            
+            DecisionVariableDeclaration dataSourceVar = createDecisionVariable("prDataSource0", dataSourceType, pip, 
+                SLOT_DATASOURCE_NAME, SRC_NAME,
+                SLOT_DATASOURCE_TUPLES, testFamily.getNestedElement(SLOT_FAMILY_INPUT).getValue().clone(),
+                SLOT_DATASOURCE_ARTIFACT, "eu.qualimaster:genericSource:0.5.0-SNAPSHOT",
+                SLOT_DATASOURCE_STORAGELOCATION, "null",
+                SLOT_DATASOURCE_PROFILINGSOURCE, true,
+                SLOT_DATASOURCE_DATAMANAGEMENTSTRATEGY, CONST_DATAMANAGEMENTSTRATEGY_NONE,
+                SLOT_DATASOURCE_PARAMETERS, createDataSourceParameters(cfgProject),
+                SLOT_DATASOURCE_SOURCECLS, "eu.qualimaster." + pipelineName + ".topology.imp." + SRC_NAME);
+            DecisionVariableDeclaration familyVar = createDecisionVariable("prFamily0", familyType, pip, 
+                SLOT_FAMILY_NAME, getValue(testFamily, SLOT_FAMILY_NAME),
+                SLOT_FAMILY_INPUT, getValue(testFamily, SLOT_FAMILY_INPUT),
+                SLOT_FAMILY_OUTPUT, getValue(testFamily, SLOT_FAMILY_OUTPUT),
+                SLOT_FAMILY_PARAMETERS, getValue(testFamily, SLOT_FAMILY_PARAMETERS),
+                SLOT_FAMILY_MEMBERS, new Object[] {testAlgorithm.getValue()});
+            DecisionVariableDeclaration familyEltVar = createDecisionVariable("prFamilyElt0", familyElementType, pip, 
+                SLOT_FAMILYELEMENT_NAME, FAM_NAME,
+                SLOT_PIPELINE_NODE_PARALLELISM, 1, 
+                SLOT_FAMILYELEMENT_FAMILY, familyVar);
+            DecisionVariableDeclaration flowVar = createDecisionVariable("prFlow0", flowType, pip,
+                SLOT_FLOW_NAME, "f1",
+                SLOT_FLOW_DESTINATION, familyEltVar,
+                SLOT_FLOW_GROUPING, CONST_GROUPING_SHUFFLEGROUPING);
+            DecisionVariableDeclaration sourceVar = createDecisionVariable("prSource0", sourceType, pip,
+                SLOT_SOURCE_NAME, "source",
+                SLOT_PIPELINE_NODE_PARALLELISM, 1, 
+                SLOT_SOURCE_OUTPUT, new Object[]{flowVar},
+                SLOT_SOURCE_SOURCE, dataSourceVar);
+            DecisionVariableDeclaration pipVar = createDecisionVariable("prPipeline0", pipelineType, pip, 
+                SLOT_PIPELINE_NAME, pipelineName, 
+                SLOT_PIPELINE_ARTIFACT, "eu.qualimaster:" + pipelineName + ":" + PIP_VERSION,
+                SLOT_PIPELINE_SOURCES, new Object[]{sourceVar},
+                SLOT_PIPELINE_NUMWORKERS, 1);
+            Utils.createFreezeBlock(pip);
+    
+            Project pipelines = createQmProject(PROJECT_PIPELINESCFG, cfgProject);
+            addImports(cfgProject, PIPELINES_IMPORTS, pipelines, pip);
+            DecisionVariableDeclaration pipelinesVar = setPipelines(pipelines, VAR_PIPELINES_PIPELINES, pipVar);
+            createFreezeBlock(new IFreezable[]{pipelinesVar}, pipelines, pipelines);
+            
+            Project infra = createQmProject(PROJECT_INFRASTRUCTURECFG, cfgProject);
+            addImports(cfgProject, INFRASTRUCTURE_IMPORTS, infra, pipelines);
+            List<IFreezable> freezes = addTopLevelValues(config, cfgInfra, infra, VAR_INFRASTRUCTURE_ACTIVEPIPELINES);
+            freezes.add(setPipelines(infra, VAR_INFRASTRUCTURE_ACTIVEPIPELINES, pipVar));
+            createFreezeBlock(freezes, infra, infra);
+            
+            qm = createQmProject(PROJECT_TOP_LEVEL, cfgProject);
+            addImports(cfgProject, TOP_IMPORTS, qm, infra);
+        } else {
+            qm = cfgProject;
+        }
         return qm;
     }
     
