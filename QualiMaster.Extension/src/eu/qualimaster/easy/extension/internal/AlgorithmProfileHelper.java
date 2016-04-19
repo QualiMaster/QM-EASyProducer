@@ -291,16 +291,15 @@ public class AlgorithmProfileHelper {
         IDecisionVariable testFamily = findNamedVariable(config, familyType, familyName);
         IDecisionVariable testAlgorithm = findAlgorithm(testFamily, algorithmName, true);
         Project qm;
-        if (null != testFamily && null != testAlgorithm) { // allow for testing
-            Project pip = createQmProject("ProfilingTestPipeline" + CFG_POSTFIX, cfgProject);
-            addImports(cfgProject, PIPELINE_IMPORTS, pip);
-    
-            Compound dataSourceType = findCompound(pip, TYPE_DATASOURCE);
-            Compound flowType = findCompound(pip, TYPE_FLOW);
-            Compound pipelineType = findCompound(pip, TYPE_PIPELINE);
-            Compound sourceType = findCompound(pip, TYPE_SOURCE);
-            Compound familyElementType = findCompound(pip, TYPE_FAMILYELEMENT);
-            
+        Project pip = createQmProject("ProfilingTestPipeline" + CFG_POSTFIX, cfgProject);
+        addImports(cfgProject, PIPELINE_IMPORTS, pip);
+        Compound dataSourceType = findCompound(pip, TYPE_DATASOURCE);
+        Compound flowType = findCompound(pip, TYPE_FLOW);
+        Compound pipelineType = findCompound(pip, TYPE_PIPELINE);
+        Compound sourceType = findCompound(pip, TYPE_SOURCE);
+        Compound familyElementType = findCompound(pip, TYPE_FAMILYELEMENT);
+
+        if (null != testFamily && null != testAlgorithm && null != dataSourceType && null != flowType) {
             DecisionVariableDeclaration dataSourceVar = createDecisionVariable("prDataSource0", dataSourceType, pip, 
                 SLOT_DATASOURCE_NAME, SRC_NAME,
                 SLOT_DATASOURCE_TUPLES, testFamily.getNestedElement(SLOT_FAMILY_INPUT).getValue().clone(),
