@@ -226,13 +226,18 @@ public class AlgorithmProfileHelper {
      * @param artifactSpec the artifact specification
      * @param name the logical name of the artifact
      * @param base the base folder where to extract to
+     * @throws VilException in case that obtaining the artifact fails
      */
-    public static void extractProfilingArtifact(String artifactSpec, String name, File base) {
+    public static void extractProfilingArtifact(String artifactSpec, String name, File base) throws VilException {
         if (null != artifactSpec) {
             File dataArtifact = RepositoryHelper.obtainArtifact(artifactSpec, name, "profiling", ".zip", base);
             if (null != dataArtifact) {
                 extractDataArtifact(dataArtifact, base);
+            } else {
+                throw new VilException("artifact for spec " + artifactSpec + " not found", VilException.ID_RUNTIME);
             }
+        } else {
+            throw new VilException("no artifact spec given ", VilException.ID_RUNTIME);
         }
     }
     
