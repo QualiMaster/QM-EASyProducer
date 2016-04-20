@@ -185,7 +185,7 @@ public class AlgorithmProfileHelper {
             File base = source.getBase();
             Compound familyType = findCompound(qm, TYPE_FAMILY);
             IDecisionVariable testFamily = findNamedVariable(config, familyType, familyName);
-            IDecisionVariable testAlgorithm = findAlgorithm(testFamily, algorithmName, true);
+            IDecisionVariable testAlgorithm = Configuration.dereference(findAlgorithm(testFamily, algorithmName, true));
             String algArtifact = VariableHelper.getString(testAlgorithm, SLOT_ALGORITHM_ARTIFACT);
             extractProfilingArtifact(algArtifact, algorithmName, base);
             File pipFile = new File(base, "eu/qualimaster/" + pipelineName + "/target/" + pipelineName 
