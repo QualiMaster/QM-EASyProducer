@@ -229,7 +229,7 @@ public class AlgorithmProfileHelper {
      */
     public static void extractProfilingArtifact(String artifactSpec, String name, File base) {
         if (null != artifactSpec) {
-            File dataArtifact = RepositoryHelper.obtainArtifact(artifactSpec, name, "-profiling.zip", base);
+            File dataArtifact = RepositoryHelper.obtainArtifact(artifactSpec, name, "profiling", ".zip", base);
             if (null != dataArtifact) {
                 extractDataArtifact(dataArtifact, base);
             }

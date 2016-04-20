@@ -1,4 +1,3 @@
-eu.qualimaster.coordination.CoordinationCommandExecutionEvent
 eu.qualimaster.coordination.ParallelismChangeRequest
 eu.qualimaster.coordination.commands.AbstractCommandContainer
 eu.qualimaster.coordination.commands.AbstractPipelineCommand
@@ -13,6 +12,11 @@ eu.qualimaster.coordination.commands.ParameterChangeCommand
 eu.qualimaster.coordination.commands.PipelineCommand
 eu.qualimaster.coordination.commands.ProfileAlgorithmCommand
 eu.qualimaster.coordination.commands.ScheduleWavefrontAdaptationCommand
+eu.qualimaster.coordination.commands.ShutdownCommand
+eu.qualimaster.coordination.commands.UpdateCommand
+eu.qualimaster.coordination.events.AlgorithmProfilingEvent
+eu.qualimaster.coordination.events.CoordinationCommandExecutionEvent
+eu.qualimaster.coordination.events.CoordinationEvent
 eu.qualimaster.adaptation.events.AdaptationEvent
 eu.qualimaster.adaptation.events.AdaptationEventResponse
 eu.qualimaster.adaptation.events.AlgorithmConfigurationAdaptationEvent
