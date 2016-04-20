@@ -444,7 +444,11 @@ public class AlgorithmProfileHelper {
             throw new ModelQueryException("cannot find slot '" + slot + "' in '" + var.getDeclaration().getName() 
                 + "'", ModelQueryException.ACCESS_ERROR);
         }
-        return nested.getValue().clone();
+        Value val = nested.getValue();
+        if (null != val) {
+            val = val.clone();
+        }
+        return val;
     }
     
     /**
