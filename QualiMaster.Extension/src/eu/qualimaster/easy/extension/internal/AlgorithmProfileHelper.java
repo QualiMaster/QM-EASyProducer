@@ -15,7 +15,6 @@
  */
 package eu.qualimaster.easy.extension.internal;
 
-import eu.qualimaster.adaptation.AdaptationConfiguration;
 import eu.qualimaster.common.QMInternal;
 import eu.qualimaster.coordination.RepositoryHelper;
 import net.ssehub.easy.basics.modelManagement.ModelManagementException;
@@ -60,11 +59,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.LogManager;
 import org.eclipse.xtext.util.Arrays;
 
@@ -192,8 +189,8 @@ public class AlgorithmProfileHelper {
             IDecisionVariable testAlgorithm = Configuration.dereference(findAlgorithm(testFamily, algorithmName, true));
             String algArtifact = VariableHelper.getString(testAlgorithm, SLOT_ALGORITHM_ARTIFACT);
             extractProfilingArtifact(algArtifact, algorithmName, base);
-            File pipFile = new File(base, "eu/qualimaster/" + pipelineName + "/target/" + pipelineName 
-                + ":" + PIP_VERSION + ".jar");
+            File pipFile = new File(base, "pipelines/eu/qualimaster/" + pipelineName + "/target/" + pipelineName 
+                + "-" + PIP_VERSION + "-jar-with-dependencies.jar");
             File dataFile = getDataFile(base);
             File controlFile = getControlFile(base);
             result = new ProfileData(pipelineName, pipFile, dataFile, controlFile);
