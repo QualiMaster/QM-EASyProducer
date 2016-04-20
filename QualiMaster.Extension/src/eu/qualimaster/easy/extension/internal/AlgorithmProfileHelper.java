@@ -15,6 +15,7 @@
  */
 package eu.qualimaster.easy.extension.internal;
 
+import eu.qualimaster.adaptation.AdaptationConfiguration;
 import eu.qualimaster.common.QMInternal;
 import eu.qualimaster.coordination.RepositoryHelper;
 import net.ssehub.easy.basics.modelManagement.ModelManagementException;
@@ -52,11 +53,14 @@ import net.ssehub.easy.varModel.model.values.ValueFactory;
 import static eu.qualimaster.easy.extension.QmConstants.*;
 import static eu.qualimaster.easy.extension.internal.Utils.*;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -249,6 +253,7 @@ public class AlgorithmProfileHelper {
      */
     private static void extractDataArtifact(File file, File base) {
         ZipInputStream zis = null;
+        byte[] buf = new byte[2048];
         try {
             zis = new ZipInputStream(new FileInputStream(file));
             ZipEntry entry;
@@ -257,7 +262,16 @@ public class AlgorithmProfileHelper {
                 if (null != entry) {
                     String name = entry.getName();
                     if (name.equals(DATA_FILE) || name.equals(CTL_FILE)) {
-                        FileUtils.copyInputStreamToFile(zis, new File(base, name));
+                        // write the file to the disk
+                        int count;
+                        File outFile = new File(base, name);
+                        FileOutputStream fos = new FileOutputStream(outFile);
+                        BufferedOutputStream dest = new BufferedOutputStream(fos, buf.length);
+                        while ((count = zis.read(buf, 0, buf.length)) != -1) {
+                            dest.write(buf, 0, count);
+                        }
+                        dest.flush();
+                        dest.close();                        
                     }
                 }
             } while (null != entry);
