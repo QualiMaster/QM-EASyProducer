@@ -75,8 +75,8 @@ public class AlgorithmProfileHelper {
     public static final String PARAM_HDFS_DATAFILE = "hdfsDataFile";
     public static final String PARAM_DATAFILE = "dataFile";
     public static final String PARAM_REPLAYSPEED = "replaySpeed";
-    public static final String SRC_NAME = "TestSource";
-    public static final String FAM_NAME = "TestFamily";
+    public static final String SRC_NAME = "TestSource"; // must be valid IVML identifier
+    public static final String FAM_NAME = "TestFamily"; // must be valid IVML identifier
     
     private static final String[] PIPELINE_IMPORTS = {PROJECT_BASICS, PROJECT_PIPELINES, PROJECT_FAMILIESCFG, 
         PROJECT_DATAMGTCFG};
@@ -316,7 +316,7 @@ public class AlgorithmProfileHelper {
         Compound familyElementType = findCompound(pip, TYPE_FAMILYELEMENT);
 
         if (null != testFamily && null != testAlgorithm && null != dataSourceType && null != flowType) {
-            DecisionVariableDeclaration dataSourceVar = createDecisionVariable("prDataSource0", dataSourceType, pip, 
+            DecisionVariableDeclaration dataSourceVar = createDecisionVariable(SRC_NAME, dataSourceType, pip, 
                 SLOT_DATASOURCE_NAME, SRC_NAME,
                 SLOT_DATASOURCE_TUPLES, testFamily.getNestedElement(SLOT_FAMILY_INPUT).getValue().clone(),
                 SLOT_DATASOURCE_ARTIFACT, "eu.qualimaster:genericSource:0.5.0-SNAPSHOT",
@@ -331,7 +331,7 @@ public class AlgorithmProfileHelper {
                 SLOT_FAMILY_OUTPUT, getValue(testFamily, SLOT_FAMILY_OUTPUT),
                 SLOT_FAMILY_PARAMETERS, getValue(testFamily, SLOT_FAMILY_PARAMETERS),
                 SLOT_FAMILY_MEMBERS, new Object[] {testAlgorithm.getValue()});
-            DecisionVariableDeclaration familyEltVar = createDecisionVariable("prFamilyElt0", familyElementType, pip, 
+            DecisionVariableDeclaration familyEltVar = createDecisionVariable(FAM_NAME, familyElementType, pip, 
                 SLOT_FAMILYELEMENT_NAME, FAM_NAME,
                 SLOT_PIPELINE_NODE_PARALLELISM, 1, 
                 SLOT_FAMILYELEMENT_FAMILY, familyVar);
