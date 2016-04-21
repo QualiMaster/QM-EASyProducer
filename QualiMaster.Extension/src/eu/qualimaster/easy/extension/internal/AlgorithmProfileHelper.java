@@ -77,6 +77,7 @@ public class AlgorithmProfileHelper {
     public static final String PARAM_REPLAYSPEED = "replaySpeed";
     public static final String SRC_NAME = "TestSource"; // must be valid IVML identifier
     public static final String FAM_NAME = "TestFamily"; // must be valid IVML identifier
+    public static final String DATASRC_NAME = SRC_NAME + "Profiling";
     
     private static final String[] PIPELINE_IMPORTS = {PROJECT_BASICS, PROJECT_PIPELINES, PROJECT_FAMILIESCFG, 
         PROJECT_DATAMGTCFG};
@@ -316,16 +317,15 @@ public class AlgorithmProfileHelper {
         Compound familyElementType = findCompound(pip, TYPE_FAMILYELEMENT);
 
         if (null != testFamily && null != testAlgorithm && null != dataSourceType && null != flowType) {
-            DecisionVariableDeclaration dataSourceVar = createDecisionVariable(SRC_NAME, dataSourceType, pip, 
-                SLOT_DATASOURCE_NAME, SRC_NAME,
+            DecisionVariableDeclaration dataSourceVar = createDecisionVariable(DATASRC_NAME, dataSourceType, pip, 
+                SLOT_DATASOURCE_NAME, DATASRC_NAME,
                 SLOT_DATASOURCE_TUPLES, testFamily.getNestedElement(SLOT_FAMILY_INPUT).getValue().clone(),
                 SLOT_DATASOURCE_ARTIFACT, "eu.qualimaster:genericSource:0.5.0-SNAPSHOT",
                 SLOT_DATASOURCE_STORAGELOCATION, "null",
                 SLOT_DATASOURCE_PROFILINGSOURCE, true,
                 SLOT_DATASOURCE_DATAMANAGEMENTSTRATEGY, CONST_DATAMANAGEMENTSTRATEGY_NONE,
                 SLOT_DATASOURCE_PARAMETERS, createDataSourceParameters(cfgProject),
-                SLOT_DATASOURCE_SOURCECLS, "eu.qualimaster." + pipelineName + ".topology.imp." + SRC_NAME 
-                    + "Profiling");
+                SLOT_DATASOURCE_SOURCECLS, "eu.qualimaster." + pipelineName + ".topology.imp." + DATASRC_NAME);
             DecisionVariableDeclaration familyVar = createDecisionVariable("prFamily0", familyType, pip, 
                 SLOT_FAMILY_NAME, getValue(testFamily, SLOT_FAMILY_NAME),
                 SLOT_FAMILY_INPUT, getValue(testFamily, SLOT_FAMILY_INPUT),
@@ -340,8 +340,8 @@ public class AlgorithmProfileHelper {
                 SLOT_FLOW_NAME, "f1",
                 SLOT_FLOW_DESTINATION, familyEltVar,
                 SLOT_FLOW_GROUPING, CONST_GROUPING_SHUFFLEGROUPING);
-            DecisionVariableDeclaration sourceVar = createDecisionVariable("prSource0", sourceType, pip,
-                SLOT_SOURCE_NAME, "source",
+            DecisionVariableDeclaration sourceVar = createDecisionVariable(SRC_NAME, sourceType, pip,
+                SLOT_SOURCE_NAME, SRC_NAME,
                 SLOT_PIPELINE_NODE_PARALLELISM, 1, 
                 SLOT_SOURCE_OUTPUT, new Object[]{flowVar},
                 SLOT_SOURCE_SOURCE, dataSourceVar);
