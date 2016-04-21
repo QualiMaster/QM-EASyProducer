@@ -325,7 +325,8 @@ public class AlgorithmProfileHelper {
                 SLOT_DATASOURCE_PROFILINGSOURCE, true,
                 SLOT_DATASOURCE_DATAMANAGEMENTSTRATEGY, CONST_DATAMANAGEMENTSTRATEGY_NONE,
                 SLOT_DATASOURCE_PARAMETERS, createDataSourceParameters(cfgProject),
-                SLOT_DATASOURCE_SOURCECLS, "eu.qualimaster." + pipelineName + ".topology.imp." + DATASRC_NAME);
+                SLOT_DATASOURCE_SOURCECLS, "eu.qualimaster." + pipelineName + ".topology.imp." + DATASRC_NAME 
+                    + "Profiling");
             DecisionVariableDeclaration familyVar = createDecisionVariable("prFamily0", familyType, pip, 
                 SLOT_FAMILY_NAME, getValue(testFamily, SLOT_FAMILY_NAME),
                 SLOT_FAMILY_INPUT, getValue(testFamily, SLOT_FAMILY_INPUT),
