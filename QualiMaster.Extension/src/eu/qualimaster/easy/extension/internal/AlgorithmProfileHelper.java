@@ -175,7 +175,7 @@ public class AlgorithmProfileHelper {
             Project qm = createNewRoot(config, pipelineName, familyName, algorithmName);
             Configuration cfg = new Configuration(qm);
             
-            TracerFactory.setInstance(ConsoleTracerFactory.INSTANCE);
+            TracerFactory.setInstance(ConsoleTracerFactory.INSTANCE); // clear thread specific instance
             StandaloneProjectDescriptor target = new StandaloneProjectDescriptor(source, source.getBase());
             Executor executor = new Executor(source.getMainVilScript())
                 .addSource(source).addTarget(target)
@@ -183,6 +183,7 @@ public class AlgorithmProfileHelper {
                 .addCustomArgument("pipelineName", pipelineName)
                 .addStartRuleName("pipeline");
             executor.execute();
+            TracerFactory.setInstance(null); // clear thread specific instance
 
             File base = source.getBase();
             Compound familyType = findCompound(qm, TYPE_FAMILY);
