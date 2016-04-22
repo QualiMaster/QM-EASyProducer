@@ -37,6 +37,7 @@
         <copy file="${eu.qualimaster:AdaptationLayer:jar}" tofile="lib/AdaptationLayer.jar" />
     	<copy file="${eu.qualimaster:MonitoringLayer:jar}" tofile="lib/MonitoringLayer.jar" />
     	<copy file="${eu.qualimaster:DataManagementLayer:jar}" tofile="lib/DataManagementLayer.jar" />
+    	<copy file="${eu.qualimaster:StormCommons:jar}" tofile="lib/StormCommons.jar" />
         <echoproperties/>        
         <java classname="eu.qualimaster.easy.extension.internal.Registration" fork="true">
             <classpath>
@@ -46,10 +47,12 @@
                 <pathelement location="lib/CoordinationLayer.jar"/>
                 <pathelement location="lib/DataManagementLayer.jar"/>
                 <pathelement location="lib/QualiMaster.Events.jar"/>
+            	<pathelement location="lib/StormCommons.jar"/>
                 <pathelement location="lib/slf4j-api-1.7.5.jar"/>
                 <pathelement location="${de.uni_hildesheim.sse.easyProducer.runtime:EASy:jar}"/>
                 <pathelement location="${org.apache.storm:storm-core:jar}"/>
             	<pathelement location="${eu.qualimaster:SpassMeterIntegration:jar}"/>
+            	<pathelement location="${ch.qos.logback:logback-core:jar}"/>
             </classpath>
         </java>
     </target>

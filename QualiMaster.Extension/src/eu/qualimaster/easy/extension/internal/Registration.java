@@ -464,10 +464,17 @@ public class Registration implements IRegistration {
         BuiltIn.initialize();
         net.ssehub.easy.instantiation.rt.core.model.rtVil.BuiltIn.initialize();
         debug = true;
-
+        
         // fixed according to the structure of this projects, shall be on classpath but not be deployed
-        String jarLocations = "lib/CoordinationLayer.jar" + File.pathSeparator + "lib/QualiMaster.Events.jar" 
-            + File.pathSeparator + "lib/AdaptationLayer.jar";
+        String[] jarNames = new String[] {"CoordinationLayer", "QualiMaster.Events", "AdaptationLayer", 
+            "DataManagementLayer", "MonitoringLayer", "StormCommons"};
+        String jarLocations = "";
+        for (int i = 0; i < jarNames.length; i++) {
+            if (i > 0) {
+                jarLocations += File.pathSeparator;
+            }
+            jarLocations += "lib/" + jarNames[i] + ".jar";
+        }
         register(jarLocations); 
         System.out.println();
         System.err.println("Please refresh the project and commit the changes.");
