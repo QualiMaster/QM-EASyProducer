@@ -31,7 +31,10 @@ Bundle-ClassPath: .,
  lib/CoordinationLayer.jar,
  lib/QualiMaster.Events.jar,
  lib/AdaptationLayer.jar,
- lib/slf4j-api-1.7.5.jar
+ lib/slf4j-api-1.7.5.jar,
+ lib/DataManagementLayer.jar,
+ lib/MonitoringLayer.jar,
+ lib/StormCommons.jar
 Export-Package: eu.qualimaster.adaptation.events,
  eu.qualimaster.easy.extension,
  eu.qualimaster.easy.extension.internal
