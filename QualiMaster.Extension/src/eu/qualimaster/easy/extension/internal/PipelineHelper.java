@@ -18,9 +18,9 @@ package eu.qualimaster.easy.extension.internal;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import eu.qualimaster.adaptation.events.ViolatingClause;
 import eu.qualimaster.common.QMInternal;
 import eu.qualimaster.easy.extension.QmConstants;
+import eu.qualimaster.monitoring.events.ViolatingClause;
 import net.ssehub.easy.instantiation.core.model.common.VilException;
 import net.ssehub.easy.instantiation.core.model.vilTypes.Collection;
 import net.ssehub.easy.instantiation.core.model.vilTypes.IVilType;
