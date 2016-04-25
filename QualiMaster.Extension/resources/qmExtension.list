@@ -14,11 +14,8 @@ eu.qualimaster.coordination.commands.ProfileAlgorithmCommand
 eu.qualimaster.coordination.commands.ScheduleWavefrontAdaptationCommand
 eu.qualimaster.adaptation.events.AdaptationEvent
 eu.qualimaster.adaptation.events.AlgorithmConfigurationAdaptationEvent
-eu.qualimaster.adaptation.events.ConstraintViolationAdaptationEvent
 eu.qualimaster.adaptation.events.InitExperimentEvent
 eu.qualimaster.adaptation.events.ParameterConfigurationAdaptationEvent
-eu.qualimaster.adaptation.events.ResourceChangedAdaptationEvent
-eu.qualimaster.adaptation.events.ViolatingClause
 eu.qualimaster.events.AbstractEvent
 eu.qualimaster.events.IEvent
 eu.qualimaster.infrastructure.InfrastructurePart
@@ -33,3 +30,6 @@ eu.qualimaster.observables.TimeBehavior
 eu.qualimaster.pipeline.AlgorithmChangeParameter
 eu.qualimaster.adaptation.events.RegularAdaptationEvent
 eu.qualimaster.adaptation.events.StartupAdaptationEvent
+eu.qualimaster.monitoring.events.ConstraintViolationAdaptationEvent
+eu.qualimaster.monitoring.events.ResourceChangedAdaptationEvent
+eu.qualimaster.monitoring.events.ViolatingClause
