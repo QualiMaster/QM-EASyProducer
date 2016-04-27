@@ -205,7 +205,11 @@ public class QmConstants {
     public static final String VAR_DATAMGT_DATASINKS = "dataSinks";
     public static final String VAR_DATAMGT_PERSISTENTDATAELTS = "persistentDataElements";
     
-    // -------------------- general-purpose hardware  -----------------------
+    // ----------------------------- cloud ---------------------------------
+
+    public static final String TYPE_CLOUDRESOURCE = "CloudResource";
+    
+    // -------------------- general-purpose hardware -----------------------
 
     public static final String PROJECT_HARDWARE = "Hardware";
     public static final String PROJECT_HARDWARECFG = PROJECT_HARDWARE + CFG_POSTFIX;
