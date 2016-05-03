@@ -17,9 +17,11 @@ package eu.qualimaster.easy.extension.debug;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
 
+import eu.qualimaster.coordination.CoordinationConfiguration;
 import eu.qualimaster.coordination.RepositoryHelper;
 import eu.qualimaster.easy.extension.internal.AlgorithmProfileHelper;
 import eu.qualimaster.easy.extension.internal.AlgorithmProfileHelper.ProfileData;
@@ -51,6 +53,10 @@ public class DebugProfile extends AbstractDebug {
             System.out.println("qualimaster.profile: <model location>");
             System.exit(0);
         } else {
+            Properties prop = new Properties();
+            prop.put(CoordinationConfiguration.PIPELINE_ELEMENTS_REPOSITORY, 
+                "https://projects.sse.uni-hildesheim.de/qm/maven/");
+            CoordinationConfiguration.configure(prop, false);
             File tmp = new File(FileUtils.getTempDirectory(), "qmDebugProfile");
             FileUtils.deleteDirectory(tmp);
             tmp.mkdirs();

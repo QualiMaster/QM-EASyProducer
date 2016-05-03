@@ -171,6 +171,9 @@ public class AlgorithmProfileHelper {
     public static ProfileData createProfilePipeline(net.ssehub.easy.varModel.confModel.Configuration config, 
         String pipelineName, String familyName, String algorithmName, IProjectDescriptor source) throws VilException {
         ProfileData result = null;
+        if (null == config.getProject()) {
+            throw new VilException("no project available - syntax/parsing error?", VilException.ID_INVALID);
+        }
         try {
             Project qm = createNewRoot(config, pipelineName, familyName, algorithmName);
             Configuration cfg = new Configuration(qm);

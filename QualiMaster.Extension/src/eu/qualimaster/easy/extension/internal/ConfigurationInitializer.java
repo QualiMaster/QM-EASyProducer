@@ -62,6 +62,9 @@ public class ConfigurationInitializer {
     public static void initializeConfiguration(net.ssehub.easy.varModel.confModel.Configuration config, 
         String newVariablePrefix) throws VilException {
         Project project = config.getProject();
+        if (null == project) {
+            throw new VilException("no project available - syntax/parsing error?", VilException.ID_INVALID);
+        }
         try {
             // did not want to introduce an IVML copy operation by now
             Enum bindingTime = (Enum) ModelQuery.findType(project, TYPE_BINDING_TIME, Enum.class);
