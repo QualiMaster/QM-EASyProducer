@@ -430,8 +430,11 @@ public class Registration implements IRegistration {
                 }
             }
         } catch (ClassNotFoundException e) {
-            LOGGING.info(e.getMessage());
+            LOGGING.info("Loading " + className + ": " + e.getMessage());
+        } catch (NoClassDefFoundError e) {
+            LOGGING.info("Loading " + className + ": " + e.getMessage());
         } 
+
     }
     
     /**
