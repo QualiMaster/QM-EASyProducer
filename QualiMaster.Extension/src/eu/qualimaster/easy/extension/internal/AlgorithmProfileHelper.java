@@ -370,7 +370,6 @@ public class AlgorithmProfileHelper {
             List<IFreezable> freezes = addTopLevelValues(config, cfgInfra, infra, VAR_INFRASTRUCTURE_ACTIVEPIPELINES);
             freezes.add(setPipelines(infra, VAR_INFRASTRUCTURE_ACTIVEPIPELINES, pipVar));
             createFreezeBlock(freezes, infra, infra);
-            
             qm = createQmProject(PROJECT_TOP_LEVEL, cfgProject);
             addImports(cfgProject, TOP_IMPORTS, qm, infra);
         } else {
@@ -390,12 +389,12 @@ public class AlgorithmProfileHelper {
      * @throws ValueDoesNotMatchTypeException in case that the index value does not match
      */
     private static ConstraintSyntaxTree createRefToTuple(DecisionVariableDeclaration var, String slotName, int index) 
-    	throws CSTSemanticException, ValueDoesNotMatchTypeException {
-    	ConstraintSyntaxTree slotAccess = new CompoundAccess(new Variable(var), slotName);
-    	ConstraintSyntaxTree indexExpr = new ConstantValue(ValueFactory.createValue(IntegerType.TYPE, index));
-    	ConstraintSyntaxTree result = new OCLFeatureCall(slotAccess, "[]", indexExpr);
-    	result.inferDatatype();
-    	return result;
+        throws CSTSemanticException, ValueDoesNotMatchTypeException {
+        ConstraintSyntaxTree slotAccess = new CompoundAccess(new Variable(var), slotName);
+        ConstraintSyntaxTree indexExpr = new ConstantValue(ValueFactory.createValue(IntegerType.TYPE, index));
+        ConstraintSyntaxTree result = new OCLFeatureCall(slotAccess, "[]", indexExpr);
+        result.inferDatatype();
+        return result;
     }
     
     /**
