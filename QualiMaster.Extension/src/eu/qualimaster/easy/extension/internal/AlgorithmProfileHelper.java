@@ -323,9 +323,10 @@ public class AlgorithmProfileHelper {
         Compound familyElementType = findCompound(pip, TYPE_FAMILYELEMENT);
 
         if (null != testFamily && null != testAlgorithm && null != dataSourceType && null != flowType) {
+            IDecisionVariable famTuples = testFamily.getNestedElement(SLOT_FAMILY_INPUT);
             DecisionVariableDeclaration dataSourceVar = createDecisionVariable(DATASRC_NAME, dataSourceType, pip, 
                 SLOT_DATASOURCE_NAME, DATASRC_NAME,
-                SLOT_DATASOURCE_TUPLES, testFamily.getNestedElement(SLOT_FAMILY_INPUT).getValue().clone(),
+                SLOT_DATASOURCE_TUPLES, famTuples.getValue().clone(),
                 SLOT_DATASOURCE_ARTIFACT, "eu.qualimaster:genericSource:0.5.0-SNAPSHOT",
                 SLOT_DATASOURCE_STORAGELOCATION, "null",
                 SLOT_DATASOURCE_PROFILINGSOURCE, true,
@@ -343,15 +344,18 @@ public class AlgorithmProfileHelper {
                 SLOT_FAMILYELEMENT_NAME, FAM_NAME,
                 SLOT_PIPELINE_NODE_PARALLELISM, 1, 
                 SLOT_FAMILYELEMENT_FAMILY, familyVar);
-            DecisionVariableDeclaration flowVar = createDecisionVariable("prFlow0", flowType, pip,
-                SLOT_FLOW_NAME, "f1",
-                SLOT_FLOW_DESTINATION, familyEltVar,
-                SLOT_FLOW_TUPLE_TYPE, createRefToTuple(dataSourceVar, SLOT_DATASOURCE_TUPLES, 0),
-                SLOT_FLOW_GROUPING, CONST_GROUPING_SHUFFLEGROUPING);
+            Object[] flowVars = new Object[famTuples.getNestedElementsCount()];
+            for (int n = 0; n < flowVars.length; n++) {
+                flowVars[n] = createDecisionVariable("prFlow" + n, flowType, pip,
+                        SLOT_FLOW_NAME, "f" + n,
+                        SLOT_FLOW_DESTINATION, familyEltVar,
+                        SLOT_FLOW_TUPLE_TYPE, createRefToTuple(dataSourceVar, SLOT_DATASOURCE_TUPLES, n),
+                        SLOT_FLOW_GROUPING, CONST_GROUPING_SHUFFLEGROUPING);
+            }
             DecisionVariableDeclaration sourceVar = createDecisionVariable(SRC_NAME, sourceType, pip,
                 SLOT_SOURCE_NAME, SRC_NAME,
                 SLOT_PIPELINE_NODE_PARALLELISM, 1, 
-                SLOT_SOURCE_OUTPUT, new Object[]{flowVar},
+                SLOT_SOURCE_OUTPUT, flowVars,
                 SLOT_SOURCE_SOURCE, dataSourceVar);
             DecisionVariableDeclaration pipVar = createDecisionVariable("prPipeline0", pipelineType, pip, 
                 SLOT_PIPELINE_NAME, pipelineName, 
