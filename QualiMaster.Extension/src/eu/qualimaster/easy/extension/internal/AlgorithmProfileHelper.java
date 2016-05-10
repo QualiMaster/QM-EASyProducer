@@ -27,6 +27,7 @@ import net.ssehub.easy.producer.core.persistence.standard.StandaloneProjectDescr
 import net.ssehub.easy.varModel.confModel.Configuration;
 import net.ssehub.easy.varModel.confModel.IDecisionVariable;
 import net.ssehub.easy.varModel.cst.CSTSemanticException;
+import net.ssehub.easy.varModel.cst.CompoundAccess;
 import net.ssehub.easy.varModel.cst.ConstantValue;
 import net.ssehub.easy.varModel.cst.ConstraintSyntaxTree;
 import net.ssehub.easy.varModel.cst.OCLFeatureCall;
@@ -45,6 +46,7 @@ import net.ssehub.easy.varModel.model.datatypes.Compound;
 import net.ssehub.easy.varModel.model.datatypes.ConstraintType;
 import net.ssehub.easy.varModel.model.datatypes.Container;
 import net.ssehub.easy.varModel.model.datatypes.IDatatype;
+import net.ssehub.easy.varModel.model.datatypes.IntegerType;
 import net.ssehub.easy.varModel.model.values.Value;
 import net.ssehub.easy.varModel.model.values.ValueDoesNotMatchTypeException;
 import net.ssehub.easy.varModel.model.values.ValueFactory;
@@ -344,6 +346,7 @@ public class AlgorithmProfileHelper {
             DecisionVariableDeclaration flowVar = createDecisionVariable("prFlow0", flowType, pip,
                 SLOT_FLOW_NAME, "f1",
                 SLOT_FLOW_DESTINATION, familyEltVar,
+                SLOT_FLOW_TUPLE_TYPE, createRefToTuple(dataSourceVar, SLOT_DATASOURCE_TUPLES, 0),
                 SLOT_FLOW_GROUPING, CONST_GROUPING_SHUFFLEGROUPING);
             DecisionVariableDeclaration sourceVar = createDecisionVariable(SRC_NAME, sourceType, pip,
                 SLOT_SOURCE_NAME, SRC_NAME,
@@ -374,6 +377,25 @@ public class AlgorithmProfileHelper {
             qm = cfgProject;
         }
         return qm;
+    }
+    
+    /**
+     * Creates an expression accessing the <code>index</code> element of <code>slotName</code> in <code>var</code>.
+     * 
+     * @param var the variable to access
+     * @param slotName the slot to access
+     * @param index the index within the slot to access
+     * @return the accessing expression
+     * @throws CSTSemanticException in case that the constraint expression cannot be created
+     * @throws ValueDoesNotMatchTypeException in case that the index value does not match
+     */
+    private static ConstraintSyntaxTree createRefToTuple(DecisionVariableDeclaration var, String slotName, int index) 
+    	throws CSTSemanticException, ValueDoesNotMatchTypeException {
+    	ConstraintSyntaxTree slotAccess = new CompoundAccess(new Variable(var), slotName);
+    	ConstraintSyntaxTree indexExpr = new ConstantValue(ValueFactory.createValue(IntegerType.TYPE, index));
+    	ConstraintSyntaxTree result = new OCLFeatureCall(slotAccess, "[]", indexExpr);
+    	result.inferDatatype();
+    	return result;
     }
     
     /**

@@ -101,6 +101,7 @@ public class QmConstants {
     public static final String SLOT_FLOW_GROUPING = "grouping";
     public static final String SLOT_FLOW_ISVALID = SLOT_ISVALID;
     public static final String CONST_GROUPING_SHUFFLEGROUPING = "shuffleGrouping";
+    public static final String SLOT_FLOW_TUPLE_TYPE = "tupleType";
     
     public static final String TYPE_PROCESSINGELEMENT = "ProcessingElement";
     public static final String SLOT_PROCESSINGELEMENT_ISVALID = SLOT_ISVALID;

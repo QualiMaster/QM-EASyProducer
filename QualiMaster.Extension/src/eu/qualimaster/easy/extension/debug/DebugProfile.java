@@ -77,6 +77,7 @@ public class DebugProfile extends AbstractDebug {
             try {
                 ProfileData data = AlgorithmProfileHelper.createProfilePipeline(monConfig, "ProfileTestPip", 
                     "fCorrelationFinancial", "TopoSoftwareCorrelationFinancial", source);
+//                		"fPreprocessor", "Preprocessor", source);
                 System.out.println("Creation successful. " + data.getPipeline());
             } catch (VilException e) {
                 e.printStackTrace();
