@@ -15,6 +15,10 @@
  */
 package eu.qualimaster.easy.extension;
 
+import java.util.ArrayList;
+
+import eu.qualimaster.observables.IObservable;
+import eu.qualimaster.observables.Observables;
 import eu.qualimaster.observables.ResourceUsage;
 import eu.qualimaster.observables.Scalability;
 import eu.qualimaster.observables.TimeBehavior;
@@ -39,5 +43,22 @@ public class QmObservables {
     public static final String TIMEBEHAVIOR_LATENCY = TimeBehavior.LATENCY.name();
 
     public static final String SCALABILITY_ITEMS = Scalability.ITEMS.name();
-
+    
+    public static final IObservable[] OBSERVABLES_LIST = Observables.OBSERVABLES;
+    
+    /**
+     * Get a list of all supported QMObservalbes.
+     * @return observaböeNames List of observalbes.
+     */
+    public static ArrayList<String> getAllObservables() {
+        
+        ArrayList<String> observableNames = new ArrayList<String>();
+        
+        for (int i = 0; i < OBSERVABLES_LIST.length; i++) {
+            String observableName = OBSERVABLES_LIST[i].name();
+            observableNames.add(observableName);
+        }
+        
+        return observableNames;
+    }
 }
