@@ -364,21 +364,96 @@ public class AlgorithmProfileHelper {
                 SLOT_PIPELINE_NUMWORKERS, 1);
             Utils.createFreezeBlock(pip);
     
-            Project pipelines = createQmProject(PROJECT_PIPELINESCFG, cfgProject);
-            addImports(cfgProject, PIPELINES_IMPORTS, pipelines, pip);
-            DecisionVariableDeclaration pipelinesVar = setPipelines(pipelines, VAR_PIPELINES_PIPELINES, pipVar);
-            createFreezeBlock(new IFreezable[]{pipelinesVar}, pipelines, pipelines);
-            
-            Project infra = createQmProject(PROJECT_INFRASTRUCTURECFG, cfgProject);
-            addImports(cfgProject, INFRASTRUCTURE_IMPORTS, infra, pipelines);
-            List<IFreezable> freezes = addTopLevelValues(config, cfgInfra, infra, VAR_INFRASTRUCTURE_ACTIVEPIPELINES);
-            freezes.add(setPipelines(infra, VAR_INFRASTRUCTURE_ACTIVEPIPELINES, pipVar));
-            createFreezeBlock(freezes, infra, infra);
-            qm = createQmProject(PROJECT_TOP_LEVEL, cfgProject);
-            addImports(cfgProject, TOP_IMPORTS, qm, infra);
+            Project pipelines = createPipelinesCfg(cfgProject, pip, pipVar);
+            Project infra = createInfrastructureCfg(config, pipelines, cfgInfra, pipVar);
+            qm = createQm(cfgProject, infra);
         } else {
             qm = cfgProject;
         }
+        return qm;
+    }
+    
+    
+    //Project pipelines = createPipelinesCfg(cfgProject, pip, pipVar);
+    /*Project pipelines = createQmProject(PROJECT_PIPELINESCFG, cfgProject);
+    addImports(cfgProject, PIPELINES_IMPORTS, pipelines, pip);
+    DecisionVariableDeclaration pipelinesVar = setPipelines(pipelines, VAR_PIPELINES_PIPELINES, pipVar);
+    createFreezeBlock(new IFreezable[]{pipelinesVar}, pipelines, pipelines);*/
+    //Project infra = createInfrastructureCfg(config, pipelines, cfgInfra, pipVar);
+    
+    /*Project infra = createQmProject(PROJECT_INFRASTRUCTURECFG, cfgProject);
+    addImports(cfgProject, INFRASTRUCTURE_IMPORTS, infra, pipelines);
+    List<IFreezable> freezes = addTopLevelValues(config, cfgInfra, infra, VAR_INFRASTRUCTURE_ACTIVEPIPELINES);
+    freezes.add(setPipelines(infra, VAR_INFRASTRUCTURE_ACTIVEPIPELINES, pipVar));
+    createFreezeBlock(freezes, infra, infra);*/
+    //qm = createQm(cfgProject, infra);
+    /*qm = createQmProject(PROJECT_TOP_LEVEL, cfgProject);
+    addImports(cfgProject, TOP_IMPORTS, qm, infra);*/
+
+    
+    /**
+     * Creates the PipelinesCfg IVML project.
+     * 
+     * @param cfgProject the top-level configuration project
+     * @param pip the pipeline project
+     * @param pipVar the pipeline decision variable
+     * @return the IVML project
+     * @throws ModelQueryException in case of model query problems
+     * @throws ModelManagementException in case of model management problems
+     * @throws CSTSemanticException in case of CST errors
+     * @throws ValueDoesNotMatchTypeException in case of unmatching values
+     */
+    private static Project createPipelinesCfg(Project cfgProject, Project pip, DecisionVariableDeclaration pipVar) 
+        throws ModelQueryException, ModelManagementException, ValueDoesNotMatchTypeException, CSTSemanticException {
+        Project pipelines = createQmProject(PROJECT_PIPELINESCFG, cfgProject);
+        addImports(cfgProject, PIPELINES_IMPORTS, pipelines, pip);
+        DecisionVariableDeclaration pipelinesVar = setPipelines(pipelines, VAR_PIPELINES_PIPELINES, pipVar);
+        createFreezeBlock(new IFreezable[]{pipelinesVar}, pipelines, pipelines);
+        return pipelines;
+    }
+
+    /**
+     * Creates the InfrastructureCfg IVML project.
+     * 
+     * @param config the top-level configuration
+     * @param pipelines the pipelines project 
+     *   (see {@link #createPipelinesCfg(Project, Project, DecisionVariableDeclaration)}
+     * @param cfgInfra the orignal infrastructure configuration project 
+     * @param pipVar the pipeline decision variable
+     * @return the IVML project
+     * @throws ModelQueryException in case of model query problems
+     * @throws ModelManagementException in case of model management problems
+     * @throws CSTSemanticException in case of CST errors
+     * @throws ValueDoesNotMatchTypeException in case of unmatching values
+     */
+    private static Project createInfrastructureCfg(net.ssehub.easy.varModel.confModel.Configuration config, 
+        Project pipelines, Project cfgInfra, DecisionVariableDeclaration pipVar) throws ModelQueryException, 
+        ModelManagementException, ValueDoesNotMatchTypeException, CSTSemanticException {
+        Project cfgProject = config.getProject();
+        Project infra = createQmProject(PROJECT_INFRASTRUCTURECFG, cfgProject);
+        addImports(cfgProject, INFRASTRUCTURE_IMPORTS, infra, pipelines);
+        List<IFreezable> freezes = addTopLevelValues(config, cfgInfra, infra, VAR_INFRASTRUCTURE_ACTIVEPIPELINES);
+        freezes.add(setPipelines(infra, VAR_INFRASTRUCTURE_ACTIVEPIPELINES, pipVar));
+        createFreezeBlock(freezes, infra, infra);
+        return infra;
+    }
+
+    /**
+     * Creates the top-level QM project.
+     * 
+     * @param cfgProject the top-level configuration project
+     * @param infra the infrastructure cfg project (see {@link 
+     *     #createInfrastructureCfg(Configuration, Project, Project, DecisionVariableDeclaration)})
+     * @return the IVML project
+     * @throws ModelQueryException in case of model query problems
+     * @throws ModelManagementException in case of model management problems
+     * @throws CSTSemanticException in case of CST errors
+     * @throws ValueDoesNotMatchTypeException in case of unmatching values
+     */
+    private static Project createQm(Project cfgProject, Project infra) throws ModelQueryException, 
+        ModelManagementException, ValueDoesNotMatchTypeException, CSTSemanticException {
+        Project qm = createQmProject(PROJECT_TOP_LEVEL, cfgProject);
+        addImports(cfgProject, TOP_IMPORTS, qm, infra);
         return qm;
     }
     
