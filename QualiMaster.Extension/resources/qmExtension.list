@@ -42,5 +42,3 @@ eu.qualimaster.monitoring.events.ConstraintViolationAdaptationEvent
 eu.qualimaster.monitoring.events.ResourceChangedAdaptationEvent
 eu.qualimaster.monitoring.events.ViolatingClause
 eu.qualimaster.common.shedding.DefaultLoadSchedders
-eu.qualimaster.common.signal.LoadSheddingSignal
-eu.qualimaster.common.signal.ReplaySignal
