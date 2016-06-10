@@ -41,4 +41,7 @@ eu.qualimaster.adaptation.events.StartupAdaptationEvent
 eu.qualimaster.monitoring.events.ConstraintViolationAdaptationEvent
 eu.qualimaster.monitoring.events.ResourceChangedAdaptationEvent
 eu.qualimaster.monitoring.events.ViolatingClause
-eu.qualimaster.common.shedding.DefaultLoadSchedders
+eu.qualimaster.common.shedding.DefaultLoadShedders
+eu.qualimaster.common.shedding.DefaultLoadSheddingParameter
+eu.qualimaster.common.shedding.ILoadShedderDescriptor
+eu.qualimaster.common.shedding.ILoadSheddingParameter
