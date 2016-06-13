@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: QMExtension.UI
+Bundle-SymbolicName: QMExtension.UI;singleton:=true
+Bundle-Version: 0.0.1
+Bundle-Activator: qmextension.ui.Activator
+Bundle-Vendor: University of Hildesheim, SSE
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ net.ssehub.easy.producer.ui,
+ net.ssehub.easy.producer.eclipse,
+ net.ssehub.easy.varModel,
+ QualiMaster.Extension;bundle-version="0.2.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy
+Import-Package: org.eclipse.core.resources

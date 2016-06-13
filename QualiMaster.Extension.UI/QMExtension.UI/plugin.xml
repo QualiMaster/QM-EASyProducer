@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+  <extension point="org.eclipse.ui.popupMenus">
+  <objectContribution
+            adaptable="true"
+            id="eu.qualimaster.ui.testing"
+            objectClass="org.eclipse.core.resources.IProject">
+         <action
+               class="qmextension.ui.handlers.FreezeHandler"
+               icon="icons/QMicon.png"
+               id="eu.qualimaster.ui.testing.AddFreeze"
+               label="Add Freeze Blocks"
+               menubarPath="additions">
+         </action>
+      </objectContribution>
+   </extension>
+</plugin>
