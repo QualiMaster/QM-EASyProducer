@@ -61,7 +61,7 @@ public class ProjectFreezeModifier implements IProjectModifier {
     
     static {
         // Already frozen in Observables (not in config)
-        BLACKLIST.add("qualityParameters");
+        BLACKLIST.add(QmConstants.VAR_OBSERVABLES_QUALITYPARAMS);
     }
     
     private List<DecisionVariableDeclaration> declarations;

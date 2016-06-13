@@ -146,6 +146,7 @@ public class QmConstants {
     public static final String PROJECT_OBSERVABLESCFG = PROJECT_OBSERVABLES + CFG_POSTFIX; 
     public static final String TYPE_OBSERVABLES_CONFIGUREDQPARAM = "ConfiguredQualityParameter";
     public static final String VAR_OBSERVABLES_CONFIGUREDPARAMS = "configuredParameters";
+    public static final String VAR_OBSERVABLES_QUALITYPARAMS = "qualityParameters";
     
     // -------------------------- families  ---------------------------------
 
