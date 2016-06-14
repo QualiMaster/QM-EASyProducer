@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="QualiMaster.Extension" default="update" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant">
+    
+    <!-- Einstellungen fuer dieses Projekt -->
+    <property name="bin.dir" value="bin"/>
+    <property name="src.dir" value="src"/>
+    <property name="doc.dir" value="doc"/>
+    <property name="dist.dir" value="dist"/>
+    <property name="lib.dir" value="lib"/>
+    <property name="javacSource" value="1.6"/>
+    <property name="javacTarget" value="1.6"/>
+    <property name="javacEncoding" value="iso-8859-1"/>
+    
+    <path id="maven-ant-tasks.classpath" path="tools/maven-ant-tasks-2.1.3.jar" />
+    <typedef resource="org/apache/maven/artifact/ant/antlib.xml"
+       uri="antlib:org.apache.maven.artifact.ant"
+       classpathref="maven-ant-tasks.classpath" />
+    
+    
+    <property name="qmExtension.name" value="QualiMaster.Events"/>
+    <property name="qmExtension.dir" value="../${qmExtension.name}"/>
+    <property name="qmExtension.dist.dir" value="${qmExtension.dir}/dist"/>
+
+    <!-- force snapshot update - does not work in macros.xml  -->
+    <artifact:remoteRepository id="qm.repository" url="https://projects.sse.uni-hildesheim.de/qm/maven/">
+        <snapshots updatePolicy="always" />
+    </artifact:remoteRepository>
+    
+    <!-- this is ugly but ok for now  -->
+    <target name="update">
+        <artifact:dependencies pathId="maven.compile.classpath">
+            <pom file="pom.xml" id="pom"/>
+            <remoteRepository refid="qm.repository" />
+        </artifact:dependencies>
+        <copy file="${eu.qualimaster:QualiMaster.Events:jar}" tofile="lib/QualiMaster.Events.jar" />
+        <copy file="${eu.qualimaster:CoordinationLayer:jar}" tofile="lib/CoordinationLayer.jar" />
+        <copy file="${eu.qualimaster:AdaptationLayer:jar}" tofile="lib/AdaptationLayer.jar" />
+        <copy file="${eu.qualimaster:MonitoringLayer:jar}" tofile="lib/MonitoringLayer.jar" />
+        <copy file="${eu.qualimaster:DataManagementLayer:jar}" tofile="lib/DataManagementLayer.jar" />
+        <copy file="${eu.qualimaster:StormCommons:jar}" tofile="lib/StormCommons.jar" />
+        <echoproperties/>        
+        <java classname="eu.qualimaster.easy.extension.internal.Registration" fork="true">
+            <classpath>
+                <pathelement location="target/classes"/>
+                <pathelement location="lib/AdaptationLayer.jar"/>
+                <pathelement location="lib/MonitoringLayer.jar"/>
+                <pathelement location="lib/CoordinationLayer.jar"/>
+                <pathelement location="lib/DataManagementLayer.jar"/>
+                <pathelement location="lib/QualiMaster.Events.jar"/>
+                <pathelement location="lib/StormCommons.jar"/>
+                <pathelement location="lib/slf4j-api-1.7.5.jar"/>
+                <pathelement location="${de.uni_hildesheim.sse.easyProducer.runtime:EASy:jar}"/>
+                <pathelement location="${org.apache.storm:storm-core:jar}"/>
+                <pathelement location="${eu.qualimaster:SpassMeterIntegration:jar}"/>
+                <pathelement location="${ch.qos.logback:logback-core:jar}"/>
+            </classpath>
+        </java>
+    </target>
+    
+</project>
