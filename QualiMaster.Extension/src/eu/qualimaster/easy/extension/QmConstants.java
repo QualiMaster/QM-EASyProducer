@@ -124,6 +124,7 @@ public class QmConstants {
     public static final String SLOT_FAMILYELEMENT_PARALLELISM = SLOT_PIPELINE_NODE_PARALLELISM;
     
     public static final String TYPE_PIPELINE = "Pipeline";
+    public static final String TYPE_SUBPIPELINE = "SubPipeline";
     public static final String SLOT_PIPELINE_NAME = SLOT_NAME;
     public static final String SLOT_PIPELINE_SOURCES = "sources";
     public static final String SLOT_PIPELINE_NUMWORKERS = "numworkers";
