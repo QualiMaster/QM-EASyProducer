@@ -106,7 +106,7 @@ public class QmConstants {
     public static final String TYPE_PROCESSINGELEMENT = "ProcessingElement";
     public static final String SLOT_PROCESSINGELEMENT_ISVALID = SLOT_ISVALID;
     
-    public static final String TYPE_DATAMANAGEMENTELEMENT = "DataMangementElement";
+    public static final String TYPE_DATAMANAGEMENTELEMENT = "DataManagementElement";
     public static final String SLOT_DATAMANAGEMENTELEMENT_ISVALID = SLOT_ISVALID;
     
     public static final String TYPE_FAMILYELEMENT = "FamilyElement";
