@@ -167,6 +167,8 @@ public class QmConstants {
     public static final String PROJECT_ALGORITHMSCFG = PROJECT_ALGORITHMS + CFG_POSTFIX;
     
     public static final String TYPE_ALGORITHM = "Algorithm";
+    public static final String TYPE_SOFTWARE_ALGORITHM = "SoftwareAlgorithm";
+    public static final String TYPE_HARDWARE_ALGORITHM = "HardwareAlgorithm";
     public static final String SLOT_ALGORITHM_INPUT = SLOT_INPUT;
     public static final String SLOT_ALGORITHM_OUTPUT = SLOT_OUTPUT;
     public static final String SLOT_ALGORITHM_PARAMETERS = SLOT_PARAMETERS;
