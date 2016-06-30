@@ -138,6 +138,8 @@ public class QmConstants {
     public static final String PROJECT_ADAPTIVITY = "Adaptivity";
     public static final String PROJECT_ADAPTIVITYCFG = PROJECT_ADAPTIVITY + CFG_POSTFIX;
     public static final String TYPE_ADAPTIVITY_QPARAMWEIGHTING = "QualityParameterWeighting";
+    public static final String SLOT_QPARAMWEIGHTING_PARAMETER = "parameter";
+    public static final String SLOT_QPARAMWEIGHTING_WEIGHT = "weight";
     public static final String VAR_ADAPTIVITY_PIPELINEIMPORTANCE = "pipelineImportance";
     public static final String VAR_ADAPTIVITY_CROSSPIPELINETRADEOFFS = "crossPipelineTradeoffs";
    
@@ -145,6 +147,9 @@ public class QmConstants {
 
     public static final String PROJECT_OBSERVABLES = "Observables";
     public static final String PROJECT_OBSERVABLESCFG = PROJECT_OBSERVABLES + CFG_POSTFIX; 
+    public static final String TYPE_OBSERVABLES_OBSERVABLE = "Observable";
+    public static final String SLOT_OBSERVABLE_TYPE = "type";
+    public static final String TYPE_OBSERVABLES_QPARAM = "QualityParameter";
     public static final String TYPE_OBSERVABLES_CONFIGUREDQPARAM = "ConfiguredQualityParameter";
     public static final String VAR_OBSERVABLES_CONFIGUREDPARAMS = "configuredParameters";
     public static final String VAR_OBSERVABLES_QUALITYPARAMS = "qualityParameters";
