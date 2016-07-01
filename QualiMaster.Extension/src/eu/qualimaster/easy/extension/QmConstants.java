@@ -151,6 +151,8 @@ public class QmConstants {
     public static final String SLOT_OBSERVABLE_TYPE = "type";
     public static final String TYPE_OBSERVABLES_QPARAM = "QualityParameter";
     public static final String TYPE_OBSERVABLES_CONFIGUREDQPARAM = "ConfiguredQualityParameter";
+    public static final String SLOT_CONFIGUREDQPARAM_MONITORCLS = "monitorCls";
+    public static final String SLOT_CONFIGUREDQPARAM_ARTIFACT = "artifact";
     public static final String VAR_OBSERVABLES_CONFIGUREDPARAMS = "configuredParameters";
     public static final String VAR_OBSERVABLES_QUALITYPARAMS = "qualityParameters";
     
