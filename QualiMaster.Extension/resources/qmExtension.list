@@ -28,6 +28,7 @@ eu.qualimaster.observables.AnalysisObservables
 eu.qualimaster.observables.CloudResourceUsage
 eu.qualimaster.observables.FunctionalSuitability
 eu.qualimaster.observables.IObservable
+eu.qualimaster.observables.MonitoringFrequency
 eu.qualimaster.observables.ResourceUsage
 eu.qualimaster.observables.Scalability
 eu.qualimaster.observables.TimeBehavior
