@@ -44,6 +44,7 @@ import net.ssehub.easy.varModel.model.Project;
 import net.ssehub.easy.varModel.model.ProjectImport;
 import net.ssehub.easy.varModel.model.datatypes.Compound;
 import net.ssehub.easy.varModel.model.datatypes.IDatatype;
+import net.ssehub.easy.varModel.model.datatypes.RealType;
 import net.ssehub.easy.varModel.model.datatypes.Reference;
 import net.ssehub.easy.varModel.model.datatypes.Set;
 import net.ssehub.easy.varModel.model.datatypes.StringType;
@@ -64,6 +65,8 @@ public class PipelineHelperTest {
     private static final String VAR_FAM1 = "fam1";
     private static final String VAR_FAM2 = "fam2";
     private static final String VAR_PIP = "pip";
+    private static final String VAR_CAPACITY = "capacity";
+    
     private static final Map<String, AbstractVariable> VARIABLES = new HashMap<String, AbstractVariable>(); 
     
     /**
@@ -225,6 +228,7 @@ public class PipelineHelperTest {
             pipelineElementType);
         createDecisionVariableDeclaration(SLOT_FAMILYELEMENT_AVAILABLE, algorithmsType, familyElementType);
         Compound pipeline = createCompoundWithName(TYPE_PIPELINE, pipelines, null);
+        createDecisionVariableDeclaration(VAR_CAPACITY, RealType.TYPE, pipeline);
         Set pipelinesType = new Set("setOf(refTo(Pipeline))", 
             new Reference("refTo(pipeline)", pipeline, pipelines), pipelines);
         DecisionVariableDeclaration pips = createDecisionVariableDeclaration(VAR_PIPELINES_PIPELINES, 
@@ -297,9 +301,12 @@ public class PipelineHelperTest {
         Assert.assertTrue(getDecision(qmCfg, VAR_PIP) == PipelineHelper.obtainPipeline(
             qmCfg, getVariableInstanceName(qmCfg, VAR_FAM2)).getVariable());
         Assert.assertNull(PipelineHelper.obtainPipeline(qmCfg, getVariableInstanceName(qmCfg, VAR_FAM2), true));
+        
         Assert.assertNull(PipelineHelper.obtainPipeline(qmCfg, getVariableInstanceName(qmCfg, VAR_PIP)));
         Assert.assertTrue(getDecision(qmCfg, VAR_PIP) == PipelineHelper.obtainPipeline(
             qmCfg, getVariableInstanceName(qmCfg, VAR_PIP), true).getVariable());
+        Assert.assertTrue(getDecision(qmCfg, VAR_PIP) == PipelineHelper.obtainPipeline(
+            qmCfg, getVariableInstanceName(qmCfg, VAR_PIP) + "::" + VAR_CAPACITY, true).getVariable());
         Assert.assertNull(PipelineHelper.obtainPipeline(qmCfg, (String) null));
         
         // try nested
