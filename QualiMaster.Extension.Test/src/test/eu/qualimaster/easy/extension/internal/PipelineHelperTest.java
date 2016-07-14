@@ -292,9 +292,14 @@ public class PipelineHelperTest {
     public void testGetPipelineVIL() throws VilException {
         Assert.assertTrue(getDecision(qmCfg, VAR_PIP) == PipelineHelper.obtainPipeline(
             qmCfg, getVariableInstanceName(qmCfg, VAR_FAM1)).getVariable());
+        Assert.assertNull(PipelineHelper.obtainPipeline(qmCfg, getVariableInstanceName(qmCfg, VAR_FAM1), true));
+        
         Assert.assertTrue(getDecision(qmCfg, VAR_PIP) == PipelineHelper.obtainPipeline(
             qmCfg, getVariableInstanceName(qmCfg, VAR_FAM2)).getVariable());
+        Assert.assertNull(PipelineHelper.obtainPipeline(qmCfg, getVariableInstanceName(qmCfg, VAR_FAM2), true));
         Assert.assertNull(PipelineHelper.obtainPipeline(qmCfg, getVariableInstanceName(qmCfg, VAR_PIP)));
+        Assert.assertTrue(getDecision(qmCfg, VAR_PIP) == PipelineHelper.obtainPipeline(
+            qmCfg, getVariableInstanceName(qmCfg, VAR_PIP), true).getVariable());
         Assert.assertNull(PipelineHelper.obtainPipeline(qmCfg, (String) null));
         
         // try nested

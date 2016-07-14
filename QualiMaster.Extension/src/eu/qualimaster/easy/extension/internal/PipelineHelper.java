@@ -55,10 +55,25 @@ public class PipelineHelper implements IVilType {
      * 
      * @param configuration the configuration as basis for the lookup
      * @param variableName the instance name of the variable
-     * @return the pipelines (may be empty)
+     * @return the pipeline (may be <b>null</b> if not found)
      * @throws VilException in case that accessing a pipeline fails
      */
     public static DecisionVariable obtainPipeline(Configuration configuration, String variableName) 
+        throws VilException {
+        return obtainPipeline(configuration, variableName, false);
+    }
+    
+    /**
+     * Returns the pipeline related to the variable given by its instance name.
+     * 
+     * @param configuration the configuration as basis for the lookup
+     * @param variableName the instance name of the variable
+     * @param strict if <code>true</code> return a pipeline only if <code>variableName</code> directly refers to it, 
+     *     <code>false</code> consider also contained variables and search also parent variables
+     * @return the pipeline (may be <b>null</b> if not found)
+     * @throws VilException in case that accessing a pipeline fails
+     */
+    public static DecisionVariable obtainPipeline(Configuration configuration, String variableName, boolean strict) 
         throws VilException {
         DecisionVariable result = null;
         if (null != variableName) {
@@ -71,7 +86,15 @@ public class PipelineHelper implements IVilType {
                 }
                 try {
                     IDecisionVariable pipVar = obtainPipeline(configuration.getConfiguration(), decVar);
-                    if (null != pipVar) { // top-level var
+                    // pipVar == null if we have a nested/related variable name as input, adjust in strict mode
+                    if (strict && null == pipVar && null != decVar) {
+                        IDatatype pipelineType = ModelQuery.findType(configuration.getConfiguration().getProject(), 
+                            QmConstants.TYPE_PIPELINE, null);
+                        if (pipelineType.isAssignableFrom(decVar.getDeclaration().getType())) {
+                            pipVar = decVar;
+                        }
+                    }
+                    if (null != pipVar && (!strict || (strict && pipVar == decVar))) { // top-level var
                         // better: config.findVariable                        
                         result = configuration.getByName(
                             net.ssehub.easy.varModel.confModel.Configuration.getInstanceName(pipVar));
