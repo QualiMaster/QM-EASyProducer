@@ -449,6 +449,7 @@ public class Registration implements IRegistration {
         RtVilTypeRegistry.INSTANCE.register(PipelineElementObservationPrediction.class);
         RtVilTypeRegistry.INSTANCE.register(PipelineElementParameterPrediction.class);
         RtVilTypeRegistry.INSTANCE.register(RepositoryHelper.class);
+        RtVilTypeRegistry.INSTANCE.register(HardwareRepositoryHelper.class);
     }
 
     /**

@@ -22,6 +22,7 @@ import net.ssehub.easy.varModel.confModel.Configuration;
 import net.ssehub.easy.varModel.confModel.IDecisionVariable;
 import net.ssehub.easy.varModel.model.datatypes.IDatatype;
 import net.ssehub.easy.varModel.model.values.BooleanValue;
+import net.ssehub.easy.varModel.model.values.IntValue;
 import net.ssehub.easy.varModel.model.values.StringValue;
 import net.ssehub.easy.varModel.model.values.Value;
 
@@ -107,6 +108,28 @@ public class VariableHelper {
                 Value value = nested.getValue();
                 if (value instanceof StringValue) {
                     result = ((StringValue) value).getValue();
+                }
+            }
+        }
+        return result;
+    }
+    
+    /**
+     * Returns the value of an integer compound slot.
+     * 
+     * @param var the variable to look into (may be <b>null</b>)
+     * @param name the name of the slot
+     * @return the integer value of the slot, <b>null</b> if there is no variable, no slot or no integer value in 
+     *     the slot 
+     */
+    public static final Integer getInteger(IDecisionVariable var, String name) {
+        Integer result = null;
+        if (null != var) {
+            IDecisionVariable nested = var.getNestedElement(name);
+            if (null != nested) {
+                Value value = nested.getValue();
+                if (value instanceof IntValue) {
+                    result = ((IntValue) value).getValue();
                 }
             }
         }

@@ -188,10 +188,27 @@ public class QmConstants {
     public static final String SLOT_ALGORITHM_INPUT = SLOT_INPUT;
     public static final String SLOT_ALGORITHM_OUTPUT = SLOT_OUTPUT;
     public static final String SLOT_ALGORITHM_PARAMETERS = SLOT_PARAMETERS;
+    /**
+     * Moved to software algorithm.
+     * @deprecated Use {@link #SLOT_SOFTWAREALGORITHM_TOPOLOGYCLASS} instead.
+     */
+    @Deprecated
     public static final String SLOT_ALGORITHM_TOPOLOGYCLASS = "algTopologyClass";
     public static final String SLOT_ALGORITHM_DESCRIPTION = "description";
     public static final String SLOT_ALGORITHM_ARTIFACT = "artifact";
     public static final String SLOT_ALGORITHM_ISVALID = SLOT_ISVALID;
+    
+    public static final String TYPE_SOFTWAREALGORITHM = "SoftwareAlgorithm";
+    public static final String SLOT_SOFTWAREALGORITHM_CLASS = "class";
+    public static final String SLOT_SOFTWAREALGORITHM_TOPOLOGYCLASS = SLOT_ALGORITHM_TOPOLOGYCLASS;
+    
+    public static final String TYPE_HARDWAREALGORITHM = "HardwareAlgorithm";
+    public static final String SLOT_HARDWAREALGORITHM_HWNODE = "hwNode";
+    public static final String SLOT_HARDWAREALGORITHM_SENDERPARALLELISM = "senderParallelism";
+    public static final String SLOT_HARDWAREALGORITHM_RECEIVERPARALLELISM = "receiverParallelism";
+    public static final String SLOT_HARDWAREALGORITHM_SENDERNUMTASKS = "senderNumTasks";
+    public static final String SLOT_HARDWAREALGORITHM_RECEIVERNUMTASKS = "receiverNumTasks";
+    public static final String SLOT_HARDWAREALGORITHM_ACTUALHWNODE = "actualHwNode";
     
     public static final String VAR_ALGORITHMS_ALGORITHMS = "algorithms";
 
@@ -243,6 +260,15 @@ public class QmConstants {
     public static final String PROJECT_RECONFHWCFG = PROJECT_RECONFHW + CFG_POSTFIX;
     public static final String TYPE_HWNODE = "HwNode";
     public static final String VAR_RECONFHW_CLUSTERS = "clusters";
+    
+    public static final String TYPE_MPCCNODE = "MPCCNode";
+    
+    public static final String SLOT_MPCCNODE_HOST = "host";
+    public static final String SLOT_MPCCNODE_MONITORINGPORT = "monitoringPort";
+    public static final String SLOT_MPCCNODE_COMMANDSENDINGPORT = "commandSendingPort";
+    public static final String SLOT_MPCCNODE_COMMANDRECEIVINGPORT = "commandReceivingPort";
+    public static final String SLOT_MPCCNODE_NUMCPUS = "numCPUs";
+    public static final String SLOT_MPCCNODE_NUMDFES = "numDFEs";
     
     // ---------------------------- basics ----------------------------------
     
