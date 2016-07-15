@@ -60,7 +60,7 @@ public class QualiMasterConfigurationSaver extends net.ssehub.easy.varModel.conf
      * @param srcConfiguration The configuration which should be saved.
      * @throws ConfigurationException in case of any configuration errors
      */
-    QualiMasterConfigurationSaver(Configuration srcConfiguration) throws ConfigurationException {
+    public QualiMasterConfigurationSaver(Configuration srcConfiguration) throws ConfigurationException {
         this(srcConfiguration, true, true);
     }
 
