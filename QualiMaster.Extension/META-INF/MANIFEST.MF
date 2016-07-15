@@ -37,4 +37,5 @@ Bundle-ClassPath: .,
  lib/StormCommons.jar
 Export-Package: eu.qualimaster.adaptation.events,
  eu.qualimaster.easy.extension,
- eu.qualimaster.easy.extension.internal
+ eu.qualimaster.easy.extension.internal,
+ eu.qualimaster.easy.extension.modelop
