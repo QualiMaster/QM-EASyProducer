@@ -84,7 +84,11 @@ public class ConfigurationInitializer {
             Compound sinkType = findCompound(project, TYPE_SINK);
             CopySpec specSink = new CopySpec(sinkType, SLOT_SINK_SINK, freezeProvider, SLOT_SINK_AVAILABLE, 
                 SLOT_SINK_ACTUAL);
-            VariableValueCopier copier = new VariableValueCopier(newVariablePrefix, specSource, specFamily, specSink);
+            Compound replaySinkType = findCompound(project, TYPE_REPLAYSINK);
+            CopySpec specReplaySink = new CopySpec(replaySinkType, SLOT_REPLAYSINK_SINK, freezeProvider, 
+                SLOT_REPLAYSINK_AVAILABLE, SLOT_REPLAYSINK_ACTUAL);            
+            VariableValueCopier copier = new VariableValueCopier(newVariablePrefix, specSource, specFamily, specSink, 
+                specReplaySink);
             copier.process(config);
         } catch (ConfigurationException e1) {
             throw new VilException(e1, VilException.ID_RUNTIME);

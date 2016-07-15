@@ -88,6 +88,15 @@ public class QmConstants {
     public static final String SLOT_SINK_AVAILABLE = SLOT_AVAILABLE;
     public static final String SLOT_SINK_ACTUAL = SLOT_ACTUAL;
     public static final String SLOT_SINK_NAME = SLOT_NAME;
+    
+    public static final String TYPE_REPLAYSINK = "ReplaySink";
+    public static final String SLOT_REPLAYSINK_ISVALID = SLOT_SINK_ISVALID;
+    public static final String SLOT_REPLAYSINK_SINK = SLOT_SINK_SINK;
+    public static final String SLOT_REPLAYSINK_AVAILABLE = SLOT_SINK_AVAILABLE;
+    public static final String SLOT_REPLAYSINK_ACTUAL = SLOT_SINK_ACTUAL;
+    public static final String SLOT_REPLAYSINK_NAME = SLOT_SINK_NAME;
+    public static final String SLOT_REPLAYSINK_REPLAY = "replay";
+    
     /**
      * Inherited parallelism slot from pipeline node.
      * @deprecated Use {@link #SLOT_PIPELINE_NODE_PARALLELISM} instead, as since slot is inherited from there
