@@ -280,6 +280,62 @@ public class PipelineHelper implements IVilType {
         }
         return result;
     }
+
+    /**
+     * Returns whether <code>var</code> is a hardware algorithm.
+     * 
+     * @param var the variable to check
+     * @return <code>true</code> for hardware algorithm, <code>false</code> else
+     */
+    @QMInternal
+    public static boolean isHardwareAlgorithm(IDecisionVariable var) {
+        boolean result = false;
+        if (null != var) {
+            try {
+                IDatatype hwAlgType = ModelQuery.findType(var.getConfiguration().getProject(), 
+                    QmConstants.TYPE_HARDWARE_ALGORITHM, null);
+                if (null != hwAlgType) {
+                    result = hwAlgType.isAssignableFrom(var.getDeclaration().getType());
+                }
+            } catch (ModelQueryException e) {
+                // -> result = null
+            }
+        }
+        return result;
+    }
+    
+    /**
+     * Obtains an algorithm from <code>config</code> by its name.
+     * 
+     * @param config the configuration
+     * @param name the name of the algorithm
+     * @return the algorithm or <b>null</b> if not found
+     */
+    @QMInternal
+    public static IDecisionVariable obtainAlgorithmByName(net.ssehub.easy.varModel.confModel.Configuration config, 
+        String name) {
+        IDecisionVariable result = null;
+        try {
+            AbstractVariable algVarDecl = ModelQuery.findVariable(
+                config.getProject(), QmConstants.VAR_ALGORITHMS_ALGORITHMS, null);
+            if (null != algVarDecl) {
+                IDecisionVariable algs = config.getDecision(algVarDecl);
+                if (null != algs) {
+                    for (int n = 0; null == result && n < algs.getNestedElementsCount(); n++) {
+                        IDecisionVariable nested = net.ssehub.easy.varModel.confModel.Configuration.dereference(
+                            algs.getNestedElement(n));
+                        if (VariableHelper.hasName(nested, name)) {
+                            result = nested;
+                        }
+                    }
+                }
+            }
+        } catch (ModelQueryException e) {
+            // -> result = null
+        }
+        return result;
+    }
+
     
     /**
      * Obtains a pipeline element.
