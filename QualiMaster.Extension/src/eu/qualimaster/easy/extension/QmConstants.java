@@ -152,6 +152,8 @@ public class QmConstants {
     public static final String VAR_ADAPTIVITY_PIPELINEIMPORTANCE = "pipelineImportance";
     public static final String VAR_ADAPTIVITY_CROSSPIPELINETRADEOFFS = "crossPipelineTradeoffs";
    
+    public static final String PROJECT_STRATEGIES_TACTICS = "StrategiesTactics";
+    
     // ------------------------- observables  ---------------------------------
 
     public static final String PROJECT_OBSERVABLES = "Observables";
