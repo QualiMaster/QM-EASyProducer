@@ -36,6 +36,7 @@ import net.ssehub.easy.basics.progress.ProgressObserver;
 import net.ssehub.easy.instantiation.core.model.buildlangModel.BuildModel;
 import net.ssehub.easy.instantiation.core.model.buildlangModel.Script;
 import net.ssehub.easy.instantiation.core.model.execution.Executor;
+import net.ssehub.easy.instantiation.core.model.templateModel.TemplateModel;
 import net.ssehub.easy.producer.core.persistence.Configuration.PathKind;
 import net.ssehub.easy.producer.core.persistence.IVMLFileWriter;
 import net.ssehub.easy.producer.core.persistence.PersistenceUtils;
@@ -98,7 +99,7 @@ public class ModelModifier {
      * Specifies whether elements shall be deleted, which are not necessary for runtime:
      * <tt>true</tt> delete frozen and unused elements, <tt>false</tt> do not delete anything.
      */
-    private static final boolean PRUNE_CONFIG = true;
+    private static final boolean PRUNE_CONFIG = false;
     
     /**
      * Destination of the pruned configuration / projects.
@@ -134,7 +135,10 @@ public class ModelModifier {
     }
     
     private File targetFolder;
+    
+    // Variables for restoring the old state inside the clear method.
     private ModelInfo<Project> oldProjectInfo;
+    private File tempVILFolder;
     
     private final Project toplevelProject;
     private final File baseLocation;
@@ -156,6 +160,7 @@ public class ModelModifier {
         this.baseLocation = baseLocation;
         this.qmApp = qmApp;
         oldProjectInfo = null;
+        tempVILFolder = null;
     }
     
     /**
@@ -171,11 +176,11 @@ public class ModelModifier {
         
         // Register copied model
         File destFolder = new File(targetFolder, COPIED_IVML_LOCATION);
-        oldProjectInfo = VarModel.INSTANCE.availableModels().getModelInfo(config.getProject());
+        oldProjectInfo = VarModel.INSTANCE.availableModels().getModelInfo(toplevelProject);
         VarModel.INSTANCE.updateModel(config.getProject(), destFolder.toURI());
         
         // Copy build model and load this temporarily
-        File vilFolder = copyBuildModel();
+        tempVILFolder = copyBuildModel();
         
         try {
             net.ssehub.easy.producer.core.persistence.Configuration pathConfig
@@ -185,23 +190,21 @@ public class ModelModifier {
                 pathConfig.setPath(PathKind.VIL, COPIED_VIL_LOCATION);
                 pathConfig.setPath(PathKind.VTL, COPIED_VIL_LOCATION);
             } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                Bundle.getLogger(ModelModifier.class).exception(e);
             }
             PersistenceUtils.addLocation(pathConfig, ProgressObserver.NO_OBSERVER);
         } catch (ModelManagementException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            Bundle.getLogger(ModelModifier.class).exception(e);
         }
         
-        URI vilURI = new File(vilFolder, QmConstants.PROJECT_TOP_LEVEL + "_0.vil").toURI();
+        URI vilURI = new File(tempVILFolder, QmConstants.PROJECT_TOP_LEVEL + "_0.vil").toURI();
         ModelInfo<Script> info = BuildModel.INSTANCE.availableModels().getModelInfo(QmConstants.PROJECT_TOP_LEVEL,
             new Version(0), vilURI);
         if (null != info) {
             try {
                 executor = new Executor(BuildModel.INSTANCE.load(info));
             } catch (ModelManagementException e) {
-                e.printStackTrace();
+                Bundle.getLogger(ModelModifier.class).exception(e);
             }
             executor.addConfiguration(config);
         }
@@ -214,11 +217,24 @@ public class ModelModifier {
      */
     public void clear() {
         // Restore variability model
-        if (null != oldProjectInfo && null != oldProjectInfo.getResolved() && null != oldProjectInfo.getLocation()) {
-            VarModel.INSTANCE.updateModel(oldProjectInfo.getResolved(), oldProjectInfo.getLocation());
+        if (null != oldProjectInfo && null != toplevelProject && null != oldProjectInfo.getLocation()) {
+            VarModel.INSTANCE.updateModel(toplevelProject, oldProjectInfo.getLocation());
         }
+        // TODO SE: Unclear whether remove location is also necessary for the copied IVML project.
         
-        // TODO SE: Restore VIL 
+        // Restore VIL
+        if (null != tempVILFolder) {
+            try {
+                BuildModel.INSTANCE.locations().removeLocation(tempVILFolder, ProgressObserver.NO_OBSERVER);
+            } catch (ModelManagementException e) {
+                Bundle.getLogger(ModelModifier.class).exception(e);
+            }
+            try {
+                TemplateModel.INSTANCE.locations().removeLocation(tempVILFolder, ProgressObserver.NO_OBSERVER);
+            } catch (ModelManagementException e) {
+                Bundle.getLogger(ModelModifier.class).exception(e);
+            }
+        }
     }
 
     /**
@@ -240,8 +256,7 @@ public class ModelModifier {
                 }
             });
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            Bundle.getLogger(ModelModifier.class).exception(e);
         }
         return vilFolder;
     }
@@ -252,7 +267,7 @@ public class ModelModifier {
      * @param targetLocation The destination folder where to instantiate all artifacts
      * @return {@link Configuration}, which should be used for the instantiation of the QM model
      */
-    private Configuration prepareConfig(File targetLocation) {
+    private Configuration prepareConfig(File targetLocation) {        
         // Copy base project
         Project baseProject = toplevelProject;
         ProjectCopyVisitor copier = new ProjectCopyVisitor(baseProject, FilterType.ALL);
