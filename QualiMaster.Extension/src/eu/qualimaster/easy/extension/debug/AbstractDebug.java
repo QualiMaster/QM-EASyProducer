@@ -15,6 +15,7 @@
  */
 package eu.qualimaster.easy.extension.debug;
 
+import java.io.File;
 import java.lang.reflect.Method;
 
 import org.osgi.service.component.ComponentContext;
@@ -73,6 +74,28 @@ public abstract class AbstractDebug {
             Thread.sleep(ms);
         } catch (InterruptedException e) {
         }
+    }
+    
+    /**
+     * Loads the model location based on the parameters passed to the main method.
+     * Will exit the program in case of any failures.
+     * @param args Should specify at the first index the model location to load.
+     * @return The loaded model location.
+     */
+    public static File loadModelLocation(String[] args) {
+        File modelLocation = null;
+        if (0 == args.length) {
+            System.out.println("qualimaster.debug: <model location> [monitor|adapt]");
+            System.exit(0);
+        } else {
+            modelLocation = new File(args[0]);
+            if (!modelLocation.exists()) {
+                System.out.println("model location " + modelLocation + " does not exist");
+                System.exit(0);
+            }
+        }
+        
+        return modelLocation;
     }
 
 }

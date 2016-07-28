@@ -29,7 +29,11 @@ import org.apache.commons.io.FileUtils;
 import eu.qualimaster.easy.extension.ProjectFreezeModifier;
 import eu.qualimaster.easy.extension.QmConstants;
 import eu.qualimaster.easy.extension.internal.Bundle;
+import eu.qualimaster.easy.extension.internal.QmProjectDescriptor;
+import net.ssehub.easy.basics.modelManagement.IModel;
 import net.ssehub.easy.basics.modelManagement.ModelInfo;
+import net.ssehub.easy.basics.modelManagement.ModelLocations.Location;
+import net.ssehub.easy.basics.modelManagement.ModelManagement;
 import net.ssehub.easy.basics.modelManagement.ModelManagementException;
 import net.ssehub.easy.basics.modelManagement.Version;
 import net.ssehub.easy.basics.progress.ProgressObserver;
@@ -138,7 +142,9 @@ public class ModelModifier {
     
     // Variables for restoring the old state inside the clear method.
     private ModelInfo<Project> oldProjectInfo;
+    private File tempIVMLFolder;
     private File tempVILFolder;
+    private Location oldVilLocation;
     
     private final Project toplevelProject;
     private final File baseLocation;
@@ -160,7 +166,9 @@ public class ModelModifier {
         this.baseLocation = baseLocation;
         this.qmApp = qmApp;
         oldProjectInfo = null;
+        tempIVMLFolder = null;
         tempVILFolder = null;
+        oldVilLocation = null;
     }
     
     /**
@@ -175,13 +183,19 @@ public class ModelModifier {
         Configuration config = prepareConfig(targetFolder);
         
         // Register copied model
-        File destFolder = new File(targetFolder, COPIED_IVML_LOCATION);
+        tempIVMLFolder = new File(targetFolder, COPIED_IVML_LOCATION);
         oldProjectInfo = VarModel.INSTANCE.availableModels().getModelInfo(toplevelProject);
-        VarModel.INSTANCE.updateModel(config.getProject(), destFolder.toURI());
+        VarModel.INSTANCE.updateModel(config.getProject(), tempIVMLFolder.toURI());
+        File ivmlFolder = new File(oldProjectInfo.getLocation().getPath()).getParentFile();
+        addOrRemoveLocation(VarModel.INSTANCE, ivmlFolder, false);
         
         // Copy build model and load this temporarily
         tempVILFolder = copyBuildModel();
         
+        oldVilLocation = BuildModel.INSTANCE.locations().getLocation(0);
+        addOrRemoveLocation(BuildModel.INSTANCE, oldVilLocation.getLocation(), false);
+        addOrRemoveLocation(TemplateModel.INSTANCE, oldVilLocation.getLocation(), false);
+        // TODO SE: check whether this is still needed or covert by the addOrRemove method
         try {
             net.ssehub.easy.producer.core.persistence.Configuration pathConfig
                 = PersistenceUtils.getConfiguration(targetFolder);
@@ -198,6 +212,7 @@ public class ModelModifier {
         }
         
         URI vilURI = new File(tempVILFolder, QmConstants.PROJECT_TOP_LEVEL + "_0.vil").toURI();
+        addOrRemoveLocation(BuildModel.INSTANCE, tempVILFolder, true);
         ModelInfo<Script> info = BuildModel.INSTANCE.availableModels().getModelInfo(QmConstants.PROJECT_TOP_LEVEL,
             new Version(0), vilURI);
         if (null != info) {
@@ -208,6 +223,7 @@ public class ModelModifier {
             }
             executor.addConfiguration(config);
         }
+        
         return executor;
     }
     
@@ -219,21 +235,39 @@ public class ModelModifier {
         // Restore variability model
         if (null != oldProjectInfo && null != toplevelProject && null != oldProjectInfo.getLocation()) {
             VarModel.INSTANCE.updateModel(toplevelProject, oldProjectInfo.getLocation());
+            addOrRemoveLocation(VarModel.INSTANCE, tempIVMLFolder, false);
+            File ivmlFolder = new File(oldProjectInfo.getLocation().getPath()).getParentFile();
+            addOrRemoveLocation(VarModel.INSTANCE, ivmlFolder, true);
         }
-        // TODO SE: Unclear whether remove location is also necessary for the copied IVML project.
         
         // Restore VIL
         if (null != tempVILFolder) {
-            try {
-                BuildModel.INSTANCE.locations().removeLocation(tempVILFolder, ProgressObserver.NO_OBSERVER);
-            } catch (ModelManagementException e) {
-                Bundle.getLogger(ModelModifier.class).exception(e);
+            addOrRemoveLocation(BuildModel.INSTANCE, tempVILFolder, false);
+            addOrRemoveLocation(TemplateModel.INSTANCE, tempVILFolder, false);
+            
+        }
+        if (null != oldVilLocation) {
+            addOrRemoveLocation(BuildModel.INSTANCE, oldVilLocation.getLocation(), true);
+            addOrRemoveLocation(TemplateModel.INSTANCE, oldVilLocation.getLocation(), true);
+        }
+    }
+    
+    /**
+     * Removed or adds a (temporary) folder for loading models from this locations.
+     * @param modelManagement {@link VarModel#INSTANCE}, {@link BuildModel#INSTANCE}, or {@link TemplateModel#INSTANCE}
+     * @param folder The folder to (un-)register
+     * @param add <tt>true</tt> the folder will be added as possible location for models, <tt>false</tt>the folder
+     *     will be removed.
+     */
+    private void addOrRemoveLocation(ModelManagement<? extends IModel> modelManagement, File folder, boolean add) {
+        try {
+            if (add) {
+                modelManagement.locations().addLocation(folder, ProgressObserver.NO_OBSERVER);
+            } else {
+                modelManagement.locations().removeLocation(folder, ProgressObserver.NO_OBSERVER);
             }
-            try {
-                TemplateModel.INSTANCE.locations().removeLocation(tempVILFolder, ProgressObserver.NO_OBSERVER);
-            } catch (ModelManagementException e) {
-                Bundle.getLogger(ModelModifier.class).exception(e);
-            }
+        } catch (ModelManagementException e) {
+            Bundle.getLogger(ModelModifier.class).exception(e);
         }
     }
 
