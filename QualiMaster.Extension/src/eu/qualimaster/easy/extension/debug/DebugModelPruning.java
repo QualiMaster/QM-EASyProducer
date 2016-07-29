@@ -2,6 +2,8 @@ package eu.qualimaster.easy.extension.debug;
 
 import java.io.File;
 
+import org.apache.commons.io.FileUtils;
+
 import eu.qualimaster.coordination.RepositoryHelper;
 import eu.qualimaster.easy.extension.internal.Bundle;
 import eu.qualimaster.easy.extension.modelop.ModelModifier;
@@ -11,6 +13,8 @@ import net.ssehub.easy.basics.progress.ProgressObserver;
 import net.ssehub.easy.instantiation.core.model.buildlangModel.BuildModel;
 import net.ssehub.easy.instantiation.core.model.buildlangModel.Script;
 import net.ssehub.easy.instantiation.core.model.execution.Executor;
+import net.ssehub.easy.instantiation.core.model.execution.TracerFactory;
+import net.ssehub.easy.instantiation.core.model.tracing.ConsoleTracerFactory;
 import net.ssehub.easy.instantiation.core.model.vilTypes.IProjectDescriptor;
 import net.ssehub.easy.producer.core.persistence.standard.StandaloneProjectDescriptor;
 import net.ssehub.easy.reasoning.core.frontend.ReasonerFrontend;
@@ -44,11 +48,13 @@ public class DebugModelPruning extends AbstractDebug {
         // Create and load folders
         File modelLocation = loadModelLocation(args);
         File tmpFolder = new File(System.getProperty("java.io.tmpdir"), "DebugModelPruningTest");
+        FileUtils.deleteQuietly(tmpFolder);
         tmpFolder.mkdirs();
         tmpFolder.deleteOnExit();
         File pruneFolder = new File(tmpFolder, "prune");
         File trgFolder = new File(tmpFolder, "trg");
 
+        TracerFactory.setInstance(ConsoleTracerFactory.INSTANCE);
         // Init EASy (and models)
         initialize();     
         ModelInitializer.registerLoader(ProgressObserver.NO_OBSERVER);
