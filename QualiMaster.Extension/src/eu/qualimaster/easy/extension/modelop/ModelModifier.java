@@ -29,10 +29,8 @@ import org.apache.commons.io.FileUtils;
 import eu.qualimaster.easy.extension.ProjectFreezeModifier;
 import eu.qualimaster.easy.extension.QmConstants;
 import eu.qualimaster.easy.extension.internal.Bundle;
-import eu.qualimaster.easy.extension.internal.QmProjectDescriptor;
 import net.ssehub.easy.basics.modelManagement.IModel;
 import net.ssehub.easy.basics.modelManagement.ModelInfo;
-import net.ssehub.easy.basics.modelManagement.ModelLocations.Location;
 import net.ssehub.easy.basics.modelManagement.ModelManagement;
 import net.ssehub.easy.basics.modelManagement.ModelManagementException;
 import net.ssehub.easy.basics.modelManagement.Version;
@@ -41,9 +39,10 @@ import net.ssehub.easy.instantiation.core.model.buildlangModel.BuildModel;
 import net.ssehub.easy.instantiation.core.model.buildlangModel.Script;
 import net.ssehub.easy.instantiation.core.model.execution.Executor;
 import net.ssehub.easy.instantiation.core.model.templateModel.TemplateModel;
-import net.ssehub.easy.producer.core.persistence.Configuration.PathKind;
+import net.ssehub.easy.instantiation.core.model.vilTypes.IProjectDescriptor;
+import net.ssehub.easy.instantiation.rt.core.model.rtVil.RtVilModel;
 import net.ssehub.easy.producer.core.persistence.IVMLFileWriter;
-import net.ssehub.easy.producer.core.persistence.PersistenceUtils;
+import net.ssehub.easy.producer.core.persistence.standard.StandaloneProjectDescriptor;
 import net.ssehub.easy.varModel.confModel.Configuration;
 import net.ssehub.easy.varModel.confModel.ConfigurationException;
 import net.ssehub.easy.varModel.management.VarModel;
@@ -69,7 +68,7 @@ import net.ssehub.easy.varModel.model.rewrite.modifier.ModelElementFilter;
  *   <li>Dynamically freeze values ({@value #FREEZE})</li>
  *   <li>Stores propagated values inside the configuration ({@value #SAVE_VALUES})</li>
  *   <li>Optimizes the model for runtime (prune config) ({@value #PRUNE_CONFIG})</li>
- *   <li>Saves the modified configuration to {@value #COPIED_IVML_LOCATION} ({@value #WRITE_MODIFIED_CONFIG})</li>
+ *   <li>Saves the modified configuration to {@value #COPIED_MODELS_LOCATION} ({@value #WRITE_MODIFIED_CONFIG})</li>
  *   <li>Saves the VIL model to {@value #COPIED_VIL_LOCATION}</li>
  * </ul>
  * @author El-Sharkawy
@@ -109,12 +108,7 @@ public class ModelModifier {
      * Destination of the pruned configuration / projects.
      * @see #WRITE_MODIFIED_CONFIG
      */
-    private static final String COPIED_IVML_LOCATION = "QM-Model";
-    
-    /**
-     * Destination of the pruned configuration / projects.
-     */
-    private static final String COPIED_VIL_LOCATION = "Instantiation";
+    private static final String COPIED_MODELS_LOCATION = "QM-Model";
     
     /**
      * Connection to functionalities of the QM-IConf platform.
@@ -139,12 +133,11 @@ public class ModelModifier {
     }
     
     private File targetFolder;
+    private IProjectDescriptor source;
     
     // Variables for restoring the old state inside the clear method.
-    private ModelInfo<Project> oldProjectInfo;
-    private File tempIVMLFolder;
-    private File tempVILFolder;
-    private Location oldVilLocation;
+    private File orgModelsFolder;
+    private File tempModelsFolder;
     
     private final Project toplevelProject;
     private final File baseLocation;
@@ -165,10 +158,9 @@ public class ModelModifier {
         this.toplevelProject = toplevelProject;
         this.baseLocation = baseLocation;
         this.qmApp = qmApp;
-        oldProjectInfo = null;
-        tempIVMLFolder = null;
-        tempVILFolder = null;
-        oldVilLocation = null;
+        orgModelsFolder = null;
+        tempModelsFolder = null;
+        source = null;
     }
     
     /**
@@ -180,51 +172,77 @@ public class ModelModifier {
     public Executor createExecutor() {
         // Create frozen and pruned config
         Executor executor = null;
-        Configuration config = prepareConfig(targetFolder);
+        prepareConfig(targetFolder);
         
         // Register copied model
-        tempIVMLFolder = new File(targetFolder, COPIED_IVML_LOCATION);
-        oldProjectInfo = VarModel.INSTANCE.availableModels().getModelInfo(toplevelProject);
-        VarModel.INSTANCE.updateModel(config.getProject(), tempIVMLFolder.toURI());
-        File ivmlFolder = new File(oldProjectInfo.getLocation().getPath()).getParentFile();
-        addOrRemoveLocation(VarModel.INSTANCE, ivmlFolder, false);
+        tempModelsFolder = new File(targetFolder, COPIED_MODELS_LOCATION);
+        ModelInfo<Project> oldProjectInfo = VarModel.INSTANCE.availableModels().getModelInfo(toplevelProject);
+        orgModelsFolder = new File(oldProjectInfo.getLocation().getPath()).getParentFile();
         
         // Copy build model and load this temporarily
-        tempVILFolder = copyBuildModel();
+        copyBuildModel();
         
-        oldVilLocation = BuildModel.INSTANCE.locations().getLocation(0);
-        addOrRemoveLocation(BuildModel.INSTANCE, oldVilLocation.getLocation(), false);
-        addOrRemoveLocation(TemplateModel.INSTANCE, oldVilLocation.getLocation(), false);
-        // TODO SE: check whether this is still needed or covert by the addOrRemove method
-        try {
-            net.ssehub.easy.producer.core.persistence.Configuration pathConfig
-                = PersistenceUtils.getConfiguration(targetFolder);
-            try {
-                pathConfig.setPath(PathKind.IVML, COPIED_IVML_LOCATION);
-                pathConfig.setPath(PathKind.VIL, COPIED_VIL_LOCATION);
-                pathConfig.setPath(PathKind.VTL, COPIED_VIL_LOCATION);
-            } catch (IOException e) {
-                Bundle.getLogger(ModelModifier.class).exception(e);
+        BuildModel.INSTANCE.locations().getLocation(0);
+        addOrRemoveLocation(orgModelsFolder, false);
+      
+        addOrRemoveLocation(tempModelsFolder, true);
+        Project project = load(VarModel.INSTANCE, ".ivml");
+        if (null != project) {
+            Configuration config = new Configuration(project, true);
+            Script startScript = load(BuildModel.INSTANCE, "_0.vil");
+            if (null != config && null != startScript) {
+                executor = new Executor(startScript);
+                executor.addConfiguration(config);
+                try {
+                    source = new StandaloneProjectDescriptor(startScript, tempModelsFolder);
+                    executor.addSource(source);
+                } catch (ModelManagementException e) {
+                    executor = null;
+                    Bundle.getLogger(ModelModifier.class).exception(e);
+                }
             }
-            PersistenceUtils.addLocation(pathConfig, ProgressObserver.NO_OBSERVER);
-        } catch (ModelManagementException e) {
-            Bundle.getLogger(ModelModifier.class).exception(e);
         }
         
-        URI vilURI = new File(tempVILFolder, QmConstants.PROJECT_TOP_LEVEL + "_0.vil").toURI();
-        addOrRemoveLocation(BuildModel.INSTANCE, tempVILFolder, true);
-        ModelInfo<Script> info = BuildModel.INSTANCE.availableModels().getModelInfo(QmConstants.PROJECT_TOP_LEVEL,
-            new Version(0), vilURI);
-        if (null != info) {
-            try {
-                executor = new Executor(BuildModel.INSTANCE.load(info));
-            } catch (ModelManagementException e) {
-                Bundle.getLogger(ModelModifier.class).exception(e);
-            }
-            executor.addConfiguration(config);
+        if (null == executor) {
+            // Allow fallback -> reset changes done to the models
+            clear();
         }
         
         return executor;
+    }
+    
+    /**
+     * Returns the internally used {@link IProjectDescriptor} used by the executor returned by the
+     * {@link #createExecutor()} method.
+     * @return The internally used source descriptor or <tt>null</tt> if also no executor is returned.
+     */
+    public IProjectDescriptor getSourceDescriptor() {
+        return source;
+    }
+    
+    /**
+     * Loads the main model.
+     * @param management Either {@link VarModel#INSTANCE} or {@link BuildModel#INSTANCE}
+     * @param fileEnding Either <tt>.ivml</tt> or <tt>_0.vil</tt>.
+     * @param <M> Either {@link Project} or {@link Script}.
+     * @return The loaded model or <tt>null</tt> if it was not found.
+     */
+    private <M extends IModel> M load(ModelManagement<M> management, String fileEnding) {
+        M model = null;
+        File file = new File(tempModelsFolder, QmConstants.PROJECT_TOP_LEVEL + fileEnding);
+        URI vilURI = file.toURI();
+        ModelInfo<M> info = management.availableModels().getModelInfo(QmConstants.PROJECT_TOP_LEVEL, new Version(0),
+            vilURI);
+            
+        if (null != info) {
+            try {
+                model = management.load(info);
+            } catch (ModelManagementException e) {
+                Bundle.getLogger(ModelModifier.class).exception(e);
+            }
+        }
+        
+        return model;
     }
     
     /**
@@ -232,31 +250,30 @@ public class ModelModifier {
      * was used for instantiation). 
      */
     public void clear() {
-        // Restore variability model
-        if (null != oldProjectInfo && null != toplevelProject && null != oldProjectInfo.getLocation()) {
-            VarModel.INSTANCE.updateModel(toplevelProject, oldProjectInfo.getLocation());
-            addOrRemoveLocation(VarModel.INSTANCE, tempIVMLFolder, false);
-            File ivmlFolder = new File(oldProjectInfo.getLocation().getPath()).getParentFile();
-            addOrRemoveLocation(VarModel.INSTANCE, ivmlFolder, true);
-        }
+        addOrRemoveLocation(tempModelsFolder, false);
+        addOrRemoveLocation(orgModelsFolder, true);
         
-        // Restore VIL
-        if (null != tempVILFolder) {
-            addOrRemoveLocation(BuildModel.INSTANCE, tempVILFolder, false);
-            addOrRemoveLocation(TemplateModel.INSTANCE, tempVILFolder, false);
-            
-        }
-        if (null != oldVilLocation) {
-            addOrRemoveLocation(BuildModel.INSTANCE, oldVilLocation.getLocation(), true);
-            addOrRemoveLocation(TemplateModel.INSTANCE, oldVilLocation.getLocation(), true);
-        }
+        // Restore variability model
+    }
+    
+    /**
+     * Shortcut for {@link #addOrRemoveLocation(File, boolean)} to (un-)load all models an once.
+     * @param folder The folder to (un-)register
+     * @param add <tt>true</tt> the folder will be added as possible location for models, <tt>false</tt> the folder
+     *     will be removed.
+     */
+    private void addOrRemoveLocation(File folder, boolean add) {
+        addOrRemoveLocation(VarModel.INSTANCE, folder, add);
+        addOrRemoveLocation(BuildModel.INSTANCE, folder, add);
+        addOrRemoveLocation(TemplateModel.INSTANCE, folder, add);
+        addOrRemoveLocation(RtVilModel.INSTANCE, folder, add);
     }
     
     /**
      * Removed or adds a (temporary) folder for loading models from this locations.
      * @param modelManagement {@link VarModel#INSTANCE}, {@link BuildModel#INSTANCE}, or {@link TemplateModel#INSTANCE}
      * @param folder The folder to (un-)register
-     * @param add <tt>true</tt> the folder will be added as possible location for models, <tt>false</tt>the folder
+     * @param add <tt>true</tt> the folder will be added as possible location for models, <tt>false</tt> the folder
      *     will be removed.
      */
     private void addOrRemoveLocation(ModelManagement<? extends IModel> modelManagement, File folder, boolean add) {
@@ -277,7 +294,7 @@ public class ModelModifier {
      */
     private File copyBuildModel() {
         File srcFolder = new File(baseLocation, "EASy");
-        File vilFolder = new File(targetFolder, COPIED_VIL_LOCATION);
+        File vilFolder = new File(targetFolder, COPIED_MODELS_LOCATION);
         vilFolder.mkdirs();
         try {
             FileUtils.copyDirectory(srcFolder, vilFolder, new FileFilter() {
@@ -332,7 +349,7 @@ public class ModelModifier {
         // Saved copied projects
         if (WRITE_MODIFIED_CONFIG) {
             try {
-                File modelFolder = new File(targetLocation, COPIED_IVML_LOCATION);
+                File modelFolder = new File(targetLocation, COPIED_MODELS_LOCATION);
                 if (!modelFolder.exists()) {
                     modelFolder.mkdirs();
                 }
