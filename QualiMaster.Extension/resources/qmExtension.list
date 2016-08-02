@@ -24,6 +24,7 @@ eu.qualimaster.monitoring.events.AbstractPipelineElementEnactmentCompletedMonito
 eu.qualimaster.monitoring.events.FrozenSystemState
 eu.qualimaster.monitoring.events.LoadSheddingChangedMonitoringEvent
 eu.qualimaster.monitoring.events.ReplayChangedMonitoringEvent
+eu.qualimaster.monitoring.events.SourceVolumeMonitoringEvent
 eu.qualimaster.observables.AnalysisObservables
 eu.qualimaster.observables.CloudResourceUsage
 eu.qualimaster.observables.FunctionalSuitability
