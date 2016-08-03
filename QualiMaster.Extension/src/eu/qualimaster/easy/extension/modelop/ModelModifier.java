@@ -55,6 +55,7 @@ import net.ssehub.easy.varModel.model.filter.DeclarationFinder.VisibilityType;
 import net.ssehub.easy.varModel.model.filter.FilterType;
 import net.ssehub.easy.varModel.model.rewrite.ProjectCopyVisitor;
 import net.ssehub.easy.varModel.model.rewrite.ProjectRewriteVisitor;
+import net.ssehub.easy.varModel.model.rewrite.UncopiedElement;
 import net.ssehub.easy.varModel.model.rewrite.modifier.FrozenCompoundConstraintsOmitter;
 import net.ssehub.easy.varModel.model.rewrite.modifier.FrozenConstraintVarFilter;
 import net.ssehub.easy.varModel.model.rewrite.modifier.FrozenConstraintsFilter;
@@ -324,6 +325,20 @@ public class ModelModifier {
         ProjectCopyVisitor copier = new ProjectCopyVisitor(baseProject, FilterType.ALL);
         baseProject.accept(copier);
         baseProject = copier.getCopiedProject();
+        List<UncopiedElement> uncopiedElements = copier.getUncopiedElements();
+        if (!uncopiedElements.isEmpty()) {
+            StringBuffer errMsg = new StringBuffer(ProjectCopyVisitor.class.getSimpleName());
+            errMsg.append(" could not copy ");
+            errMsg.append(uncopiedElements.size());
+            errMsg.append("elements of project \"");
+            errMsg.append(toplevelProject.getName());
+            errMsg.append("\". These are:");
+            for (int i = 0, end = uncopiedElements.size(); i < end; i++) {
+                errMsg.append("\n * ");
+                errMsg.append(uncopiedElements.get(i).getDescription());
+            }
+            Bundle.getLogger(ModelModifier.class).warn(errMsg.toString());
+        }
 
         if (SAVE_VALUES) {
             saveValues(baseProject, new HashSet<Project>());

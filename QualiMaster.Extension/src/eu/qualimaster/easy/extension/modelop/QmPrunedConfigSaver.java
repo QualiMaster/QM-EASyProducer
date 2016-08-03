@@ -15,6 +15,7 @@
  */
 package eu.qualimaster.easy.extension.modelop;
 
+import net.ssehub.easy.instantiation.core.Bundle;
 import net.ssehub.easy.varModel.confModel.Configuration;
 import net.ssehub.easy.varModel.confModel.ConfigurationException;
 import net.ssehub.easy.varModel.confModel.IDecisionVariable;
@@ -44,7 +45,17 @@ class QmPrunedConfigSaver extends QualiMasterConfigurationSaver {
     
     @Override
     protected boolean isSavingEnabled(Project destProject, IDecisionVariable var) {
-        // QMI-Conf app does not modify predefined annotation values -> do not save them 
-        return super.isSavingEnabled(destProject, var) && !var.getDeclaration().isAttribute();
+        boolean savingEnabled = super.isSavingEnabled(destProject, var);
+
+        if (savingEnabled) {
+            // QMI-Conf app does not modify predefined annotation values -> do not save them 
+            savingEnabled = !var.getDeclaration().isAttribute();
+            if (!savingEnabled) {
+                Bundle.getLogger(QmPrunedConfigSaver.class).debug("Ommiting annotation value: ",
+                    var.getDeclaration().getName(), " = " , var.getValue().getValue());
+            }
+        }
+        
+        return savingEnabled;
     }
 }
