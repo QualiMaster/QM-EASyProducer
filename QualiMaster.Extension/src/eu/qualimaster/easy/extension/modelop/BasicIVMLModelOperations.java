@@ -165,14 +165,17 @@ public class BasicIVMLModelOperations {
             // as output could be an array, check this condition here
             if (compound.get(name).getClass().isArray()) {
                 sourceObject.add(name);
-                Object[] arrayVar = (Object[]) compound.get(name);                              
-                DecisionVariableDeclaration[] variables = new DecisionVariableDeclaration[arrayVar.length];
-                for (int i = 0; i < arrayVar.length; i++) {
-                    Object var = arrayVar[i];
-                    variables[i] = new DecisionVariableDeclaration(var.toString(),
-                        compoundVariablesMap.get(name), decisionVariable);
+                Object[] arrayVar = (Object[]) compound.get(name);
+                if (!(arrayVar != null && arrayVar.length > 0 && arrayVar[0] instanceof ConstraintSyntaxTree)) {
+                    DecisionVariableDeclaration[] variables = new DecisionVariableDeclaration[arrayVar.length];
+                    for (int i = 0; i < arrayVar.length; i++) {
+                        Object var = arrayVar[i];
+                        variables[i] = new DecisionVariableDeclaration(var.toString(),
+                            compoundVariablesMap.get(name), decisionVariable);
+                    }
+                    arrayVar = variables;
                 }
-                sourceObject.add(variables);               
+                sourceObject.add(arrayVar);
             } else if (compound.get(name) instanceof ConstraintSyntaxTree) {
                 sourceObject.add(name);
                 sourceObject.add(compound.get(name));

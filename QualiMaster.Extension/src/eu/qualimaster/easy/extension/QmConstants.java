@@ -62,6 +62,7 @@ public class QmConstants {
     public static final String TYPE_PIPELINE_ELEMENT = "PipelineElement";
     public static final String SLOT_PIPELINE_ELEMENT_ISVALID = SLOT_ISVALID;
     public static final String TYPE_PIPELINE_ELEMENT_NAME = "name";
+    public static final String SLOT_PIPELINE_ELEMENT_PERMISSIBLE_PARAMETERS = "permissibleParameters";
     
     public static final String TYPE_PIPELINE_NODE = "PipelineNode";
     public static final String SLOT_PIPELINE_NODE_ISVALID = SLOT_ISVALID;
