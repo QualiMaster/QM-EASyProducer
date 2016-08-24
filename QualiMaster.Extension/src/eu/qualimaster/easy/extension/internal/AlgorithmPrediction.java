@@ -24,8 +24,8 @@ import net.ssehub.easy.instantiation.core.model.vilTypes.Instantiator;
  * 
  * @author Holger Eichelberger
  */
-@Instantiator("obtainPipelineElementObservationPrediction")
-public class PipelineElementObservationPrediction implements IVilType {
+@Instantiator("algorithmPrediction")
+public class AlgorithmPrediction implements IVilType {
     
     /**
      * Performs a prediction on a pipeline element observable when changing a parameter.
@@ -37,7 +37,7 @@ public class PipelineElementObservationPrediction implements IVilType {
      * @param value the actual value 
      * @return the predicted value (may be <b>null</b> if there is no prediction)
      */
-    public static Double obtainPipelineElementObservationPrediction(IObservable observable, double actual, 
+    public static Double algorithmPrediction(IObservable observable, double actual, 
         String element, String parameter, Object value) {
         return null;
     }
