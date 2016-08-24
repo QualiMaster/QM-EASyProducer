@@ -17,6 +17,7 @@ eu.qualimaster.coordination.commands.ScheduleWavefrontAdaptationCommand
 eu.qualimaster.adaptation.events.AdaptationEvent
 eu.qualimaster.adaptation.events.AlgorithmConfigurationAdaptationEvent
 eu.qualimaster.adaptation.events.ParameterConfigurationAdaptationEvent
+eu.qualimaster.adaptation.events.SourceVolumeAdaptationEvent
 eu.qualimaster.events.AbstractEvent
 eu.qualimaster.events.IEvent
 eu.qualimaster.infrastructure.InfrastructurePart
