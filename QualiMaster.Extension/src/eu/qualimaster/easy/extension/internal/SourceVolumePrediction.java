@@ -18,9 +18,6 @@ package eu.qualimaster.easy.extension.internal;
 import java.util.List;
 import java.util.Map;
 
-import eu.qualimaster.events.SynchronousEventStore;
-import eu.qualimaster.monitoring.events.SourceVolumePredictionRequest;
-import eu.qualimaster.monitoring.events.SourceVolumePredictionResponse;
 import net.ssehub.easy.instantiation.core.model.vilTypes.IVilType;
 import net.ssehub.easy.instantiation.core.model.vilTypes.Instantiator;
 import net.ssehub.easy.instantiation.core.model.vilTypes.OperationMeta;
@@ -33,9 +30,36 @@ import net.ssehub.easy.instantiation.core.model.vilTypes.OperationMeta;
 @Instantiator("sourceVolumePrediction")
 public class SourceVolumePrediction implements IVilType {
 
-    private static SynchronousEventStore<SourceVolumePredictionRequest, SourceVolumePredictionResponse> store 
-        = new SynchronousEventStore<SourceVolumePredictionRequest, SourceVolumePredictionResponse>(
-            SourceVolumePredictionResponse.class);
+    private static final SourceVolumePredictor IMPL;
+    
+    static {
+        SourceVolumePredictor impl = null;
+        try {
+            Class<?> cls = Class.forName("eu.qualimaster.easy.extension.internal.SourceVolumePredictorImpl");
+            impl = (SourceVolumePredictor) cls.newInstance();
+        } catch (ClassNotFoundException e) {
+            error(e);
+        } catch (InstantiationException e) {
+            error(e);
+        } catch (IllegalAccessException e) {
+            error(e);
+        } catch (ClassCastException e) {
+            error(e);
+        }
+        if (null == impl) {
+            impl = new SourceVolumePredictor();
+        }
+        IMPL = impl;
+    }
+
+    /**
+     * Emits a class loading error.
+     * 
+     * @param exc the exception/throwable
+     */
+    private static void error(Throwable exc) {
+        Registration.error("Error loading SourceVolumePredictorImp - falling back to default: " + exc.getMessage());
+    }
     
     /**
      * Performs a prediction of source volumes for certain keywords.
@@ -48,8 +72,7 @@ public class SourceVolumePrediction implements IVilType {
     @OperationMeta(returnGenerics = {String.class, Double.class} )
     public static Map<String, Double> sourceVolumePrediction(String pipeline, String source, 
         List<String> keywords) {
-        SourceVolumePredictionResponse resp = waitFor(new SourceVolumePredictionRequest(pipeline, source, keywords));
-        return resp.getPredictions();
+        return IMPL.sourceVolumePrediction(pipeline, source, keywords);
     }
     
     /**
@@ -61,23 +84,7 @@ public class SourceVolumePrediction implements IVilType {
      * @return the predicted new value (may be <b>null</b> if there is no prediction)
      */
     public static Double sourceVolumePrediction(String pipeline, String source, String keyword) {
-        Double result = null; 
-        SourceVolumePredictionResponse resp = waitFor(new SourceVolumePredictionRequest(pipeline, source, keyword));
-        Map<String, Double> predictions = resp.getPredictions();
-        if (null != predictions) {
-            result = predictions.get(keyword);
-        }
-        return result;
-    }
-    
-    /**
-     * Waits for a response to the given <code>request</code>.
-     * 
-     * @param request the request
-     * @return the response (may be <b>null</b> if there was none within the predefined timeout)
-     */
-    private static SourceVolumePredictionResponse waitFor(SourceVolumePredictionRequest request) {
-        return store.waitFor(2000, 100, request);
+        return IMPL.sourceVolumePrediction(pipeline, source, keyword);
     }
 
 }

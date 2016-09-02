@@ -449,16 +449,12 @@ public class Registration implements IRegistration {
         RtVilTypeRegistry.INSTANCE.register(PipelineHelper.class);
         RtVilTypeRegistry.INSTANCE.register(PipelineElementHelper.class);
         
-        String layer = System.getProperty("qm.layer");
-        if (null == layer || "coordination".equals(layer)) {
-            RtVilTypeRegistry.INSTANCE.register(RepositoryHelper.class);
-            RtVilTypeRegistry.INSTANCE.register(HardwareRepositoryHelper.class);
-            RtVilTypeRegistry.INSTANCE.register(CoordinationHelper.class);
-        }
-        if (null == layer || "coordination".equals(layer) || "monitoring".equals(layer)) {
-            RtVilTypeRegistry.INSTANCE.register(AlgorithmPrediction.class);
-            RtVilTypeRegistry.INSTANCE.register(SourceVolumePrediction.class);
-        }
+        RtVilTypeRegistry.INSTANCE.register(RepositoryHelper.class);
+        RtVilTypeRegistry.INSTANCE.register(HardwareRepositoryHelper.class);
+        RtVilTypeRegistry.INSTANCE.register(CoordinationHelper.class);
+
+        RtVilTypeRegistry.INSTANCE.register(AlgorithmPrediction.class);
+        RtVilTypeRegistry.INSTANCE.register(SourceVolumePrediction.class);
     }
 
     /**
@@ -494,9 +490,19 @@ public class Registration implements IRegistration {
         System.out.println();
         System.err.println("Please refresh the project and commit the changes.");
         
+        // just as a test
         Registration reg = new Registration();
         reg.activate(null);
         reg.deactivate(null);
+    }
+    
+    /**
+     * Logs an error.
+     * 
+     * @param message the error message
+     */
+    public static void error(String message) {
+        LOGGING.error(message);
     }
     
 }

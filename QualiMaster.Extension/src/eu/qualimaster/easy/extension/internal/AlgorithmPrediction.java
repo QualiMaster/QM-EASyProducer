@@ -27,6 +27,37 @@ import net.ssehub.easy.instantiation.core.model.vilTypes.Instantiator;
 @Instantiator("algorithmPrediction")
 public class AlgorithmPrediction implements IVilType {
     
+    private static final AlgorithmPredictor IMPL;
+    
+    static {
+        AlgorithmPredictor impl = null;
+        try {
+            Class<?> cls = Class.forName("eu.qualimaster.easy.extension.internal.AlgorithmPredictorImpl");
+            impl = (AlgorithmPredictor) cls.newInstance();
+        } catch (ClassNotFoundException e) {
+            error(e);
+        } catch (InstantiationException e) {
+            error(e);
+        } catch (IllegalAccessException e) {
+            error(e);
+        } catch (ClassCastException e) {
+            error(e);
+        }
+        if (null == impl) {
+            impl = new AlgorithmPredictor();
+        }
+        IMPL = impl;
+    }
+    
+    /**
+     * Emits a class loading error.
+     * 
+     * @param exc the exception/throwable
+     */
+    private static void error(Throwable exc) {
+        Registration.error("Error loading AlgorithmPredictorImpl - falling back to default: " + exc.getMessage());
+    }
+
     /**
      * Performs a prediction on a pipeline element observable when changing a parameter.
      * 
@@ -39,7 +70,7 @@ public class AlgorithmPrediction implements IVilType {
      */
     public static Double algorithmPrediction(IObservable observable, double actual, 
         String element, String parameter, Object value) {
-        return null;
+        return IMPL.algorithmPrediction(observable, actual, element, parameter, value);
     }
 
 }
