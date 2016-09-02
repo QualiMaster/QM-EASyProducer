@@ -439,22 +439,31 @@ public class Registration implements IRegistration {
     
     /**
      * Private method to activate plugin.
+     * 
      * @param context Context.
      */
     protected void activate(ComponentContext context) {
         // this is not the official way of using DS but the official way is unstable
         register(null);
+        
         RtVilTypeRegistry.INSTANCE.register(PipelineHelper.class);
         RtVilTypeRegistry.INSTANCE.register(PipelineElementHelper.class);
-        RtVilTypeRegistry.INSTANCE.register(AlgorithmPrediction.class);
-        RtVilTypeRegistry.INSTANCE.register(SourceVolumePrediction.class);
-        RtVilTypeRegistry.INSTANCE.register(RepositoryHelper.class);
-        RtVilTypeRegistry.INSTANCE.register(HardwareRepositoryHelper.class);
-        RtVilTypeRegistry.INSTANCE.register(CoordinationHelper.class);
+        
+        String layer = System.getProperty("qm.layer");
+        if (null == layer || "coordination".equals(layer)) {
+            RtVilTypeRegistry.INSTANCE.register(RepositoryHelper.class);
+            RtVilTypeRegistry.INSTANCE.register(HardwareRepositoryHelper.class);
+            RtVilTypeRegistry.INSTANCE.register(CoordinationHelper.class);
+        }
+        if (null == layer || "coordination".equals(layer) || "monitoring".equals(layer)) {
+            RtVilTypeRegistry.INSTANCE.register(AlgorithmPrediction.class);
+            RtVilTypeRegistry.INSTANCE.register(SourceVolumePrediction.class);
+        }
     }
 
     /**
      * Private method to to de-activate plugin.
+     * 
      * @param context Context.
      */
     protected void deactivate(ComponentContext context) {
@@ -484,6 +493,10 @@ public class Registration implements IRegistration {
         register(jarLocations); 
         System.out.println();
         System.err.println("Please refresh the project and commit the changes.");
+        
+        Registration reg = new Registration();
+        reg.activate(null);
+        reg.deactivate(null);
     }
     
 }
