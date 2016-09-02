@@ -20,7 +20,8 @@ import java.util.Map;
 
 /**
  * Encapsulates the source volume predictor. This indirection is necessary, because when testing / running layers
- * independently of each other, the Monitoring Layer may not be available.
+ * independently of each other, the Monitoring Layer may not be available. However, the VIL interface shall still be
+ * available.
  * 
  * @author Holger Eichelberger
  */

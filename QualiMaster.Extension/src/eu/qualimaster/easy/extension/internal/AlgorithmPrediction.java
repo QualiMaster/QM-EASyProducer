@@ -27,6 +27,7 @@ import net.ssehub.easy.instantiation.core.model.vilTypes.Instantiator;
 @Instantiator("algorithmPrediction")
 public class AlgorithmPrediction implements IVilType {
     
+    // explanation see AlgorithmPredictor
     private static final AlgorithmPredictor IMPL;
     
     static {

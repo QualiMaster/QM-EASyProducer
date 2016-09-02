@@ -30,6 +30,7 @@ import net.ssehub.easy.instantiation.core.model.vilTypes.OperationMeta;
 @Instantiator("sourceVolumePrediction")
 public class SourceVolumePrediction implements IVilType {
 
+    // explanation see SourceVolumePredictor
     private static final SourceVolumePredictor IMPL;
     
     static {
