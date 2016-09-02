@@ -15,6 +15,9 @@
  */
 package eu.qualimaster.easy.extension.internal;
 
+import java.io.Serializable;
+import java.util.Map;
+
 import eu.qualimaster.observables.IObservable;
 
 /**
@@ -27,17 +30,47 @@ import eu.qualimaster.observables.IObservable;
 public class AlgorithmPredictor {
 
     /**
-     * Performs a prediction on a pipeline element observable when changing a parameter.
+     * Creates a request for predicting the characteristics for a given algorithm in the current target setting.
      * 
-     * @param observable the observable to predict
-     * @param actual the actual value of <code>observable</code>
-     * @param element the name of the pipeline element to predict on
-     * @param parameter the parameter name
-     * @param value the actual value 
-     * @return the predicted value (may be <b>null</b> if there is no prediction)
+     * @param pipeline the pipeline to predict for
+     * @param pipelineElement the pipeline element
+     * @param algorithm the algorithm (may be <b>null</b> for the actual one)
+     * @param observable the observable to predict for
+     * @return the predicted value or <b>null</b> if there is no prediction
      */
-    public Double algorithmPrediction(IObservable observable, double actual, 
-        String element, String parameter, Object value) {
+    public Double algorithmPrediction(String pipeline, String pipelineElement, String algorithm, 
+        IObservable observable) {
+        return null;
+    }
+    
+    /**
+     * Creates a request for predicting the characteristics for a given algorithm in a target setting.
+     * 
+     * @param pipeline the pipeline to predict for
+     * @param pipelineElement the pipeline element
+     * @param algorithm the algorithm (may be <b>null</b> for the actual one)
+     * @param observable the observable to predict for
+     * @param targetValues the target values for a modified situation (may be <b>null</b> if just the algorithm may 
+     *     change based on the current situation)
+     * @return the predicted value or <b>null</b> if there is no prediction
+     */
+    public Double algorithmPrediction(String pipeline, String pipelineElement, String algorithm, 
+        IObservable observable, Map<Object, Serializable> targetValues) {
+        return null;
+    }
+    
+    /**
+     * Creates a request to obtain the best algorithm in this situation.
+     * 
+     * @param pipeline the pipeline to predict for
+     * @param pipelineElement the pipeline element
+     * @param weighting the weighting
+     * @param targetValues the target values for a modified situation (may be <b>null</b> if just the algorithm may 
+     *     change based on the current situation)
+     * @return the best algorithm or <b>null</b> if there is no prediction
+     */
+    public String algorithmPrediction(String pipeline, String pipelineElement, Map<IObservable, Double> weighting, 
+        Map<Object, Serializable> targetValues) {
         return null;
     }
     
