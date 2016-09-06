@@ -17,6 +17,7 @@ package eu.qualimaster.easy.extension.internal;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.Set;
 
 import eu.qualimaster.observables.IObservable;
 import net.ssehub.easy.instantiation.core.model.vilTypes.IVilType;
@@ -97,14 +98,15 @@ public class AlgorithmPrediction implements IVilType {
      * 
      * @param pipeline the pipeline to predict for
      * @param pipelineElement the pipeline element
+     * @param algorithms the algorithms to take into account
      * @param weighting the weighting
      * @param targetValues the target values for a modified situation (may be <b>null</b> if just the algorithm may 
      *     change based on the current situation)
      * @return the best algorithm or <b>null</b> if there is no prediction
      */
-    public static String algorithmPrediction(String pipeline, String pipelineElement, 
+    public static String algorithmPrediction(String pipeline, String pipelineElement, Set<String> algorithms, 
         Map<IObservable, Double> weighting, Map<Object, Serializable> targetValues) {
-        return IMPL.algorithmPrediction(pipeline, pipelineElement, weighting, targetValues);
+        return IMPL.algorithmPrediction(pipeline, pipelineElement, algorithms, weighting, targetValues);
     }
 
 }

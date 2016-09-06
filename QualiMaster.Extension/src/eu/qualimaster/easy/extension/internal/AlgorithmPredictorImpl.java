@@ -17,6 +17,7 @@ package eu.qualimaster.easy.extension.internal;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.Set;
 
 import eu.qualimaster.events.SynchronousEventStore;
 import eu.qualimaster.monitoring.events.AlgorithmProfilePredictionRequest;
@@ -58,10 +59,10 @@ class AlgorithmPredictorImpl extends AlgorithmPredictor {
     }
 
     @Override
-    public String algorithmPrediction(String pipeline, String pipelineElement, Map<IObservable, Double> weighting, 
-        Map<Object, Serializable> targetValues) {
+    public String algorithmPrediction(String pipeline, String pipelineElement, Set<String> algorithms, 
+        Map<IObservable, Double> weighting, Map<Object, Serializable> targetValues) {
         AlgorithmProfilePredictionResponse resp = waitFor(
-            new AlgorithmProfilePredictionRequest(pipeline, pipelineElement, weighting, targetValues));
+            new AlgorithmProfilePredictionRequest(pipeline, pipelineElement, algorithms, weighting, targetValues));
         return resp.getAlgorithm();
     }
     
