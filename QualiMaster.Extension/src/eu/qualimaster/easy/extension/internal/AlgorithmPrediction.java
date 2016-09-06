@@ -71,7 +71,7 @@ public class AlgorithmPrediction implements IVilType {
      * @param observable the observable to predict for
      * @return the predicted value or <b>null</b> if there is no prediction
      */
-    public Double algorithmPrediction(String pipeline, String pipelineElement, String algorithm, 
+    public static Double algorithmPrediction(String pipeline, String pipelineElement, String algorithm, 
         IObservable observable) {
         return IMPL.algorithmPrediction(pipeline, pipelineElement, algorithm, observable);
     }
@@ -87,7 +87,7 @@ public class AlgorithmPrediction implements IVilType {
      *     change based on the current situation)
      * @return the predicted value or <b>null</b> if there is no prediction
      */
-    public Double algorithmPrediction(String pipeline, String pipelineElement, String algorithm, 
+    public static Double algorithmPrediction(String pipeline, String pipelineElement, String algorithm, 
         IObservable observable, Map<Object, Serializable> targetValues) {
         return IMPL.algorithmPrediction(pipeline, pipelineElement, algorithm, observable, targetValues);
     }
@@ -102,8 +102,8 @@ public class AlgorithmPrediction implements IVilType {
      *     change based on the current situation)
      * @return the best algorithm or <b>null</b> if there is no prediction
      */
-    public String algorithmPrediction(String pipeline, String pipelineElement, Map<IObservable, Double> weighting, 
-        Map<Object, Serializable> targetValues) {
+    public static String algorithmPrediction(String pipeline, String pipelineElement, 
+        Map<IObservable, Double> weighting, Map<Object, Serializable> targetValues) {
         return IMPL.algorithmPrediction(pipeline, pipelineElement, weighting, targetValues);
     }
 
