@@ -225,7 +225,7 @@ public class Registration implements IRegistration {
                         try {
                             classes.add(loader.loadClass(line));
                         } catch (ClassNotFoundException e) {
-                            LOGGING.error(e.getMessage(), e);
+                            LOGGING.error("Class not found " + e.getMessage());
                         }
                     }
                 } while (null != line);
@@ -327,7 +327,7 @@ public class Registration implements IRegistration {
             try {
                 RtVilTypeRegistry.registerRtTypes(toImport);
             } catch (VilException e) {
-                LOGGING.error(e.getMessage(), e);
+                LOGGING.error("While registering " + e.getMessage(), e);
             }
             if (debug) {
                 Collections.sort(toImport, new ClassNameComparator());

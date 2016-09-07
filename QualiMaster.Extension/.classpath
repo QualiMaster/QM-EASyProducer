@@ -19,5 +19,6 @@
 	<classpathentry kind="lib" path="lib/slf4j-api-1.7.5.jar"/>
 	<classpathentry kind="lib" path="lib/DataManagementLayer.jar"/>
 	<classpathentry kind="lib" path="lib/MonitoringLayer.jar"/>
+	<classpathentry kind="lib" path="lib/StormCommons.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

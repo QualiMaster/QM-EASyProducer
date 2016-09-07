@@ -382,9 +382,22 @@ public class PipelineHelper implements IVilType {
      */
     @QMInternal
     public static IDecisionVariable obtainAlgorithmFromFamilyByName(IDecisionVariable family, String name) {
+        return obtainAlgorithmFromFamilyByName(family, QmConstants.SLOT_FAMILYELEMENT_AVAILABLE, name);
+    }
+
+    /**
+     * Obtains an algorithm form a family.
+     * 
+     * @param family the family (may be <b>null</b>)
+     * @param slot the slot in <code>family</code> to use
+     * @param name the name of the algorithm
+     * @return the algorithm or <b>null</b> if none exists
+     */
+    public static IDecisionVariable obtainAlgorithmFromFamilyByName(IDecisionVariable family, String slot, 
+        String name) {
         IDecisionVariable result = null;
         if (null != family) {
-            IDecisionVariable avail = family.getNestedElement(QmConstants.SLOT_FAMILYELEMENT_AVAILABLE);
+            IDecisionVariable avail = family.getNestedElement(slot);
             if (null != avail) {
                 for (int n = 0, c = avail.getNestedElementsCount(); null == result && n < c; n++) {
                     IDecisionVariable alg = net.ssehub.easy.varModel.confModel.Configuration.dereference(
