@@ -21,6 +21,7 @@ eu.qualimaster.adaptation.events.SourceVolumeAdaptationEvent
 eu.qualimaster.events.AbstractEvent
 eu.qualimaster.events.IEvent
 eu.qualimaster.infrastructure.InfrastructurePart
+eu.qualimaster.infrastructure.PipelineOptions
 eu.qualimaster.monitoring.events.AbstractPipelineElementEnactmentCompletedMonitoringEvent
 eu.qualimaster.monitoring.events.FrozenSystemState
 eu.qualimaster.monitoring.events.LoadSheddingChangedMonitoringEvent
