@@ -76,7 +76,10 @@ public class QmConstants {
     public static final String SLOT_SOURCE_ACTUAL = SLOT_ACTUAL;
     public static final String SLOT_SOURCE_NAME = SLOT_NAME;
     public static final String SLOT_SOURCE_OUTPUT = "output";
-   /**
+    public static final String SLOT_SOURCE_ITEMS = "items";
+    public static final String SLOT_SOURCE_CAPACITY = "capacity";
+
+    /**
      * Inherited parallelism slot from pipeline node.
      * @deprecated Use {@link #SLOT_PIPELINE_NODE_PARALLELISM} instead, as since slot is inherited from there
      */
