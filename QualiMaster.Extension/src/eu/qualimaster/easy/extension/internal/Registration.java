@@ -46,7 +46,9 @@ import net.ssehub.easy.basics.logger.EASyLoggerFactory.EASyLogger;
 import net.ssehub.easy.instantiation.core.model.common.VilException;
 import net.ssehub.easy.instantiation.core.model.vilTypes.BuiltIn;
 import net.ssehub.easy.instantiation.core.model.vilTypes.FieldDescriptor;
+import net.ssehub.easy.instantiation.core.model.vilTypes.ILazyDescriptor;
 import net.ssehub.easy.instantiation.core.model.vilTypes.IRegistration;
+import net.ssehub.easy.instantiation.core.model.vilTypes.IVilType;
 import net.ssehub.easy.instantiation.core.model.vilTypes.OperationDescriptor;
 import net.ssehub.easy.instantiation.core.model.vilTypes.ReflectionResolver;
 import net.ssehub.easy.instantiation.core.model.vilTypes.TypeDescriptor;
@@ -340,23 +342,32 @@ public class Registration implements IRegistration {
                             FieldDescriptor fDesc = desc.getField(f);
                             System.out.println("        * " + fDesc.getSignature());
                         }
-                        for (int o = 0; o < desc.getOperationsCount(); o++) {
-                            OperationDescriptor oDesc = desc.getOperation(o);
-                            String ret = oDesc.getReturnType().getVilName() + " ";
-                            if (oDesc.isConstructor()) {
-                                ret = "";
-                            }
-                            if (ret.startsWith("PseudoVoid")) {
-                                ret = "";
-                            }
-                            System.out.println("        * " + ret + oDesc.getSignature());
-                        }
+                        printOperations(desc);
                     } else {
                         System.out.println("NOT FOUND " + cls.getName());
                     }
                 }
             }
             ReflectionResolver.setTypeRegistry(regSave);
+        }
+    }
+
+    /**
+     * Prints all operations in <code>desc</code>.
+     * 
+     * @param desc the descriptor to print the operations for
+     */
+    private static void printOperations(TypeDescriptor<?> desc) {
+        for (int o = 0; o < desc.getOperationsCount(); o++) {
+            OperationDescriptor oDesc = desc.getOperation(o);
+            String ret = oDesc.getReturnType().getVilName() + " ";
+            if (oDesc.isConstructor()) {
+                ret = "";
+            }
+            if (ret.startsWith("PseudoVoid")) {
+                ret = "";
+            }
+            System.out.println("        * " + ret + oDesc.getSignature());
         }
     }
     
@@ -445,16 +456,51 @@ public class Registration implements IRegistration {
     protected void activate(ComponentContext context) {
         // this is not the official way of using DS but the official way is unstable
         register(null);
-        
-        RtVilTypeRegistry.INSTANCE.register(PipelineHelper.class);
-        RtVilTypeRegistry.INSTANCE.register(PipelineElementHelper.class);
-        
-        RtVilTypeRegistry.INSTANCE.register(RepositoryHelper.class);
-        RtVilTypeRegistry.INSTANCE.register(HardwareRepositoryHelper.class);
-        RtVilTypeRegistry.INSTANCE.register(CoordinationHelper.class);
 
-        RtVilTypeRegistry.INSTANCE.register(AlgorithmPrediction.class);
-        RtVilTypeRegistry.INSTANCE.register(SourceVolumePrediction.class);
+        RtVilTypeRegistry.setTypeAnalyzer(ANALYZER);
+        TypeRegistry regSave = ReflectionResolver.setTypeRegistry(RtVilTypeRegistry.INSTANCE);
+
+        List<TypeDescriptor<?>> instantiators = new ArrayList<TypeDescriptor<?>>();
+        registerInstantiator(PipelineHelper.class, instantiators);
+        registerInstantiator(PipelineElementHelper.class, instantiators);
+        
+        registerInstantiator(RepositoryHelper.class, instantiators);
+        registerInstantiator(HardwareRepositoryHelper.class, instantiators);
+        registerInstantiator(CoordinationHelper.class, instantiators);
+
+        registerInstantiator(AlgorithmPrediction.class, instantiators);
+        registerInstantiator(SourceVolumePrediction.class, instantiators);
+        registerInstantiator(ConstraintViolationConverter.class, instantiators);
+        
+        ReflectionResolver.setTypeRegistry(regSave);
+
+        if (debug) {
+            System.out.println("    Instantiators:");
+            for (TypeDescriptor<?> desc: instantiators) {
+                printOperations(desc);
+            }
+            System.out.println();
+            System.err.println("Please refresh the project and commit the changes.");
+        }
+    }
+    
+    /**
+     * Handles the registration of an instantiator.
+     * 
+     * @param cls the class to be registered
+     * @param instantiators the instantiators (modified as a side effect)
+     */
+    private static void registerInstantiator(Class<? extends IVilType> cls, List<TypeDescriptor<?>> instantiators) {
+        TypeDescriptor<?> desc = RtVilTypeRegistry.INSTANCE.register(cls);
+        if (null != desc) {
+            for (int o = 0; o < desc.getOperationsCount(); o++) {
+                OperationDescriptor od = desc.getOperation(o);
+                if (od instanceof ILazyDescriptor) {
+                    ((ILazyDescriptor) od).forceInitialization();
+                }
+            }
+            instantiators.add(desc);
+        }
     }
 
     /**
@@ -487,8 +533,6 @@ public class Registration implements IRegistration {
             jarLocations += "lib/" + jarNames[i] + ".jar";
         }
         register(jarLocations); 
-        System.out.println();
-        System.err.println("Please refresh the project and commit the changes.");
         
         // just as a test
         Registration reg = new Registration();

@@ -84,7 +84,7 @@
          <scope>provided</scope>
        </dependency>
        <dependency>
-         <groupId>de.uni_hildesheim.sse.easyProducer.runtime</groupId>
+         <groupId>net.ssehub.easy.runtime</groupId>
          <artifactId>EASy</artifactId>
          <version>1.2.0-SNAPSHOT</version>
          <scope>provided</scope>
