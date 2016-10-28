@@ -59,11 +59,11 @@ class AlgorithmPredictorImpl extends AlgorithmPredictor {
     }
 
     @Override
-    public String algorithmPrediction(String pipeline, String pipelineElement, Set<String> algorithms, 
-        Map<IObservable, Double> weighting, Map<Object, Serializable> targetValues) {
+    public Map<String, Map<IObservable, Double>> algorithmPrediction(String pipeline, String pipelineElement, 
+        Set<String> algorithms, Set<IObservable> observables, Map<Object, Serializable> targetValues) {
         AlgorithmProfilePredictionResponse resp = waitFor(
-            new AlgorithmProfilePredictionRequest(pipeline, pipelineElement, algorithms, weighting, targetValues));
-        return resp.getAlgorithm();
+            new AlgorithmProfilePredictionRequest(pipeline, pipelineElement, algorithms, observables, targetValues));
+        return resp.getMassPrediction();
     }
     
     /**

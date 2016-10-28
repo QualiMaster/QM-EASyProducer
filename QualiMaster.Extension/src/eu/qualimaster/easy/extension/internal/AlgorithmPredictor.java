@@ -61,18 +61,18 @@ public class AlgorithmPredictor {
     }
     
     /**
-     * Creates a request to obtain the best algorithm in this situation.
+     * Creates a mass-request to obtain the predictions for multiple algorithms/observables.
      * 
      * @param pipeline the pipeline to predict for
      * @param pipelineElement the pipeline element
      * @param algorithms the algorithms to take into account
-     * @param weighting the weighting
+     * @param observables weighting the weighting
      * @param targetValues the target values for a modified situation (may be <b>null</b> if just the algorithm may 
      *     change based on the current situation)
      * @return the best algorithm or <b>null</b> if there is no prediction
      */
-    public String algorithmPrediction(String pipeline, String pipelineElement, Set<String> algorithms, 
-        Map<IObservable, Double> weighting, Map<Object, Serializable> targetValues) {
+    public Map<String, Map<IObservable, Double>> algorithmPrediction(String pipeline, String pipelineElement, 
+        Set<String> algorithms, Set<IObservable> observables, Map<Object, Serializable> targetValues) {
         return null;
     }
     
