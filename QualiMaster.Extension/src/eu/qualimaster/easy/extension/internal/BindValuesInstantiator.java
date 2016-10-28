@@ -17,7 +17,6 @@ package eu.qualimaster.easy.extension.internal;
 
 import java.util.Map;
 
-import eu.qualimaster.adaptation.internal.IvmlElementIDentifier;
 import net.ssehub.easy.instantiation.core.model.vilTypes.IVilType;
 import net.ssehub.easy.instantiation.core.model.vilTypes.Instantiator;
 import net.ssehub.easy.instantiation.core.model.vilTypes.configuration.Configuration;
@@ -37,8 +36,8 @@ public class BindValuesInstantiator implements IVilType {
      * @param bindings The new values to set in form of <tt>&lt;id for a (nested) variable, value&gt;</tt>
      */
     public static void storeValueBinding(Configuration configuration, Map<String, Object> bindings) {
-        AdaptiveConfiguration<IvmlElementIDentifier.ObservableTuple> aConfig =
-            new AdaptiveConfiguration<>(configuration.getConfiguration(), new IvmlElementIDentifier());
+        AdaptiveConfiguration<IvmlElementIdentifier.ObservableTuple> aConfig =
+            new AdaptiveConfiguration<>(configuration.getConfiguration(), new IvmlElementIdentifier());
         aConfig.addValues(bindings);
         
         // Will change the configuration as a side effect
