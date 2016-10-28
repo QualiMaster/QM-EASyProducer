@@ -28,7 +28,7 @@ import net.ssehub.easy.instantiation.rt.core.model.confModel.AdaptiveConfigurati
  * @author El-Sharkawy
  *
  */
-@Instantiator("bindValues")
+@Instantiator("storeValueBinding")
 public class BindValuesInstantiator implements IVilType {
     
     /**
@@ -36,7 +36,7 @@ public class BindValuesInstantiator implements IVilType {
      * @param configuration The configuration, which shall receive the new values from the mapping
      * @param bindings The new values to set in form of <tt>&lt;id for a (nested) variable, value&gt;</tt>
      */
-    public static void bindValues(Configuration configuration, Map<String, Object> bindings) {
+    public static void storeValueBinding(Configuration configuration, Map<String, Object> bindings) {
         AdaptiveConfiguration<IvmlElementIDentifier.ObservableTuple> aConfig =
             new AdaptiveConfiguration<>(configuration.getConfiguration(), new IvmlElementIDentifier());
         aConfig.addValues(bindings);
