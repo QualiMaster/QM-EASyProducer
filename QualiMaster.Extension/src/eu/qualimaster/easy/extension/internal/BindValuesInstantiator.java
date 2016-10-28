@@ -15,7 +15,11 @@
  */
 package eu.qualimaster.easy.extension.internal;
 
+
+import java.lang.reflect.Field;
 import java.util.Map;
+
+import org.omg.CORBA.Any;
 
 import net.ssehub.easy.instantiation.core.model.vilTypes.IVilType;
 import net.ssehub.easy.instantiation.core.model.vilTypes.Instantiator;
@@ -44,4 +48,26 @@ public class BindValuesInstantiator implements IVilType {
         aConfig.takeOverValues();
     }
 
+    /**
+     * Converts and Vil-Map into a Java-Map and calls {@link #storeValueBinding(Configuration, Map)}.
+     * @param configuration The configuration, which shall receive the new values from the mapping
+     * @param bindings The new values to set in form of <tt>&lt;id for a (nested) variable, value&gt;</tt>
+     */
+    public static void storeValueBinding(Configuration configuration,
+        net.ssehub.easy.instantiation.core.model.vilTypes.Map<String, Any> bindings) {
+        
+
+        Class<?> clazz = net.ssehub.easy.instantiation.core.model.vilTypes.Map.class;
+        try {
+            Field nestedMap = clazz.getDeclaredField("map");
+            nestedMap.setAccessible(true);
+            @SuppressWarnings("unchecked")
+            Map<String, Object> map = (Map<String, Object>) nestedMap.get(bindings);
+            storeValueBinding(configuration, map);
+        } catch (ReflectiveOperationException e) {
+            Bundle.getLogger(BindValuesInstantiator.class).exception(e);
+        } catch (SecurityException e) {
+            Bundle.getLogger(BindValuesInstantiator.class).exception(e);
+        }
+    }
 }
