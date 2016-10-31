@@ -19,6 +19,7 @@ import eu.qualimaster.observables.IObservable;
 import net.ssehub.easy.instantiation.core.model.vilTypes.IVilType;
 import net.ssehub.easy.instantiation.core.model.vilTypes.Instantiator;
 import net.ssehub.easy.instantiation.core.model.vilTypes.Map;
+import net.ssehub.easy.instantiation.core.model.vilTypes.ParameterMeta;
 
 /**
  * A simple selection of the "best" alternative via weighted values/predictions.
@@ -36,28 +37,38 @@ public class WeightingSelector implements IVilType {
      * @param weighting the weighting of the observables
      * @return the "best" solution in terms of the name
      */
-    public static String weightingSelection(Map<String, Map<IObservable, Double>> predictions, 
+    @SuppressWarnings("unchecked")
+    public static String weightingSelection(
+        @ParameterMeta(generics = {String.class, Map.class, IObservable.class, Double.class}) 
+        Map<String, Map<IObservable, Double>> predictions, 
+        @ParameterMeta(generics = {IObservable.class, Double.class}) 
         Map<IObservable, Double> weighting) {
         String best = null;
         double bestVal = 0;
         if (null != predictions) {
+            double[] results = new double[2];
             for (String name : predictions.keys()) {
-                Map<IObservable, Double> algPredictions = predictions.get(name);
                 double algVal = 0;
-                double sum = 0;
-                double weights = 0;
-                for (IObservable obs : weighting.keys()) {
-                    Double weight = weighting.get(obs);
-                    if (null != obs && null != weight) {
-                        Double predicted = algPredictions.get(obs);
-                        if (null != predicted) {
-                            sum += predicted * weight;
+                results[0] = 0; // sum
+                results[1] = 0; // weights
+                Object map = predictions.get(name);
+                if (map instanceof Map) {
+                    Map<IObservable, Double> algPredictions = (Map<IObservable, Double>) map;
+                    for (IObservable obs : weighting.keys()) {
+                        if (null != obs) {
+                            update(obs, weighting, algPredictions.get(obs), results);
                         }
-                        weights += weight;
+                    }
+                } else if (map instanceof java.util.Map) {
+                    java.util.Map<IObservable, Double> algPredictions = (java.util.Map<IObservable, Double>) map;
+                    for (IObservable obs : weighting.keys()) {
+                        if (null != obs) {
+                            update(obs, weighting, algPredictions.get(obs), results);
+                        }
                     }
                 }
-                if (weights != 0) {
-                    algVal = sum / weights;
+                if (results[1] != 0) {
+                    algVal = results[0] / results[1];
                 } else {
                     algVal = 0;
                 }
@@ -69,4 +80,23 @@ public class WeightingSelector implements IVilType {
         return best;
     }
 
+    /**
+     * Updates the sum/weight in <code>result</code>.
+     * 
+     * @param obs the actual observable
+     * @param weighting the weighting
+     * @param predicted the predicted value
+     * @param results the results to be updated
+     */
+    private static void update(IObservable obs, Map<IObservable, Double> weighting, Double predicted, 
+        double[] results) {
+        Double weight = weighting.get(obs);
+        if (null != weight) {
+            if (null != predicted) {
+                results[0] += predicted * weight;
+            }
+            results[1] += weight;
+        }
+    }
+    
 }
