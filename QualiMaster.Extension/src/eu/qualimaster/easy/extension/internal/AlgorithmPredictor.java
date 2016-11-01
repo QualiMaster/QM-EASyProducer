@@ -75,5 +75,22 @@ public class AlgorithmPredictor {
         Set<String> algorithms, Set<IObservable> observables, Map<Object, Serializable> targetValues) {
         return null;
     }
-    
+
+    /**
+     * Creates a request to obtain the best algorithm in this situation.
+     * 
+     * @param pipeline the pipeline to predict for
+     * @param pipelineElement the pipeline element
+     * @param parameter the parameter to predict for
+     * @param observables the observables
+     * @param targetValues the target values for a modified situation (may be <b>null</b> if just the algorithm may 
+     *     change based on the current situation)
+     * @return the predictions per algorithm/observables, if not possible individual predictions may be <b>null</b>
+     *     or the entire result may be <b>null</b> if there is no prediction at all
+     */
+    public Map<String, Map<IObservable, Double>> parameterPrediction(String pipeline, String pipelineElement, 
+        String parameter, Set<IObservable> observables, Map<Object, Serializable> targetValues) {
+        return null;
+    }
+
 }

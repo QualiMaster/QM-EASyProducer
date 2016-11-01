@@ -65,7 +65,27 @@ class AlgorithmPredictorImpl extends AlgorithmPredictor {
             new AlgorithmProfilePredictionRequest(pipeline, pipelineElement, algorithms, observables, targetValues));
         return resp.getMassPrediction();
     }
-    
+
+    /**
+     * Creates a request to obtain the best algorithm in this situation.
+     * 
+     * @param pipeline the pipeline to predict for
+     * @param pipelineElement the pipeline element
+     * @param parameter the parameter to predict for
+     * @param observables the observables
+     * @param targetValues the target values for a modified situation (may be <b>null</b> if just the algorithm may 
+     *     change based on the current situation)
+     * @return the predictions per algorithm/observables, if not possible individual predictions may be <b>null</b>
+     *     or the entire result may be <b>null</b> if there is no prediction at all
+     */
+    @Override
+    public Map<String, Map<IObservable, Double>> parameterPrediction(String pipeline, String pipelineElement, 
+        String parameter, Set<IObservable> observables, Map<Object, Serializable> targetValues) {
+        AlgorithmProfilePredictionResponse resp = waitFor(
+            new AlgorithmProfilePredictionRequest(pipeline, pipelineElement, parameter, observables, targetValues));
+        return resp.getMassPrediction();
+    }
+
     /**
      * Waits for a response to the given <code>request</code>.
      * 
@@ -75,5 +95,5 @@ class AlgorithmPredictorImpl extends AlgorithmPredictor {
     private AlgorithmProfilePredictionResponse waitFor(AlgorithmProfilePredictionRequest request) {
         return store.waitFor(2000, 100, request);
     }
-    
+
 }

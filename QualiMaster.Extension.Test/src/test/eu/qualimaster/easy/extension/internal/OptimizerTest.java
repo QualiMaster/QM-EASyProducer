@@ -75,7 +75,6 @@ public class OptimizerTest {
         Map<String, Map<IObservable, Double>> vilPredictions 
             = new Map<String, Map<IObservable, Double>>(predictions, predTypes);
         Map<IObservable, Double> vilWeighting = new Map<IObservable, Double>(weighting, weightingTypes);
-        
 
         String result = WeightingSelector.weightingSelection(vilPredictions, vilWeighting);
         Assert.assertEquals("alg2", result);

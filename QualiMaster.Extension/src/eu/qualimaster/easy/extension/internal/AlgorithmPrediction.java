@@ -16,12 +16,18 @@
 package eu.qualimaster.easy.extension.internal;
 
 import java.io.Serializable;
-import java.util.Map;
-import java.util.Set;
+import java.util.HashMap;
 
 import eu.qualimaster.observables.IObservable;
+import net.ssehub.easy.instantiation.core.model.common.VilException;
 import net.ssehub.easy.instantiation.core.model.vilTypes.IVilType;
 import net.ssehub.easy.instantiation.core.model.vilTypes.Instantiator;
+import net.ssehub.easy.instantiation.core.model.vilTypes.Map;
+import net.ssehub.easy.instantiation.core.model.vilTypes.OperationMeta;
+import net.ssehub.easy.instantiation.core.model.vilTypes.ParameterMeta;
+import net.ssehub.easy.instantiation.core.model.vilTypes.Set;
+import net.ssehub.easy.instantiation.core.model.vilTypes.TypeDescriptor;
+import net.ssehub.easy.instantiation.rt.core.model.rtVil.types.RtVilTypeRegistry;
 
 /**
  * Performs observation predictions for pipeline elements.
@@ -52,6 +58,15 @@ public class AlgorithmPrediction implements IVilType {
             impl = new AlgorithmPredictor();
         }
         IMPL = impl;
+    }
+
+    /**
+     * Returns the internal predictor instance.
+     * 
+     * @return the instance
+     */
+    static AlgorithmPredictor getInstance() {
+        return IMPL;
     }
     
     /**
@@ -89,8 +104,11 @@ public class AlgorithmPrediction implements IVilType {
      * @return the predicted value or <b>null</b> if there is no prediction
      */
     public static Double algorithmPrediction(String pipeline, String pipelineElement, String algorithm, 
-        IObservable observable, Map<Object, Serializable> targetValues) {
-        return IMPL.algorithmPrediction(pipeline, pipelineElement, algorithm, observable, targetValues);
+        IObservable observable, 
+        @ParameterMeta(generics = {Object.class, Serializable.class}) 
+        Map<Object, Serializable> targetValues) {
+        
+        return IMPL.algorithmPrediction(pipeline, pipelineElement, algorithm, observable, toMappedMap(targetValues));
     }
     
     /**
@@ -105,9 +123,68 @@ public class AlgorithmPrediction implements IVilType {
      * @return the predictions per algorithm/observables, if not possible individual predictions may be <b>null</b>
      *     or the entire result may be <b>null</b> if there is no prediction at all
      */
+    @OperationMeta(returnGenerics = {String.class, Map.class, IObservable.class, Double.class})
     public static Map<String, Map<IObservable, Double>> algorithmPrediction(String pipeline, String pipelineElement, 
-        Set<String> algorithms, Set<IObservable> observables, Map<Object, Serializable> targetValues) {
-        return IMPL.algorithmPrediction(pipeline, pipelineElement, algorithms, observables, targetValues);
+        @ParameterMeta(generics = {String.class}) 
+        Set<String> algorithms, 
+        @ParameterMeta(generics = {IObservable.class}) 
+        Set<IObservable> observables, 
+        @ParameterMeta(generics = {Object.class, Serializable.class}) 
+        Map<Object, Serializable> targetValues) {
+        return toResult(IMPL.algorithmPrediction(pipeline, pipelineElement, algorithms.toMappedSet(), 
+            observables.toMappedSet(), toMappedMap(targetValues)));
+    }
+    
+    /**
+     * Translates a VIL map to a Java map.
+     * 
+     * @param <K> the key type
+     * @param <V> the value type
+     * @param map the map to be translated
+     * @return the translated map
+     */
+    static <K, V> java.util.Map<K, V> toMappedMap(Map<K, V> map) {
+        // TODO replace by toMappedMap
+        java.util.Map<K, V> result = new HashMap<K, V>();
+        for (K k : map.keys()) {
+            result.put(k, map.get(k));
+        }
+        return result;
+    }
+
+    /**
+     * Translates the Java result instance to a VIL result instance.
+     * 
+     * @param res the Java result instance
+     * @return the corresponding VIL result instance
+     */
+    static Map<String, Map<IObservable, Double>> toResult(
+        java.util.Map<String, java.util.Map<IObservable, Double>> res) {
+
+        TypeDescriptor<?>[] predTypesInner = TypeDescriptor.createArray(2);
+        predTypesInner[0] = RtVilTypeRegistry.INSTANCE.getType(IObservable.class);
+        predTypesInner[1] = RtVilTypeRegistry.realType();
+        TypeDescriptor<?>[] predTypes = TypeDescriptor.createArray(2);
+        predTypes[0] = RtVilTypeRegistry.stringType();
+        try {
+            predTypes[1] = RtVilTypeRegistry.getMapType(predTypesInner);
+        } catch (VilException e) {
+            predTypes[1] = RtVilTypeRegistry.anyType();
+        }
+        
+        Map<String, Map<IObservable, Double>> result = null;
+        if (null != res) {
+            java.util.Map<Object, Object> resTemp = new HashMap<Object, Object>();
+            for (java.util.Map.Entry<String, java.util.Map<IObservable, Double>> ent : res.entrySet()) {
+                String key = ent.getKey();
+                java.util.Map<IObservable, Double> inner = ent.getValue();
+                java.util.Map<Object, Object> tmpInner = new HashMap<Object, Object>();
+                tmpInner.putAll(inner);
+                resTemp.put(key, new Map<IObservable, Double>(tmpInner, predTypesInner));
+            }
+            result = new Map<>(resTemp, predTypes);
+        }
+        return result;
     }
 
 }
