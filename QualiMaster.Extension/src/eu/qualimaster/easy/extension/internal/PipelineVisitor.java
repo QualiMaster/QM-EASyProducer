@@ -30,6 +30,7 @@ class PipelineVisitor {
 
     private PipelineContentsContainer container;
     private Configuration config;
+    private boolean containerInitialized;
     
     /**
      * Sole constructor.
@@ -37,6 +38,7 @@ class PipelineVisitor {
      */
     PipelineVisitor(IDecisionVariable pipeline) {
         container = new PipelineContentsContainer();
+        containerInitialized = false;
         this.config = pipeline.getConfiguration();
         ContainerValue sources = (ContainerValue) pipeline
             .getNestedElement(QmConstants.SLOT_PIPELINE_SOURCES).getValue();
@@ -49,6 +51,10 @@ class PipelineVisitor {
      * @return The referenced variables of the pipeline.
      */
     PipelineContentsContainer getPipelineContents() {
+        if (!containerInitialized) {
+            containerInitialized = true;
+            container.init();
+        }
         return container;
     }
     

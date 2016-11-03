@@ -38,12 +38,17 @@ import net.ssehub.easy.varModel.model.values.ReferenceValue;
  */
 class PipelineContentsContainer {
     private static Set<IDecisionVariable> allMappedVariables = new HashSet<>();
+    
+    // Element structure of pipeline (collected through visiting)
     private List<IDecisionVariable> sources = new ArrayList<>();
     private List<IDecisionVariable> familyElements = new ArrayList<>();
     private List<IDecisionVariable> dataManagementElements = new ArrayList<>();
     private List<IDecisionVariable> sinks = new ArrayList<>();
+   
+    // Mapped runtime elements (collected when init() is called for the first time)
     private List<IDecisionVariable> orgAlgorithms = null;
     private Map<String, IDecisionVariable> algorithmMapping = new HashMap<>();
+    private Map<String, IDecisionVariable> sourceMapping = new HashMap<>();
     
     private Models phase = null;
     
@@ -181,12 +186,42 @@ class PipelineContentsContainer {
     }
     
     /**
+     * Creates the sources structure, this includes the original sources
+     * as well as the mapped runtime counterparts.
+     */
+    private void gatherSources() {
+        for (int i = 0, end = sources.size(); i < end; i++) {
+            IDecisionVariable sourceElement = sources.get(i);
+            List<IDecisionVariable> runtimesources = getMappedMembers(sourceElement);
+            IDecisionVariable sourceSlot = sourceElement.getNestedElement(QmConstants.SLOT_SOURCE_SOURCE);
+            if (null != sourceSlot && null != runtimesources && !runtimesources.isEmpty()) {
+                Configuration config = sourceSlot.getConfiguration();
+                ReferenceValue sourceRef = (ReferenceValue) sourceSlot.getValue();
+                IDecisionVariable orgSource = PipelineVisitor.extractVar(sourceRef, config);
+                
+                if (null != orgSource) {
+                    String orgName = orgSource.getNestedElement(QmConstants.SLOT_NAME).getValue().getValue().toString();
+                    sourceMapping.put(orgName, runtimesources.get(0));
+                    allMappedVariables.add(runtimesources.get(0));
+                }
+            }
+        }
+    }
+    
+    /**
+     * Creates structured information for dependent information, which is not collected directly during visiting.
+     */
+    void init() {
+        gatherAlgorithms();
+        gatherSources();       
+    }
+    
+    /**
      * Returns the mapped algorithm instance for the given (configured) algorithm.
      * @param originalAlgorithmName The user defined name of the algorithm.
      * @return The configured name of the original algorithm from the model.
      */
     public IDecisionVariable getMappedAlgorithm(String originalAlgorithmName) {
-        gatherAlgorithms();
         return algorithmMapping.get(originalAlgorithmName);
     }
     

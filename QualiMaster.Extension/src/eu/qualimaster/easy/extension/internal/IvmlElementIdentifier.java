@@ -85,6 +85,7 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
     
     private List<IDecisionVariable> pipelines;
     private Map<String, PipelineContentsContainer> pipelineInfos;
+    private Map<String, List<String>> cachedIDSegments;
     
     /**
      * Sole constructor for this class.
@@ -98,6 +99,7 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
             }
         }
 
+        cachedIDSegments = new HashMap<>();
         pipelineInfos = new HashMap<>();
     }
     
@@ -109,7 +111,6 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
     private PipelineContentsContainer getPipelineInfos(String pipName) {
         PipelineContentsContainer infos = pipelineInfos.get(pipName);
         if (null == infos) {
-            System.out.println("New info for " + pipName);
             IDecisionVariable pipeline = null;
             for (int i = 0, end = pipelines.size(); i < end && null == pipeline; i++) {
                 IDecisionVariable tmpPip = pipelines.get(i);
@@ -154,28 +155,7 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
 
     @Override
     protected Iterator<String> getIDIterator(final String id) {
-        final List<String> segments = new ArrayList<String>();
-        String[] arraySegments = id.split(FrozenSystemState.SEPARATOR);
-        System.out.println(id);
-        if (arraySegments[0].equals("Algorithm")) {
-            PipelineContentsContainer infos = getPipelineInfos(arraySegments[1]);
-            if (null != infos) {
-                IDecisionVariable mappedVar = infos.getMappedAlgorithm(arraySegments[2]);
-                if (null != mappedVar) {
-                    segments.add(arraySegments[0]);
-                    segments.add(mappedVar.getDeclaration().getName());
-                    segments.add(arraySegments[arraySegments.length - 1]);
-                } else {
-                    System.out.println("No mapped infos for: " + arraySegments[2]);
-                }
-            } else {
-                System.out.println("No pip infos for: " + arraySegments[1]);
-            }
-        } else {
-            for (int i = 0; i < arraySegments.length; i++) {
-                segments.add(arraySegments[i]);
-            }
-        }
+        final List<String> segments = splitID(id);
         
         return new Iterator<String>() {
             
@@ -210,6 +190,48 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
                 throw new UnsupportedOperationException("Removing segments are not supported. Tried this on: " + id);
             }
         };
+    }
+
+    /**
+     * Splits a given ID into segments for iteration through the element parts.
+     * Will also use a cached to minimize String operations.
+     * @param id The ID to split into individual segments.
+     * @return An list of the split elements.
+     */
+    private List<String> splitID(final String id) {
+        List<String> segments = cachedIDSegments.get(id);
+        if (null == segments) {
+            segments = new ArrayList<String>();
+            cachedIDSegments.put(id, segments);
+            
+            String[] arraySegments = id.split(FrozenSystemState.SEPARATOR);
+            if (QmConstants.TYPE_ALGORITHM.equals(arraySegments[0])) {
+                PipelineContentsContainer infos = getPipelineInfos(arraySegments[1]);
+                if (null != infos) {
+                    IDecisionVariable mappedVar = infos.getMappedAlgorithm(arraySegments[2]);
+                    if (null != mappedVar) {
+                        segments.add(arraySegments[0]);
+                        segments.add(mappedVar.getDeclaration().getName());
+                        segments.add(arraySegments[arraySegments.length - 1]);
+                    } else {
+                        Bundle.getLogger(IvmlElementIdentifier.class).warn("No mapped variable found for: "
+                            + arraySegments[2]);
+                    }
+                } else {
+                    Bundle.getLogger(IvmlElementIdentifier.class).warn("No pipeline information found for: "
+                        + arraySegments[1]);
+                }
+            }
+            
+            // Default operation and fall back
+            if (segments.isEmpty()) {
+                for (int i = 0; i < arraySegments.length; i++) {
+                    segments.add(arraySegments[i]);
+                }
+            }
+        }
+        
+        return segments;
     }
 
     @Override
