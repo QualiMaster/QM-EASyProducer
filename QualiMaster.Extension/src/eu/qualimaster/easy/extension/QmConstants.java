@@ -127,7 +127,7 @@ public class QmConstants {
     public static final String SLOT_FAMILYELEMENT_AVAILABLE = SLOT_AVAILABLE;
     public static final String SLOT_FAMILYELEMENT_ACTUAL = SLOT_ACTUAL;
     public static final String SLOT_FAMILYELEMENT_FAMILY = "family";
-    public static final String SLOT_FAMILYELEMENT_DEFAULT = "default";
+    public static final String SLOT_FAMILYELEMENT_DEFAULT = "defaultAlgorithm";
     public static final String SLOT_FAMILYELEMENT_ISVALID = SLOT_ISVALID;
     /**
      * Inherited parallelism slot from pipeline node.

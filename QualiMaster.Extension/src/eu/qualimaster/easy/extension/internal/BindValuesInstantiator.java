@@ -17,6 +17,7 @@ package eu.qualimaster.easy.extension.internal;
 
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.omg.CORBA.Any;
@@ -34,6 +35,9 @@ import net.ssehub.easy.instantiation.rt.core.model.confModel.AdaptiveConfigurati
 @Instantiator("storeValueBinding")
 public class BindValuesInstantiator implements IVilType {
     
+    private static Map<net.ssehub.easy.varModel.confModel.Configuration,
+        AdaptiveConfiguration<IvmlElementIdentifier.ObservableTuple>> configMapping = new HashMap<>();
+    
     /**
      * Binds the values of the given mapping to the configuration.
      * @param configuration The configuration, which shall receive the new values from the mapping
@@ -41,7 +45,13 @@ public class BindValuesInstantiator implements IVilType {
      */
     public static void storeValueBinding(Configuration configuration, Map<String, Object> bindings) {
         AdaptiveConfiguration<IvmlElementIdentifier.ObservableTuple> aConfig =
-            new AdaptiveConfiguration<>(configuration.getConfiguration(), new IvmlElementIdentifier());
+            configMapping.get(configuration.getConfiguration());
+        if (null == aConfig) {
+            net.ssehub.easy.varModel.confModel.Configuration config = configuration.getConfiguration();
+            aConfig = new AdaptiveConfiguration<>(config, new IvmlElementIdentifier(config));
+            configMapping.put(configuration.getConfiguration(), aConfig);
+        }
+
         aConfig.addValues(bindings);
         
         // Will change the configuration as a side effect
@@ -55,7 +65,6 @@ public class BindValuesInstantiator implements IVilType {
      */
     public static void storeValueBinding(Configuration configuration,
         net.ssehub.easy.instantiation.core.model.vilTypes.Map<String, Any> bindings) {
-        
 
         Class<?> clazz = net.ssehub.easy.instantiation.core.model.vilTypes.Map.class;
         try {
