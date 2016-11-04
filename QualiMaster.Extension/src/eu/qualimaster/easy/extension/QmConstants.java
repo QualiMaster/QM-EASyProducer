@@ -162,7 +162,7 @@ public class QmConstants {
 
     public static final String PROJECT_OBSERVABLES = "Observables";
     public static final String PROJECT_OBSERVABLESCFG = PROJECT_OBSERVABLES + CFG_POSTFIX; 
-    public static final String TYPE_OBSERVABLES_OBSERVABLE = "Observable";
+    public static final String TYPE_OBSERVABLES_OBSERVABLE = "ObservableDecl";
     public static final String SLOT_OBSERVABLE_TYPE = "type";
     public static final String TYPE_OBSERVABLES_QPARAM = "QualityParameter";
     public static final String TYPE_OBSERVABLES_CONFIGUREDQPARAM = "ConfiguredQualityParameter";
