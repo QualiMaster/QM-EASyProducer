@@ -9,8 +9,8 @@
 	
 	<!-- Einstellungen fuer dieses Projekt -->
 	<property name="src.dir" value="src"/>
-	<property name="javacSource" value="1.5"/>
-	<property name="javacTarget" value="1.5"/>
+	<property name="javacSource" value="1.7"/>
+	<property name="javacTarget" value="1.7"/>
 
     <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
         <classpath path="${jacoco.path}/jacocoant.jar"/>
