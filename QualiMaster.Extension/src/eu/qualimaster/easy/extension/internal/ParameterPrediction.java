@@ -50,7 +50,7 @@ public class ParameterPrediction implements IVilType {
         String parameter,
         @ParameterMeta(generics = {IObservable.class}) 
         Set<IObservable> observables, 
-        @ParameterMeta(generics = {Object.class, Serializable.class}) 
+        @ParameterMeta(generics = {Object.class, Serializable.class}) // serializable is not known -> any/object
         Map<Object, Serializable> targetValues) {
         return AlgorithmPrediction.toResult(AlgorithmPrediction.getInstance().parameterPrediction(pipeline, 
             pipelineElement, parameter, observables.toMappedSet(), AlgorithmPrediction.toMappedMap(targetValues)));

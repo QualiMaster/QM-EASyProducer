@@ -105,10 +105,28 @@ public class AlgorithmPrediction implements IVilType {
      */
     public static Double algorithmPrediction(String pipeline, String pipelineElement, String algorithm, 
         IObservable observable, 
-        @ParameterMeta(generics = {Object.class, Serializable.class}) 
+        @ParameterMeta(generics = {Object.class, Serializable.class}) // serializable is not known to VIL -> any/object
         Map<Object, Serializable> targetValues) {
-        
         return IMPL.algorithmPrediction(pipeline, pipelineElement, algorithm, observable, toMappedMap(targetValues));
+    }
+
+    /**
+     * Creates a request to obtain the best algorithm in this situation.
+     * 
+     * @param pipeline the pipeline to predict for
+     * @param pipelineElement the pipeline element
+     * @param algorithms the algorithms to take into account
+     * @param observables the observables
+     * @return the predictions per algorithm/observables, if not possible individual predictions may be <b>null</b>
+     *     or the entire result may be <b>null</b> if there is no prediction at all
+     */
+    @OperationMeta(returnGenerics = {String.class, Map.class, IObservable.class, Double.class})
+    public static Map<String, Map<IObservable, Double>> algorithmPrediction(String pipeline, String pipelineElement, 
+        @ParameterMeta(generics = {String.class}) 
+        Set<String> algorithms, 
+        @ParameterMeta(generics = {IObservable.class}) 
+        Set<IObservable> observables) {
+        return algorithmPrediction(pipeline, pipelineElement, algorithms, observables, null);
     }
     
     /**
@@ -129,7 +147,7 @@ public class AlgorithmPrediction implements IVilType {
         Set<String> algorithms, 
         @ParameterMeta(generics = {IObservable.class}) 
         Set<IObservable> observables, 
-        @ParameterMeta(generics = {Object.class, Serializable.class}) 
+        @ParameterMeta(generics = {Object.class, Serializable.class}) // serializable is not known to VIL -> any/object
         Map<Object, Serializable> targetValues) {
         return toResult(IMPL.algorithmPrediction(pipeline, pipelineElement, algorithms.toMappedSet(), 
             observables.toMappedSet(), toMappedMap(targetValues)));
@@ -140,14 +158,18 @@ public class AlgorithmPrediction implements IVilType {
      * 
      * @param <K> the key type
      * @param <V> the value type
-     * @param map the map to be translated
-     * @return the translated map
+     * @param map the map to be translated (may be <b>null</b>)
+     * @return the translated map (may be <b>null</b> if <code>map</code> is <b>null</b>)
      */
     static <K, V> java.util.Map<K, V> toMappedMap(Map<K, V> map) {
-        // TODO replace by toMappedMap
-        java.util.Map<K, V> result = new HashMap<K, V>();
-        for (K k : map.keys()) {
-            result.put(k, map.get(k));
+        java.util.Map<K, V> result;
+        if (null != map) {
+            result = new HashMap<K, V>(); // TODO replace by toMappedMap
+            for (K k : map.keys()) {
+                result.put(k, map.get(k));
+            }
+        } else {
+            result = null;
         }
         return result;
     }

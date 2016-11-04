@@ -467,8 +467,10 @@ public class Registration implements IRegistration {
         registerInstantiator(RepositoryHelper.class, instantiators);
         registerInstantiator(HardwareRepositoryHelper.class, instantiators);
         registerInstantiator(CoordinationHelper.class, instantiators);
+        registerInstantiator(ObservableHelper.class, instantiators);
 
         registerInstantiator(AlgorithmPrediction.class, instantiators);
+        registerInstantiator(ParameterPrediction.class, instantiators);
         registerInstantiator(SourceVolumePrediction.class, instantiators);
         registerInstantiator(ConstraintViolationConverter.class, instantiators);
         

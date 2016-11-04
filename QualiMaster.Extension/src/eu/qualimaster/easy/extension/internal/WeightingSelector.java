@@ -37,66 +37,23 @@ public class WeightingSelector implements IVilType {
      * @param weighting the weighting of the observables
      * @return the "best" solution in terms of the name
      */
-    @SuppressWarnings("unchecked")
     public static String weightingSelection(
         @ParameterMeta(generics = {String.class, Map.class, IObservable.class, Double.class}) 
         Map<String, Map<IObservable, Double>> predictions, 
         @ParameterMeta(generics = {IObservable.class, Double.class}) 
         Map<IObservable, Double> weighting) {
+        
+        java.util.Map<String, Double> weighted = Weighting.weightingImpl(predictions, weighting);
         String best = null;
         double bestVal = 0;
-        if (null != predictions) {
-            double[] results = new double[2];
-            for (String name : predictions.keys()) {
-                double algVal = 0;
-                results[0] = 0; // sum
-                results[1] = 0; // weights
-                Object map = predictions.get(name);
-                if (map instanceof Map) {
-                    Map<IObservable, Double> algPredictions = (Map<IObservable, Double>) map;
-                    for (IObservable obs : weighting.keys()) {
-                        if (null != obs) {
-                            update(obs, weighting, algPredictions.get(obs), results);
-                        }
-                    }
-                } else if (map instanceof java.util.Map) {
-                    java.util.Map<IObservable, Double> algPredictions = (java.util.Map<IObservable, Double>) map;
-                    for (IObservable obs : weighting.keys()) {
-                        if (null != obs) {
-                            update(obs, weighting, algPredictions.get(obs), results);
-                        }
-                    }
-                }
-                if (results[1] != 0) {
-                    algVal = results[0] / results[1];
-                } else {
-                    algVal = 0;
-                }
-                if (null == best || algVal > bestVal) {
-                    best = name;
-                }
+        for (java.util.Map.Entry<String, Double> ent : weighted.entrySet()) {
+            String name = ent.getKey();
+            Double algVal = ent.getValue();
+            if (null == best || (null != algVal && algVal > bestVal)) {
+                best = name;
             }
         }
         return best;
-    }
-
-    /**
-     * Updates the sum/weight in <code>result</code>.
-     * 
-     * @param obs the actual observable
-     * @param weighting the weighting
-     * @param predicted the predicted value
-     * @param results the results to be updated
-     */
-    private static void update(IObservable obs, Map<IObservable, Double> weighting, Double predicted, 
-        double[] results) {
-        Double weight = weighting.get(obs);
-        if (null != weight) {
-            if (null != predicted) {
-                results[0] += predicted * weight;
-            }
-            results[1] += weight;
-        }
     }
     
 }
