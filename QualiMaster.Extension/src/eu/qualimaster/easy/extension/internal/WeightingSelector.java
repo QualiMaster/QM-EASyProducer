@@ -43,7 +43,7 @@ public class WeightingSelector implements IVilType {
         @ParameterMeta(generics = {IObservable.class, Double.class}) 
         Map<IObservable, Double> weighting) {
         
-        java.util.Map<String, Double> weighted = Weighting.weightingImpl(predictions, weighting);
+        java.util.Map<String, Double> weighted = Weighting.weightAllImpl(predictions, weighting);
         String best = null;
         double bestVal = 0;
         for (java.util.Map.Entry<String, Double> ent : weighted.entrySet()) {

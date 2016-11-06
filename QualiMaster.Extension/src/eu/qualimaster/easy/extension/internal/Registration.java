@@ -474,6 +474,7 @@ public class Registration implements IRegistration {
         registerInstantiator(SourceVolumePrediction.class, instantiators);
         registerInstantiator(ConstraintViolationConverter.class, instantiators);
         
+        registerInstantiator(Weighting.class, instantiators);
         registerInstantiator(WeightingSelector.class, instantiators);
         
         registerInstantiator(BindValuesInstantiator.class, instantiators);

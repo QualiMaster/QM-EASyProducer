@@ -18,8 +18,11 @@ package eu.qualimaster.easy.extension.internal;
 import java.util.HashMap;
 
 import eu.qualimaster.observables.IObservable;
+import net.ssehub.easy.instantiation.core.model.vilTypes.IVilType;
+import net.ssehub.easy.instantiation.core.model.vilTypes.Instantiator;
 import net.ssehub.easy.instantiation.core.model.vilTypes.Invisible;
 import net.ssehub.easy.instantiation.core.model.vilTypes.Map;
+import net.ssehub.easy.instantiation.core.model.vilTypes.OperationMeta;
 import net.ssehub.easy.instantiation.core.model.vilTypes.ParameterMeta;
 import net.ssehub.easy.instantiation.core.model.vilTypes.TypeDescriptor;
 import net.ssehub.easy.instantiation.core.model.vilTypes.TypeRegistry;
@@ -29,7 +32,8 @@ import net.ssehub.easy.instantiation.core.model.vilTypes.TypeRegistry;
  * 
  * @author Holger Eichelberger
  */
-public class Weighting {
+@Instantiator("weightAll")
+public class Weighting implements IVilType {
 
     /**
      * Implements a weighting of mass predictions.
@@ -39,7 +43,8 @@ public class Weighting {
      * @param weighting the weighting of the observables
      * @return the "best" solution in terms of the name
      */
-    public static Map<String, Double> weighting(
+    @OperationMeta(returnGenerics = {String.class, Double.class})
+    public static Map<String, Double> weightAll(
         @ParameterMeta(generics = {String.class, Map.class, IObservable.class, Double.class}) 
         Map<String, Map<IObservable, Double>> predictions, 
         @ParameterMeta(generics = {IObservable.class, Double.class}) 
@@ -47,7 +52,7 @@ public class Weighting {
         TypeDescriptor<?>[] types = TypeDescriptor.createArray(2);
         types[0] = TypeRegistry.stringType();
         types[1] = TypeRegistry.realType();
-        return new Map<String, Double>(new HashMap<Object, Object>(weightingImpl(predictions, weighting)), types);
+        return new Map<String, Double>(new HashMap<Object, Object>(weightAllImpl(predictions, weighting)), types);
     }
     
     /**
@@ -60,7 +65,7 @@ public class Weighting {
      */
     @Invisible
     @SuppressWarnings("unchecked")
-    public static java.util.Map<String, Double> weightingImpl(
+    public static java.util.Map<String, Double> weightAllImpl(
         @ParameterMeta(generics = {String.class, Map.class, IObservable.class, Double.class}) 
         Map<String, Map<IObservable, Double>> predictions, 
         @ParameterMeta(generics = {IObservable.class, Double.class}) 
