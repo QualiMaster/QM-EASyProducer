@@ -43,7 +43,7 @@ public class ObservableHelper implements IVilType {
      * @return the observable (may be <b>null</b> if there is no mapping)
      */
     public static IObservable mapObservable(String ivmlName) {
-        return ObservableMapper.getObservable(ivmlName);
+        return ObservableMapper.getObservableByType(ivmlName);
     }
     
     /**

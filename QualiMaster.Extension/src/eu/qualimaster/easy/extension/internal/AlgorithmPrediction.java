@@ -164,10 +164,7 @@ public class AlgorithmPrediction implements IVilType {
     static <K, V> java.util.Map<K, V> toMappedMap(Map<K, V> map) {
         java.util.Map<K, V> result;
         if (null != map) {
-            result = new HashMap<K, V>(); // TODO replace by toMappedMap
-            for (K k : map.keys()) {
-                result.put(k, map.get(k));
-            }
+            result = map.toMappedMap();
         } else {
             result = null;
         }
@@ -178,7 +175,7 @@ public class AlgorithmPrediction implements IVilType {
      * Translates the Java result instance to a VIL result instance.
      * 
      * @param res the Java result instance
-     * @return the corresponding VIL result instance
+     * @return the corresponding VIL result instance, always a result even if empty
      */
     static Map<String, Map<IObservable, Double>> toResult(
         java.util.Map<String, java.util.Map<IObservable, Double>> res) {
@@ -194,9 +191,8 @@ public class AlgorithmPrediction implements IVilType {
             predTypes[1] = RtVilTypeRegistry.anyType();
         }
         
-        Map<String, Map<IObservable, Double>> result = null;
+        java.util.Map<Object, Object> resTemp = new HashMap<Object, Object>();
         if (null != res) {
-            java.util.Map<Object, Object> resTemp = new HashMap<Object, Object>();
             for (java.util.Map.Entry<String, java.util.Map<IObservable, Double>> ent : res.entrySet()) {
                 String key = ent.getKey();
                 java.util.Map<IObservable, Double> inner = ent.getValue();
@@ -204,9 +200,8 @@ public class AlgorithmPrediction implements IVilType {
                 tmpInner.putAll(inner);
                 resTemp.put(key, new Map<IObservable, Double>(tmpInner, predTypesInner));
             }
-            result = new Map<>(resTemp, predTypes);
         }
-        return result;
+        return new Map<>(resTemp, predTypes);
     }
 
 }
