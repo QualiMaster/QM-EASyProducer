@@ -34,7 +34,8 @@ public class WeightingSelector implements IVilType {
      * 
      * @param predictions the predictions given as name-observable-prediction mapping, may be <b>null</b>, entries 
      *     may be <b>null</b>
-     * @param weighting the weighting of the observables
+     * @param weighting the weighting of the observables, negative weights invert the value by subtracting from the 
+     *     respective maximum
      * @return the "best" solution in terms of the name
      */
     public static String weightingSelection(
@@ -51,6 +52,7 @@ public class WeightingSelector implements IVilType {
             Double algVal = ent.getValue();
             if (null == best || (null != algVal && algVal > bestVal)) {
                 best = name;
+                bestVal = algVal;
             }
         }
         return best;
