@@ -145,6 +145,8 @@ public class QmConstants {
     public static final String SLOT_PIPELINE_ISVALID = SLOT_ISVALID;
     public static final String VAR_PIPELINES_PIPELINES = "pipelines";
     public static final String TYPE_SUBPIPELINE_ALGORITHM = "SubPipelineAlgorithm";
+    public static final String SLOT_SUBPIPELINE_FAMILY = "subPipelineFamily";
+    
 
     // ------------------------- adaptivity ---------------------------------
 
