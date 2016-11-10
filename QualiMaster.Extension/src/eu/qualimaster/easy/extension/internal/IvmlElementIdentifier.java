@@ -46,6 +46,10 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
     private static final Map<String, String> RUNTIME_VAR_NORMALIZATION = new HashMap<String, String>();
 
     static {
+        RUNTIME_VAR_NORMALIZATION.put("AVAILABLE", "available");
+        RUNTIME_VAR_NORMALIZATION.put("AVAILABLE_MEMORY", "availableMemory");
+        RUNTIME_VAR_NORMALIZATION.put("AVAILABLE_FREQUENCY", "availableFrequency");
+        RUNTIME_VAR_NORMALIZATION.put("BANDWIDTH", "bandwidth");
         RUNTIME_VAR_NORMALIZATION.put("CAPACITY", "capacity");
         RUNTIME_VAR_NORMALIZATION.put("EXECUTORS", "executors");
         RUNTIME_VAR_NORMALIZATION.put("HOSTS", "hosts");
@@ -53,8 +57,14 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
         RUNTIME_VAR_NORMALIZATION.put("IS_ENACTING", "isEnacting");
         RUNTIME_VAR_NORMALIZATION.put("ITEMS", "items");
         RUNTIME_VAR_NORMALIZATION.put("LATENCY", "latency");
+        RUNTIME_VAR_NORMALIZATION.put("LOAD", "load");
+        RUNTIME_VAR_NORMALIZATION.put("PING", "ping");
         RUNTIME_VAR_NORMALIZATION.put("THROUGHPUT_ITEMS", "throughputItems");
         RUNTIME_VAR_NORMALIZATION.put("THROUGHPUT_VOLUME", "throughputVolume");
+        RUNTIME_VAR_NORMALIZATION.put("USED_HARDDISC_MEM", "UsedHarddiscMem");
+        RUNTIME_VAR_NORMALIZATION.put("USED_MEMORY", "usedMemory");
+        RUNTIME_VAR_NORMALIZATION.put("USED_PROCESSORS", "UsedProcessors");
+        RUNTIME_VAR_NORMALIZATION.put("USED_WORKING_STORAGE", "UsedWorkingStorage");
     }
 
     /**
