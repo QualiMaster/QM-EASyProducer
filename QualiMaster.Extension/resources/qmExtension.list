@@ -1,3 +1,4 @@
+eu.qualimaster.coordination.InitializationMode
 eu.qualimaster.coordination.ParallelismChangeRequest
 eu.qualimaster.coordination.commands.AbstractCommandContainer
 eu.qualimaster.coordination.commands.AbstractPipelineCommand
