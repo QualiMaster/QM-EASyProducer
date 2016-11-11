@@ -52,7 +52,8 @@ import java.util.Iterator;
 public class ConfigurationInitializer {
 
     /**
-     * Initializes a QM model with runtime instances. [preliminary, separate concerns]
+     * Initializes a QM model with runtime instances. [preliminary, separate concerns] Actual instances are initialized
+     * by default.
      * 
      * @param config the configuration
      * @param newVariablePrefix the prefix for the new variables
@@ -61,6 +62,20 @@ public class ConfigurationInitializer {
     @QMInternal
     public static void initializeConfiguration(net.ssehub.easy.varModel.confModel.Configuration config, 
         String newVariablePrefix) throws VilException {
+        initializeConfiguration(config, newVariablePrefix, true);
+    }
+    
+    /**
+     * Initializes a QM model with runtime instances. [preliminary, separate concerns]
+     * 
+     * @param config the configuration
+     * @param newVariablePrefix the prefix for the new variables
+     * @param initActual whether actual instance shall be initialized by default
+     * @throws VilException in case that initialization fails
+     */
+    @QMInternal
+    public static void initializeConfiguration(net.ssehub.easy.varModel.confModel.Configuration config, 
+        String newVariablePrefix, boolean initActual) throws VilException {
         Project project = config.getProject();
         if (null == project) {
             throw new VilException("no project available - syntax/parsing error?", VilException.ID_INVALID);
@@ -75,18 +90,18 @@ public class ConfigurationInitializer {
                 OclKeyWords.GREATER_EQUALS, bindingTime.getLiteral(1));
 
             Compound sourceType = findCompound(project, TYPE_SOURCE);
-            CopySpec specSource = new CopySpec(sourceType, SLOT_SOURCE_SOURCE, freezeProvider, SLOT_SOURCE_AVAILABLE, 
-                SLOT_SOURCE_ACTUAL);
+            CopySpec specSource = new CopySpec(sourceType, SLOT_SOURCE_SOURCE, freezeProvider, 
+                select(initActual, SLOT_SOURCE_AVAILABLE, SLOT_SOURCE_ACTUAL));
             Compound familyElementType = findCompound(project, TYPE_FAMILYELEMENT);
             CopySpec specFamily = new CopySpec(familyElementType, SLOT_FAMILYELEMENT_FAMILY 
                 + IvmlKeyWords.COMPOUND_ACCESS + SLOT_FAMILY_MEMBERS, freezeProvider, 
-                SLOT_FAMILYELEMENT_AVAILABLE, SLOT_FAMILYELEMENT_ACTUAL);
+                select(initActual, SLOT_FAMILYELEMENT_AVAILABLE, SLOT_FAMILYELEMENT_ACTUAL));
             Compound sinkType = findCompound(project, TYPE_SINK);
-            CopySpec specSink = new CopySpec(sinkType, SLOT_SINK_SINK, freezeProvider, SLOT_SINK_AVAILABLE, 
-                SLOT_SINK_ACTUAL);
+            CopySpec specSink = new CopySpec(sinkType, SLOT_SINK_SINK, freezeProvider, 
+                select(initActual, SLOT_SINK_AVAILABLE, SLOT_SINK_ACTUAL));
             Compound replaySinkType = findCompound(project, TYPE_REPLAYSINK);
             CopySpec specReplaySink = new CopySpec(replaySinkType, SLOT_REPLAYSINK_SINK, freezeProvider, 
-                SLOT_REPLAYSINK_AVAILABLE, SLOT_REPLAYSINK_ACTUAL);            
+                select(initActual, SLOT_REPLAYSINK_AVAILABLE, SLOT_REPLAYSINK_ACTUAL));            
             VariableValueCopier copier = new VariableValueCopier(newVariablePrefix, specSource, specFamily, specSink, 
                 specReplaySink);
             copier.process(config);
@@ -99,6 +114,27 @@ public class ConfigurationInitializer {
         } catch (CSTSemanticException e4) {
             throw new VilException(e4, VilException.ID_RUNTIME);
         }
+    }
+    
+    /**
+     * Selects from the given available and actual name, whether both or only available shall be returned.
+     * 
+     * @param initActual include or exclude <code>actual</code>
+     * @param available the name of the available collection slot
+     * @param actual the name of the actual slot
+     * @return the selected slot names
+     */
+    private static String[] select(boolean initActual, String available, String actual) {
+        String[] result;
+        if (initActual) {
+            result = new String[2];
+            result[0] = available;
+            result[1] = actual;
+        } else {
+            result = new String[1];
+            result[0] = available;
+        }
+        return result;
     }
     
     /**
