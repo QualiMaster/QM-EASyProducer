@@ -48,6 +48,9 @@ import net.ssehub.easy.varModel.model.datatypes.RealType;
 import net.ssehub.easy.varModel.model.datatypes.Reference;
 import net.ssehub.easy.varModel.model.datatypes.Set;
 import net.ssehub.easy.varModel.model.datatypes.StringType;
+import net.ssehub.easy.varModel.model.values.NullValue;
+import net.ssehub.easy.varModel.model.values.ReferenceValue;
+import net.ssehub.easy.varModel.model.values.Value;
 import net.ssehub.easy.varModel.model.values.ValueDoesNotMatchTypeException;
 import net.ssehub.easy.varModel.model.values.ValueFactory;
 
@@ -209,10 +212,10 @@ public class PipelineHelperTest {
         ConfigurationException {
         Project algorithms = new Project("Algorithms");
         Compound algorithmType = createCompoundWithName(TYPE_ALGORITHM, algorithms, null);
-        Set algorithmsType = new Set("setOf(refTo(Algorithm))", 
-            new Reference("refTo(Algorithm)", algorithmType, algorithms), algorithms);
+        Reference refAlgorithmType = new Reference("refTo(Algorithm)", algorithmType, algorithms);
+        Set refAlgorithmsType = new Set("setOf(refTo(Algorithm))", refAlgorithmType, algorithms);
         DecisionVariableDeclaration algs = createDecisionVariableDeclaration(
-            VAR_ALGORITHMS_ALGORITHMS, algorithmsType, algorithms);
+            VAR_ALGORITHMS_ALGORITHMS, refAlgorithmsType, algorithms);
 
         Project algorithmsCfg = new Project("AlgorithmsCfg");
         addProjectImport(algorithms, algorithmsCfg);
@@ -226,7 +229,8 @@ public class PipelineHelperTest {
         Compound pipelineElementType = createCompoundWithName(TYPE_PIPELINE_ELEMENT, pipelines, null);
         Compound familyElementType = createCompoundWithName(TYPE_FAMILYELEMENT, pipelines, 
             pipelineElementType);
-        createDecisionVariableDeclaration(SLOT_FAMILYELEMENT_AVAILABLE, algorithmsType, familyElementType);
+        createDecisionVariableDeclaration(SLOT_FAMILYELEMENT_ACTUAL, refAlgorithmType, familyElementType);
+        createDecisionVariableDeclaration(SLOT_FAMILYELEMENT_AVAILABLE, refAlgorithmsType, familyElementType);
         Compound pipeline = createCompoundWithName(TYPE_PIPELINE, pipelines, null);
         createDecisionVariableDeclaration(VAR_CAPACITY, RealType.TYPE, pipeline);
         Set pipelinesType = new Set("setOf(refTo(Pipeline))", 
@@ -442,6 +446,37 @@ public class PipelineHelperTest {
         Assert.assertNull(PipelineHelper.obtainAlgorithmFromFamilyByName(family1, VAR_ALG2));
         Assert.assertNull(PipelineHelper.obtainAlgorithmFromFamilyByName(family2, VAR_ALG1));
         Assert.assertNotNull(PipelineHelper.obtainAlgorithmFromFamilyByName(family2, VAR_ALG2));
+    }
+
+    /**
+     * Tests setting the actual value.
+     * 
+     * @throws ConfigurationException shall not occur
+     */
+    @Test
+    public void testSetActual() throws ConfigurationException {
+        IDecisionVariable pip = PipelineHelper.obtainPipelineByName(qmCfg.getConfiguration(), VAR_PIP);
+        Assert.assertNotNull(pip);
+        IDecisionVariable family1 = PipelineHelper.obtainFamilyByName(pip, VAR_FAM1);
+        Assert.assertNotNull(family1);
+        IDecisionVariable actual = family1.getNestedElement(SLOT_ACTUAL);
+        Assert.assertNotNull(actual);
+        actual.setValue(NullValue.INSTANCE, AssignmentState.USER_ASSIGNED);
+        Assert.assertEquals(NullValue.INSTANCE, actual.getValue());
+        IDecisionVariable alg1 = PipelineHelper.obtainAlgorithmFromFamilyByName(family1, VAR_ALG1);
+        Assert.assertNotNull(alg1);
+        
+        try {
+            PipelineHelper.setActual(qmCfg.getConfiguration(), VAR_PIP, VAR_FAM1, VAR_ALG1);
+        } catch (VilException e) {
+            Assert.fail(e.getMessage());
+        }
+        Value val = actual.getValue();
+        Assert.assertNotNull(val);
+        Assert.assertNotEquals(NullValue.INSTANCE, val);
+        Assert.assertTrue(val instanceof ReferenceValue);
+        ReferenceValue refVal = (ReferenceValue) val;
+        Assert.assertEquals(alg1.getDeclaration(), refVal.getValue());
     }
 
 }

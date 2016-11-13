@@ -31,6 +31,8 @@ import net.ssehub.easy.instantiation.core.model.vilTypes.Set;
 import net.ssehub.easy.instantiation.core.model.vilTypes.SetSet;
 import net.ssehub.easy.instantiation.core.model.vilTypes.configuration.Configuration;
 import net.ssehub.easy.instantiation.core.model.vilTypes.configuration.DecisionVariable;
+import net.ssehub.easy.varModel.confModel.AssignmentState;
+import net.ssehub.easy.varModel.confModel.ConfigurationException;
 import net.ssehub.easy.varModel.confModel.IDecisionVariable;
 import net.ssehub.easy.varModel.model.AbstractVariable;
 import net.ssehub.easy.varModel.model.ContainableModelElement;
@@ -41,6 +43,10 @@ import net.ssehub.easy.varModel.model.ModelQueryException;
 import net.ssehub.easy.varModel.model.Project;
 import net.ssehub.easy.varModel.model.datatypes.IDatatype;
 import net.ssehub.easy.varModel.model.datatypes.IResolutionScope;
+import net.ssehub.easy.varModel.model.values.NullValue;
+import net.ssehub.easy.varModel.model.values.Value;
+import net.ssehub.easy.varModel.model.values.ValueDoesNotMatchTypeException;
+import net.ssehub.easy.varModel.model.values.ValueFactory;
 
 /**
  * Some pipeline helper functions mapped into rt-VIL.
@@ -409,6 +415,58 @@ public class PipelineHelper implements IVilType {
             }
         }
         return result;
+    }
+    
+    /**
+     * Sets the value of the actual slot of <code>pElt</code> due to algorithm corresponding to the algorithm with same 
+     * name in the available slot.
+     * 
+     * @param pElt the IVML configuration variable representing the target pipeline element
+     * @param algorithm the name of the algorithm to set as actual
+     * @throws VilException in case that setting the actual value is not possible, but not if the algorithm or the 
+     *     pipeline element does not exist
+     */
+    public static void setActual(IDecisionVariable pElt, String algorithm) throws VilException {
+        IDecisionVariable actual = pElt.getNestedElement(QmConstants.SLOT_ACTUAL);
+        if (AssignmentState.UNDEFINED == actual.getState() || NullValue.INSTANCE == actual.getValue()) {
+            IDecisionVariable available = pElt.getNestedElement(QmConstants.SLOT_AVAILABLE);
+            if (null != available) {
+                IDecisionVariable algVar = VariableHelper.findNamedVariable(available, null, algorithm);
+                if (null != algVar) {
+                    try {
+                        Value val = ValueFactory.createValue(
+                            actual.getDeclaration().getType(), algVar.getDeclaration());
+                        actual.setValue(val, AssignmentState.USER_ASSIGNED);
+                    } catch (ValueDoesNotMatchTypeException e) {
+                        throw new VilException(e, VilException.ID_RUNTIME);
+                    } catch (ConfigurationException e) {
+                        throw new VilException(e, VilException.ID_RUNTIME);
+                    }
+                }
+            } else {
+                throw new VilException("No available slot", VilException.ID_RUNTIME);
+            }
+        }
+    }
+    
+    /**
+     * Sets the value of the actual slot in <code>pipeline</code>, <code>pipelineElement</code> to 
+     * <code>algorithm</code> to the respective instance stored in the available slot of <code>pipelineElement</code>.
+     * 
+     * @param config the configuration
+     * @param pipeline the pipeline name
+     * @param pipelineElement the pipeline element name
+     * @param algorithm the algorithm name
+     * @throws VilException if setting the actual value is not possible, but not if the algorithm or the pipeline 
+     *     element does not exist
+     */
+    public static void setActual(net.ssehub.easy.varModel.confModel.Configuration config, String pipeline, 
+        String pipelineElement, String algorithm) throws VilException {
+        IDecisionVariable pVar = PipelineHelper.obtainPipelineByName(config, pipeline);
+        IDecisionVariable pElt = PipelineHelper.obtainPipelineElementByName(pVar, null, pipelineElement);
+        if (null != pElt) {
+            setActual(pElt, algorithm);
+        }
     }
 
 }
