@@ -428,24 +428,28 @@ public class PipelineHelper implements IVilType {
      */
     public static void setActual(IDecisionVariable pElt, String algorithm) throws VilException {
         IDecisionVariable actual = pElt.getNestedElement(QmConstants.SLOT_ACTUAL);
-        if (AssignmentState.UNDEFINED == actual.getState() || NullValue.INSTANCE == actual.getValue()) {
-            IDecisionVariable available = pElt.getNestedElement(QmConstants.SLOT_AVAILABLE);
-            if (null != available) {
-                IDecisionVariable algVar = VariableHelper.findNamedVariable(available, null, algorithm);
-                if (null != algVar) {
-                    try {
-                        Value val = ValueFactory.createValue(
-                            actual.getDeclaration().getType(), algVar.getDeclaration());
-                        actual.setValue(val, AssignmentState.USER_ASSIGNED);
-                    } catch (ValueDoesNotMatchTypeException e) {
-                        throw new VilException(e, VilException.ID_RUNTIME);
-                    } catch (ConfigurationException e) {
-                        throw new VilException(e, VilException.ID_RUNTIME);
+        if (null != actual) {
+            if (AssignmentState.UNDEFINED == actual.getState() || NullValue.INSTANCE == actual.getValue()) {
+                IDecisionVariable available = pElt.getNestedElement(QmConstants.SLOT_AVAILABLE);
+                if (null != available) {
+                    IDecisionVariable algVar = VariableHelper.findNamedVariable(available, null, algorithm);
+                    if (null != algVar) {
+                        try {
+                            Value val = ValueFactory.createValue(
+                                actual.getDeclaration().getType(), algVar.getDeclaration());
+                            actual.setValue(val, AssignmentState.USER_ASSIGNED);
+                        } catch (ValueDoesNotMatchTypeException e) {
+                            throw new VilException(e, VilException.ID_RUNTIME);
+                        } catch (ConfigurationException e) {
+                            throw new VilException(e, VilException.ID_RUNTIME);
+                        }
                     }
+                } else {
+                    throw new VilException("No available slot", VilException.ID_RUNTIME);
                 }
-            } else {
-                throw new VilException("No available slot", VilException.ID_RUNTIME);
             }
+        } else {
+            throw new VilException("No actual slot", VilException.ID_RUNTIME);
         }
     }
     
