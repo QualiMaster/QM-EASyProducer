@@ -493,7 +493,9 @@ public class Registration implements IRegistration {
             System.err.println("Please refresh the project and commit the changes.");
         }
     }
-    
+
+    // checkstyle: stop exception type check
+
     /**
      * Handles the registration of an instantiator.
      * 
@@ -501,17 +503,23 @@ public class Registration implements IRegistration {
      * @param instantiators the instantiators (modified as a side effect)
      */
     private static void registerInstantiator(Class<? extends IVilType> cls, List<TypeDescriptor<?>> instantiators) {
-        TypeDescriptor<?> desc = RtVilTypeRegistry.INSTANCE.register(cls);
-        if (null != desc) {
-            for (int o = 0; o < desc.getOperationsCount(); o++) {
-                OperationDescriptor od = desc.getOperation(o);
-                if (od instanceof ILazyDescriptor) {
-                    ((ILazyDescriptor) od).forceInitialization();
+        try {
+            TypeDescriptor<?> desc = RtVilTypeRegistry.INSTANCE.register(cls);
+            if (null != desc) {
+                for (int o = 0; o < desc.getOperationsCount(); o++) {
+                    OperationDescriptor od = desc.getOperation(o);
+                    if (od instanceof ILazyDescriptor) {
+                        ((ILazyDescriptor) od).forceInitialization();
+                    }
                 }
+                instantiators.add(desc);
             }
-            instantiators.add(desc);
+        } catch (Throwable e) { // may happen in testing if not all layers are present
+            LOGGING.info("Loading " + cls.getName() + ": " + e.getMessage());
         }
     }
+    
+    // checkstyle: resume exception type check
 
     /**
      * Private method to to de-activate plugin.
