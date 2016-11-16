@@ -37,6 +37,16 @@ import net.ssehub.easy.varModel.model.values.ReferenceValue;
  *
  */
 class PipelineContentsContainer {
+    
+    /**
+     * Denotes which kind of model element was mapped / shall be returned. 
+     * @author El-Sharkawy
+     *
+     */
+    public static enum MappedInstanceType {
+        SOURCE, ALGORITHM, SINK;
+    }
+    
     private static Set<IDecisionVariable> allMappedVariables = new HashSet<>();
     
     // Element structure of pipeline (collected through visiting)
@@ -46,9 +56,9 @@ class PipelineContentsContainer {
     private List<IDecisionVariable> sinks = new ArrayList<>();
    
     // Mapped runtime elements (collected when init() is called for the first time)
-    private List<IDecisionVariable> orgAlgorithms = null;
     private Map<String, IDecisionVariable> algorithmMapping = new HashMap<>();
     private Map<String, IDecisionVariable> sourceMapping = new HashMap<>();
+    private Map<String, IDecisionVariable> sinkMapping = new HashMap<>();
     
     private Models phase = null;
     
@@ -99,26 +109,22 @@ class PipelineContentsContainer {
      * as well as the mapped runtime counterparts.
      */
     private void gatherAlgorithms() {
-        if (null == orgAlgorithms) {
-            orgAlgorithms = new ArrayList<>();
-            
-            for (int i = 0, end = familyElements.size(); i < end; i++) {
-                IDecisionVariable familyElement = familyElements.get(i);
-                List<IDecisionVariable> runtimeAglrotihms = getMappedMembers(familyElement);
-                IDecisionVariable familySlot = familyElement.getNestedElement(QmConstants.SLOT_FAMILYELEMENT_FAMILY);
-                if (null != familySlot) {
-                    Configuration config = familySlot.getConfiguration();
-                    ReferenceValue familyRef = (ReferenceValue) familySlot.getValue();
-                    IDecisionVariable orgFamily = PipelineVisitor.extractVar(familyRef, config);
-                    
-                    ContainerValue referencedOrgAlgos = null;
-                    if (null != orgFamily) {
-                        referencedOrgAlgos = (ContainerValue) orgFamily.getNestedElement(
+        for (int i = 0, end = familyElements.size(); i < end; i++) {
+            IDecisionVariable familyElement = familyElements.get(i);
+            List<IDecisionVariable> runtimeAglrotihms = getMappedMembers(familyElement);
+            IDecisionVariable familySlot = familyElement.getNestedElement(QmConstants.SLOT_FAMILYELEMENT_FAMILY);
+            if (null != familySlot) {
+                Configuration config = familySlot.getConfiguration();
+                ReferenceValue familyRef = (ReferenceValue) familySlot.getValue();
+                IDecisionVariable orgFamily = PipelineVisitor.extractVar(familyRef, config);
+                
+                ContainerValue referencedOrgAlgos = null;
+                if (null != orgFamily) {
+                    referencedOrgAlgos = (ContainerValue) orgFamily.getNestedElement(
                             QmConstants.SLOT_FAMILY_MEMBERS).getValue(); 
-                    }
-                    
-                    collectAlgorithmFromFamily(config, referencedOrgAlgos, runtimeAglrotihms);
                 }
+                
+                collectAlgorithmFromFamily(config, referencedOrgAlgos, runtimeAglrotihms);
             }
         }
     }
@@ -138,7 +144,6 @@ class PipelineContentsContainer {
             ReferenceValue orgRef = (ReferenceValue) referencedOrgAlgos.getElement(i);
             IDecisionVariable orgAlgorithm = PipelineVisitor.extractVar(orgRef, config);
             String orgName = orgAlgorithm.getNestedElement(QmConstants.SLOT_NAME).getValue().getValue().toString();
-            orgAlgorithms.add(orgAlgorithm);
             
             if (null != runtimeAglrotihms) {
                 IDecisionVariable mappedAlgorithm = null;
@@ -185,24 +190,55 @@ class PipelineContentsContainer {
         return mappedVariable;
     }
     
+//    /**
+//     * Creates the sources structure, this includes the original sources
+//     * as well as the mapped runtime counterparts.
+//     */
+//    private void gatherSources() {
+//        for (int i = 0, end = sources.size(); i < end; i++) {
+//            IDecisionVariable sourceElement = sources.get(i);
+//            List<IDecisionVariable> runtimesources = getMappedMembers(sourceElement);
+//            IDecisionVariable sourceSlot = sourceElement.getNestedElement(QmConstants.SLOT_SOURCE_SOURCE);
+//            if (null != sourceSlot && null != runtimesources && !runtimesources.isEmpty()) {
+//                Configuration config = sourceSlot.getConfiguration();
+//                ReferenceValue sourceRef = (ReferenceValue) sourceSlot.getValue();
+//                IDecisionVariable orgSource = PipelineVisitor.extractVar(sourceRef, config);
+//                
+//                if (null != orgSource) {
+//                    String orgName = orgSource.getNestedElement(QmConstants.SLOT_NAME).getValue()
+//                            .getValue().toString();
+//                    sourceMapping.put(orgName, runtimesources.get(0));
+//                    allMappedVariables.add(runtimesources.get(0));
+//                }
+//            }
+//        }
+//    }
+    
     /**
-     * Creates the sources structure, this includes the original sources
-     * as well as the mapped runtime counterparts.
+     * Creates the mapping structure for mapping runtime variables. This does not work for algorithms of a family,
+     * because they have a different nesting structure.
+     * @param orignalVariables The list of original variables for which the mapped variables shall be retrieved.
+     *   One of <tt>sources, sinks</tt>
+     * @param slotName The slot name of the pipeline element, which is pointing to the selected element. 
+     * @param mapping The mapping to be filled, e.g., (original source name, mapped source instance).
      */
-    private void gatherSources() {
-        for (int i = 0, end = sources.size(); i < end; i++) {
-            IDecisionVariable sourceElement = sources.get(i);
-            List<IDecisionVariable> runtimesources = getMappedMembers(sourceElement);
-            IDecisionVariable sourceSlot = sourceElement.getNestedElement(QmConstants.SLOT_SOURCE_SOURCE);
-            if (null != sourceSlot && null != runtimesources && !runtimesources.isEmpty()) {
-                Configuration config = sourceSlot.getConfiguration();
-                ReferenceValue sourceRef = (ReferenceValue) sourceSlot.getValue();
-                IDecisionVariable orgSource = PipelineVisitor.extractVar(sourceRef, config);
+    private void gatherMappedNonFamilyElement(List<IDecisionVariable> orignalVariables, String slotName,
+        Map<String, IDecisionVariable> mapping) {
+        
+        for (int i = 0, end = orignalVariables.size(); i < end; i++) {
+            IDecisionVariable orignalVariable = orignalVariables.get(i);
+            List<IDecisionVariable> mappedRuntimeVariables = getMappedMembers(orignalVariable);
+            IDecisionVariable pointerVariable = orignalVariable.getNestedElement(slotName);
+            if (null != pointerVariable && null != mappedRuntimeVariables && !mappedRuntimeVariables.isEmpty()) {
+                Configuration config = orignalVariable.getConfiguration();
+                ReferenceValue referencedValue = (ReferenceValue) pointerVariable.getValue();
+                IDecisionVariable orgReferencedVariable = PipelineVisitor.extractVar(referencedValue, config);
                 
-                if (null != orgSource) {
-                    String orgName = orgSource.getNestedElement(QmConstants.SLOT_NAME).getValue().getValue().toString();
-                    sourceMapping.put(orgName, runtimesources.get(0));
-                    allMappedVariables.add(runtimesources.get(0));
+                if (null != orgReferencedVariable) {
+                    String orgName = orgReferencedVariable.getNestedElement(QmConstants.SLOT_NAME).getValue()
+                        .getValue().toString();
+                    mapping.put(orgName, mappedRuntimeVariables.get(0));
+                    allMappedVariables.add(mappedRuntimeVariables.get(0));
                 }
             }
         }
@@ -213,16 +249,46 @@ class PipelineContentsContainer {
      */
     void init() {
         gatherAlgorithms();
-        gatherSources();       
+        gatherMappedNonFamilyElement(sources, QmConstants.SLOT_SOURCE_SOURCE, sourceMapping);
+        gatherMappedNonFamilyElement(sinks, QmConstants.SLOT_SINK_SINK, sinkMapping);
     }
     
+//    /**
+//     * Returns the mapped algorithm instance for the given (configured) algorithm.
+//     * @param originalAlgorithmName The user defined name of the algorithm.
+//     * @return The configured name of the original algorithm from the model.
+//     */
+//    public IDecisionVariable getMappedAlgorithm(String originalAlgorithmName) {
+//        return algorithmMapping.get(originalAlgorithmName);
+//    }
+//    
     /**
-     * Returns the mapped algorithm instance for the given (configured) algorithm.
-     * @param originalAlgorithmName The user defined name of the algorithm.
+     * Returns the mapped instance for the given (configured) item.
+     * @param type Specifies for which kind of pipeline element the mapped element shall be returned.
+     * @param orgName The user defined name of the variable.
      * @return The configured name of the original algorithm from the model.
      */
-    public IDecisionVariable getMappedAlgorithm(String originalAlgorithmName) {
-        return algorithmMapping.get(originalAlgorithmName);
+    public IDecisionVariable getMappedInstance(MappedInstanceType type, String orgName) {
+        IDecisionVariable result = null;
+        
+        if (null != type) {
+            switch (type) {
+            case SOURCE:
+                result = sourceMapping.get(orgName);
+                break;
+            case ALGORITHM:
+                result = algorithmMapping.get(orgName);
+                break;
+            case SINK:
+                result = sinkMapping.get(orgName);
+                break;
+            default:
+                Bundle.getLogger(PipelineContentsContainer.class).error("Undefined type passed: " + type.name());
+                break;
+            }
+        }
+        
+        return result;
     }
     
     @Override

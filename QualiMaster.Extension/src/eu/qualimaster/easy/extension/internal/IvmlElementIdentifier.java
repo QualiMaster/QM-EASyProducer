@@ -24,6 +24,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 
 import eu.qualimaster.easy.extension.QmConstants;
+import eu.qualimaster.easy.extension.internal.PipelineContentsContainer.MappedInstanceType;
 import eu.qualimaster.monitoring.events.FrozenSystemState;
 import eu.qualimaster.monitoring.systemState.TypeMapper;
 import eu.qualimaster.monitoring.systemState.TypeMapper.TypeCharacterizer;
@@ -223,21 +224,11 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
             
             String[] arraySegments = id.split(FrozenSystemState.SEPARATOR);
             if (QmConstants.TYPE_ALGORITHM.equals(arraySegments[0])) {
-                PipelineContentsContainer infos = getPipelineInfos(arraySegments[1]);
-                if (null != infos) {
-                    IDecisionVariable mappedVar = infos.getMappedAlgorithm(arraySegments[2]);
-                    if (null != mappedVar) {
-                        segments.add(arraySegments[0]);
-                        segments.add(mappedVar.getDeclaration().getName());
-                        segments.add(arraySegments[arraySegments.length - 1]);
-                    } else {
-                        Bundle.getLogger(IvmlElementIdentifier.class).warn("No mapped variable found for: "
-                            + arraySegments[2]);
-                    }
-                } else {
-                    Bundle.getLogger(IvmlElementIdentifier.class).warn("No pipeline information found for: "
-                        + arraySegments[1]);
-                }
+                fillSegmentList(MappedInstanceType.ALGORITHM, arraySegments, segments);
+            } else if (QmConstants.TYPE_SOURCE.equals(arraySegments[0])) {
+                fillSegmentList(MappedInstanceType.SOURCE, arraySegments, segments);
+            } else if (QmConstants.TYPE_SINK.equals(arraySegments[0])) {
+                fillSegmentList(MappedInstanceType.SINK, arraySegments, segments);
             }
             
             // Default operation and fall back
@@ -251,6 +242,30 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
         return segments;
     }
 
+    /**
+     * Part of {@link #splitID(String)} to fill the list for mapped runtime variable instances.
+     * @param type The type of mapped variable
+     * @param arraySegments The already split ID for an variable
+     * @param segments The empty list to fill via side effect
+     */
+    private void fillSegmentList(MappedInstanceType type, String[] arraySegments, List<String> segments) {
+        PipelineContentsContainer infos = getPipelineInfos(arraySegments[1]);
+        if (null != infos) {
+            IDecisionVariable mappedVar = infos.getMappedInstance(type, arraySegments[2]);
+            if (null != mappedVar) {
+                segments.add(arraySegments[0]);
+                segments.add(mappedVar.getDeclaration().getName());
+                segments.add(arraySegments[arraySegments.length - 1]);
+            } else {
+                Bundle.getLogger(IvmlElementIdentifier.class).warn("No mapped variable found for: "
+                    + arraySegments[2]);
+            }
+        } else {
+            Bundle.getLogger(IvmlElementIdentifier.class).warn("No pipeline information found for: "
+                + arraySegments[1]);
+        }
+    }
+    
     @Override
     protected String iDecisionVariableToID(IDecisionVariable variable) {
         String id = null;
