@@ -34,6 +34,13 @@ import net.ssehub.easy.instantiation.rt.core.model.confModel.AbstractVariableIde
 import net.ssehub.easy.varModel.confModel.Configuration;
 import net.ssehub.easy.varModel.confModel.IDecisionVariable;
 import net.ssehub.easy.varModel.model.ModelQueryException;
+import net.ssehub.easy.varModel.model.datatypes.BooleanType;
+import net.ssehub.easy.varModel.model.datatypes.IDatatype;
+import net.ssehub.easy.varModel.model.datatypes.IntegerType;
+import net.ssehub.easy.varModel.model.values.BooleanValue;
+import net.ssehub.easy.varModel.model.values.Value;
+import net.ssehub.easy.varModel.model.values.ValueDoesNotMatchTypeException;
+import net.ssehub.easy.varModel.model.values.ValueFactory;
 
 /**
  * Uses {@link IvmlElement}s and {@link IObservable}s to identify temporary value mappings inside the
@@ -270,5 +277,21 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
         }
 
         return id;
+    }
+
+    @Override
+    protected Value toIVMLValue(IDecisionVariable trgVariable, Object oValue) throws ValueDoesNotMatchTypeException {
+        IDatatype type = trgVariable.getDeclaration().getType();
+        Value result = null;
+        if (IntegerType.TYPE.isAssignableFrom(type) && oValue instanceof Double) {
+            oValue = ((Double) oValue).intValue();
+        } else if (BooleanType.TYPE.isAssignableFrom(type) && oValue instanceof Double) {
+            result = ((Double) oValue) >= 0.5 ? BooleanValue.TRUE : BooleanValue.FALSE;
+        }
+        if (null == result) {
+            result = ValueFactory.createValue(type, oValue);
+        }
+        
+        return result;
     }
 }
