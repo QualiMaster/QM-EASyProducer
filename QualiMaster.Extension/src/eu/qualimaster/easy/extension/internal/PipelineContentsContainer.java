@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import eu.qualimaster.coordination.RepositoryConnector;
+import eu.qualimaster.coordination.RuntimeVariableMapping;
 import eu.qualimaster.coordination.RepositoryConnector.Models;
 import eu.qualimaster.coordination.RepositoryConnector.Phase;
 import eu.qualimaster.easy.extension.QmConstants;
@@ -175,14 +176,21 @@ class PipelineContentsContainer {
             mappedVariable = phase.getVariableMapping().getMappedVariables(originalVariable);
         } else {
             Models tmpPhase = RepositoryConnector.getModels(Phase.ADAPTATION);
-            mappedVariable = tmpPhase.getVariableMapping().getMappedVariables(originalVariable);
-            if (null != mappedVariable) {
-                phase = tmpPhase;
-            } else {
-                tmpPhase = RepositoryConnector.getModels(Phase.MONITORING);
-                mappedVariable = tmpPhase.getVariableMapping().getMappedVariables(originalVariable);
+            RuntimeVariableMapping mapping = tmpPhase.getVariableMapping();
+            if (null != mapping) {
+                mappedVariable = mapping.getMappedVariables(originalVariable);
                 if (null != mappedVariable) {
                     phase = tmpPhase;
+                }
+            }
+            if (null == mappedVariable) {
+                tmpPhase = RepositoryConnector.getModels(Phase.MONITORING);
+                mapping = tmpPhase.getVariableMapping();
+                if (null != mapping) {
+                    mappedVariable = mapping.getMappedVariables(originalVariable);
+                    if (null != mappedVariable) {
+                        phase = tmpPhase;
+                    }
                 }
             }
         }
@@ -251,6 +259,7 @@ class PipelineContentsContainer {
         gatherAlgorithms();
         gatherMappedNonFamilyElement(sources, QmConstants.SLOT_SOURCE_SOURCE, sourceMapping);
         gatherMappedNonFamilyElement(sinks, QmConstants.SLOT_SINK_SINK, sinkMapping);
+        // TODO SE: ReplaySinks
     }
     
 //    /**

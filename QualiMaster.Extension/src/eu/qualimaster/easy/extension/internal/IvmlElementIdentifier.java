@@ -2,6 +2,7 @@ package eu.qualimaster.easy.extension.internal;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 /*
  * Copyright 2009-2016 University of Hildesheim, Software Systems Engineering
  *
@@ -20,6 +21,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -52,9 +54,11 @@ import net.ssehub.easy.varModel.model.values.ValueFactory;
 public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElementIdentifier.ObservableTuple> {
 
     private static final Map<String, String> RUNTIME_VAR_NORMALIZATION = new HashMap<String, String>();
+    private static final Set<String> TOPLEVEL_VAR_NORMALIZATION = new HashSet<String>();
 
     static {
         RUNTIME_VAR_NORMALIZATION.put("AVAILABLE", "available");
+        RUNTIME_VAR_NORMALIZATION.put("AVAILABLE_DFES", "availableMachines");
         RUNTIME_VAR_NORMALIZATION.put("AVAILABLE_MEMORY", "availableMemory");
         RUNTIME_VAR_NORMALIZATION.put("AVAILABLE_FREQUENCY", "availableFrequency");
         RUNTIME_VAR_NORMALIZATION.put("BANDWIDTH", "bandwidth");
@@ -69,10 +73,13 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
         RUNTIME_VAR_NORMALIZATION.put("PING", "ping");
         RUNTIME_VAR_NORMALIZATION.put("THROUGHPUT_ITEMS", "throughputItems");
         RUNTIME_VAR_NORMALIZATION.put("THROUGHPUT_VOLUME", "throughputVolume");
+        RUNTIME_VAR_NORMALIZATION.put("USED_DFES", "usedMachines");
         RUNTIME_VAR_NORMALIZATION.put("USED_HARDDISC_MEM", "UsedHarddiscMem");
         RUNTIME_VAR_NORMALIZATION.put("USED_MEMORY", "usedMemory");
         RUNTIME_VAR_NORMALIZATION.put("USED_PROCESSORS", "UsedProcessors");
         RUNTIME_VAR_NORMALIZATION.put("USED_WORKING_STORAGE", "UsedWorkingStorage");
+        
+        TOPLEVEL_VAR_NORMALIZATION.add("Infrastructure");
     }
 
     /**
@@ -168,7 +175,8 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
 
     @Override
     protected boolean isNestedVariable(String id) {
-        return null != id && StringUtils.countMatches(id, FrozenSystemState.SEPARATOR) > 1;
+        return null != id && !TOPLEVEL_VAR_NORMALIZATION.contains(id)
+            && StringUtils.countMatches(id, FrozenSystemState.SEPARATOR) > 1;
     }
 
     @Override
@@ -189,7 +197,12 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
                 String id;
                 if (1 == index) {
                     index = Math.max(segments.size() - 2, 1);
-                    id = segments.get(0) + FrozenSystemState.SEPARATOR + segments.get(index++);
+                    if (segments.get(0).equals("PipelineElement")) {
+                        id = segments.get(0) + FrozenSystemState.SEPARATOR + segments.get(1)
+                            + FrozenSystemState.SEPARATOR + segments.get(index++);
+                    } else {
+                        id = segments.get(0) + FrozenSystemState.SEPARATOR + segments.get(index++);
+                    }
                 } else if ((segments.size() - 1) == index) {
                     id = segments.get(index++);
                     String mappedValue = RUNTIME_VAR_NORMALIZATION.get(id);
