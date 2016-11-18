@@ -24,6 +24,7 @@ import org.junit.runners.Suite;
  * @author Holger Eichelberger
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({PipelineHelperTest.class, VariableHelperTest.class, QmConstantsTest.class, OptimizerTest.class })
+@Suite.SuiteClasses({PipelineHelperTest.class, VariableHelperTest.class, QmConstantsTest.class, OptimizerTest.class, 
+    NameMappingHelperTest.class })
 public class AllTests {
 }
