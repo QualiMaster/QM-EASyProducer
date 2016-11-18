@@ -2,7 +2,6 @@ package eu.qualimaster.easy.extension.internal;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 /*
  * Copyright 2009-2016 University of Hildesheim, Software Systems Engineering
  *
@@ -21,7 +20,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -30,7 +28,13 @@ import eu.qualimaster.easy.extension.internal.PipelineContentsContainer.MappedIn
 import eu.qualimaster.monitoring.events.FrozenSystemState;
 import eu.qualimaster.monitoring.systemState.TypeMapper;
 import eu.qualimaster.monitoring.systemState.TypeMapper.TypeCharacterizer;
+import eu.qualimaster.observables.AnalysisObservables;
+import eu.qualimaster.observables.CloudResourceUsage;
+import eu.qualimaster.observables.FunctionalSuitability;
 import eu.qualimaster.observables.IObservable;
+import eu.qualimaster.observables.ResourceUsage;
+import eu.qualimaster.observables.Scalability;
+import eu.qualimaster.observables.TimeBehavior;
 import net.ssehub.easy.instantiation.core.model.vilTypes.configuration.AbstractIvmlVariable;
 import net.ssehub.easy.instantiation.core.model.vilTypes.configuration.IvmlElement;
 import net.ssehub.easy.instantiation.rt.core.model.confModel.AbstractVariableIdentifier;
@@ -54,32 +58,55 @@ import net.ssehub.easy.varModel.model.values.ValueFactory;
 public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElementIdentifier.ObservableTuple> {
 
     private static final Map<String, String> RUNTIME_VAR_NORMALIZATION = new HashMap<String, String>();
-    private static final Set<String> TOPLEVEL_VAR_NORMALIZATION = new HashSet<String>();
+    private static final Map<String, String> RUNTIME_ALGORITHM_NORMALIZATION = new HashMap<String, String>();
+    private static final Map<String, String> REVERSE_RUNTIME_VAR_NORMALIZATION = new HashMap<String, String>();
+    private static final String MAIN_PROJECT_ID = "Infrastructure:";
 
     static {
-        RUNTIME_VAR_NORMALIZATION.put("AVAILABLE", "available");
-        RUNTIME_VAR_NORMALIZATION.put("AVAILABLE_DFES", "availableMachines");
-        RUNTIME_VAR_NORMALIZATION.put("AVAILABLE_MEMORY", "availableMemory");
-        RUNTIME_VAR_NORMALIZATION.put("AVAILABLE_FREQUENCY", "availableFrequency");
-        RUNTIME_VAR_NORMALIZATION.put("BANDWIDTH", "bandwidth");
-        RUNTIME_VAR_NORMALIZATION.put("CAPACITY", "capacity");
-        RUNTIME_VAR_NORMALIZATION.put("EXECUTORS", "executors");
-        RUNTIME_VAR_NORMALIZATION.put("HOSTS", "hosts");
-        RUNTIME_VAR_NORMALIZATION.put("IS_VALID", "isValid");
-        RUNTIME_VAR_NORMALIZATION.put("IS_ENACTING", "isEnacting");
-        RUNTIME_VAR_NORMALIZATION.put("ITEMS", "items");
-        RUNTIME_VAR_NORMALIZATION.put("LATENCY", "latency");
-        RUNTIME_VAR_NORMALIZATION.put("LOAD", "load");
-        RUNTIME_VAR_NORMALIZATION.put("PING", "ping");
-        RUNTIME_VAR_NORMALIZATION.put("THROUGHPUT_ITEMS", "throughputItems");
-        RUNTIME_VAR_NORMALIZATION.put("THROUGHPUT_VOLUME", "throughputVolume");
-        RUNTIME_VAR_NORMALIZATION.put("USED_DFES", "usedMachines");
-        RUNTIME_VAR_NORMALIZATION.put("USED_HARDDISC_MEM", "UsedHarddiscMem");
-        RUNTIME_VAR_NORMALIZATION.put("USED_MEMORY", "usedMemory");
-        RUNTIME_VAR_NORMALIZATION.put("USED_PROCESSORS", "UsedProcessors");
-        RUNTIME_VAR_NORMALIZATION.put("USED_WORKING_STORAGE", "UsedWorkingStorage");
+        putAlgorithmMapping(FunctionalSuitability.ACCURACY_CONFIDENCE, "accuracyConfidence");
+        putAlgorithmMapping(FunctionalSuitability.ACCURACY_ERROR_RATE, "accuracyErrorRate");
+        putAlgorithmMapping(FunctionalSuitability.BELIEVABILITY, "believability");
+        putAlgorithmMapping(FunctionalSuitability.COMPLETENESS, "completeness");
+        putAlgorithmMapping(ResourceUsage.HOSTS, "pipeline_Hosts");
+        putAlgorithmMapping(AnalysisObservables.IS_VALID, "isValid");
+        putAlgorithmMapping(Scalability.ITEMS, "family_Items");
+        putAlgorithmMapping(TimeBehavior.LATENCY, "latency");
+        putAlgorithmMapping(FunctionalSuitability.RELEVANCY, "relevancy");
+        putAlgorithmMapping(TimeBehavior.THROUGHPUT_ITEMS, "throughputItems");
+        putAlgorithmMapping(TimeBehavior.THROUGHPUT_VOLUME, "throughputVolume");
+        putAlgorithmMapping(ResourceUsage.USED_MEMORY, "memoryUse");
+        putAlgorithmMapping(Scalability.VARIETY, "variety");
+        putAlgorithmMapping(Scalability.VELOCITY, "velocity");
+        putAlgorithmMapping(Scalability.VOLUME, "volume");
         
-        TOPLEVEL_VAR_NORMALIZATION.add("Infrastructure");
+        put(FunctionalSuitability.ACCURACY_CONFIDENCE, "accuracyConfidence");
+        put(FunctionalSuitability.ACCURACY_ERROR_RATE, "accuracyErrorRate");
+        put(ResourceUsage.AVAILABLE, "available");
+        put("AVAILABLE_DFES", "availableMachines");
+        put(ResourceUsage.AVAILABLE_MEMORY, "availableMemory");
+        put(ResourceUsage.AVAILABLE_FREQUENCY, "availableFrequency");
+        put(ResourceUsage.BANDWIDTH, "bandwidth");
+        put(ResourceUsage.CAPACITY, "capacity");
+        put(FunctionalSuitability.COMPLETENESS, "completeness");
+        put(ResourceUsage.EXECUTORS, "executors");
+        put(ResourceUsage.HOSTS, "hosts");
+        put(AnalysisObservables.IS_VALID, "isValid");
+        put("IS_ENACTING", "isEnacting");
+        put(Scalability.ITEMS, "items");
+        put(TimeBehavior.LATENCY, "latency");
+        put(ResourceUsage.LOAD, "load");
+        put(CloudResourceUsage.PING, "ping");
+        put(ResourceUsage.TASKS, "tasks");
+        put(TimeBehavior.THROUGHPUT_ITEMS, "throughputItems");
+        put(TimeBehavior.THROUGHPUT_VOLUME, "throughputVolume");
+        put("USED_DFES", "usedMachines");
+        put(CloudResourceUsage.USED_HARDDISC_MEM, "UsedHarddiscMem");
+        put(ResourceUsage.USED_MEMORY, "usedMemory");
+        put(CloudResourceUsage.USED_PROCESSORS, "UsedProcessors");
+        put(CloudResourceUsage.USED_WORKING_STORAGE, "UsedWorkingStorage");
+        put(Scalability.VELOCITY, "velocity");
+        put(Scalability.VOLATILITY, "volatility");
+        put(Scalability.VOLUME, "volume");
     }
 
     /**
@@ -175,7 +202,7 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
 
     @Override
     protected boolean isNestedVariable(String id) {
-        return null != id && !TOPLEVEL_VAR_NORMALIZATION.contains(id)
+        return null != id && !id.startsWith(MAIN_PROJECT_ID)
             && StringUtils.countMatches(id, FrozenSystemState.SEPARATOR) > 1;
     }
 
@@ -186,6 +213,7 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
         return new Iterator<String>() {
             
             private int index = 1;
+            private boolean isAlgorithm = false;
 
             @Override
             public boolean hasNext() {
@@ -197,15 +225,21 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
                 String id;
                 if (1 == index) {
                     index = Math.max(segments.size() - 2, 1);
-                    if (segments.get(0).equals("PipelineElement")) {
-                        id = segments.get(0) + FrozenSystemState.SEPARATOR + segments.get(1)
+                    String fistSegment = segments.get(0);
+                    if (fistSegment.equals("PipelineElement")) {
+                        id = fistSegment + FrozenSystemState.SEPARATOR + segments.get(1)
                             + FrozenSystemState.SEPARATOR + segments.get(index++);
                     } else {
-                        id = segments.get(0) + FrozenSystemState.SEPARATOR + segments.get(index++);
+                        if (fistSegment.equals("Algorithm")) {
+                            isAlgorithm = true;
+                        }
+                        id = fistSegment + FrozenSystemState.SEPARATOR + segments.get(index++);
                     }
                 } else if ((segments.size() - 1) == index) {
                     id = segments.get(index++);
-                    String mappedValue = RUNTIME_VAR_NORMALIZATION.get(id);
+                    Map<String, String> mapping = isAlgorithm ? RUNTIME_ALGORITHM_NORMALIZATION
+                        : RUNTIME_VAR_NORMALIZATION;
+                    String mappedValue = mapping.get(id);
                     if (null != mappedValue) {
                         id = mappedValue;
                     }
@@ -302,6 +336,16 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
                     : VariableHelper.getName(variable);                
             }
             id = prefix + FrozenSystemState.SEPARATOR + key;
+        } else {
+            String varName = VariableHelper.getName(variable);
+            if (null == varName) {
+                varName = variable.getDeclaration().getName();
+            }
+            String normalizedName = REVERSE_RUNTIME_VAR_NORMALIZATION.get(varName);
+            if (null != normalizedName) {
+                varName = ":" + normalizedName;
+            }
+            id = MAIN_PROJECT_ID + varName;
         }
 
         return id;
@@ -321,5 +365,37 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
         }
         
         return result;
+    }
+    
+    /**
+     * Part of the static block, adds a mapping between class name of an obervable and the algorithm item
+     * to the map.
+     * @param observable The implementing obervable enumeration.
+     * @param variableName The name of the model element.
+     */
+    private static void putAlgorithmMapping(IObservable observable, String variableName) {
+        RUNTIME_ALGORITHM_NORMALIZATION.put(observable.name(), variableName);
+    }
+    /**
+     * Part of the static block, adds a mapping between class name of an obervable and the model item to the two
+     * maps. Not suitable for algorithms as they have different slot names for the same observables as the other
+     * elements.
+     * @param observable The implementing obervable enumeration.
+     * @param variableName The name of the model element.
+     */
+    private static void put(IObservable observable, String variableName) {
+        put(observable.name(), variableName);
+    }
+    
+    /**
+     * Part of the static block, adds a mapping between class name of an obervable and the model item to the two
+     * maps. Not suitable for algorithms as they have different slot names for the same observables as the other
+     * elements.
+     * @param observableName The name of the implementing obervable enumeration.
+     * @param variableName The name of the model element.
+     */
+    private static void put(String observableName, String variableName) {
+        RUNTIME_VAR_NORMALIZATION.put(observableName, variableName);
+        REVERSE_RUNTIME_VAR_NORMALIZATION.put(variableName, observableName);
     }
 }
