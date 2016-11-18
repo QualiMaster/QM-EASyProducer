@@ -86,7 +86,7 @@
             <test name="test.eu.qualimaster.easy.extension.internal.AllTests" haltonfailure="no" outfile="result">
                 <formatter type="xml" />
             </test>
-            <jvmarg value="-Dqm.base.dir=${home.QualiMaster.Extension.java.dir}"/>
+            <jvmarg value="-Dqm.base.dir=${projects.QualiMaster.Extension.Test.dir}"/>
             <env key="STORM_TEST_TIMEOUT_MS" value="20000"/>
           </junit>
       </jacoco:coverage>
