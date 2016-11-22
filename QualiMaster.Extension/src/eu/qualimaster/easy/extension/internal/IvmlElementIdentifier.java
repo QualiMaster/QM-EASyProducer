@@ -23,18 +23,13 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
+import eu.qualimaster.easy.extension.ObservableMapping;
 import eu.qualimaster.easy.extension.QmConstants;
 import eu.qualimaster.easy.extension.internal.PipelineContentsContainer.MappedInstanceType;
 import eu.qualimaster.monitoring.events.FrozenSystemState;
 import eu.qualimaster.monitoring.systemState.TypeMapper;
 import eu.qualimaster.monitoring.systemState.TypeMapper.TypeCharacterizer;
-import eu.qualimaster.observables.AnalysisObservables;
-import eu.qualimaster.observables.CloudResourceUsage;
-import eu.qualimaster.observables.FunctionalSuitability;
 import eu.qualimaster.observables.IObservable;
-import eu.qualimaster.observables.ResourceUsage;
-import eu.qualimaster.observables.Scalability;
-import eu.qualimaster.observables.TimeBehavior;
 import net.ssehub.easy.instantiation.core.model.vilTypes.configuration.AbstractIvmlVariable;
 import net.ssehub.easy.instantiation.core.model.vilTypes.configuration.IvmlElement;
 import net.ssehub.easy.instantiation.rt.core.model.confModel.AbstractVariableIdentifier;
@@ -57,57 +52,7 @@ import net.ssehub.easy.varModel.model.values.ValueFactory;
  */
 public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElementIdentifier.ObservableTuple> {
 
-    private static final Map<String, String> RUNTIME_VAR_NORMALIZATION = new HashMap<String, String>();
-    private static final Map<String, String> RUNTIME_ALGORITHM_NORMALIZATION = new HashMap<String, String>();
-    private static final Map<String, String> REVERSE_RUNTIME_VAR_NORMALIZATION = new HashMap<String, String>();
     private static final String MAIN_PROJECT_ID = "Infrastructure:";
-
-    static {
-        putAlgorithmMapping(FunctionalSuitability.ACCURACY_CONFIDENCE, "accuracyConfidence");
-        putAlgorithmMapping(FunctionalSuitability.ACCURACY_ERROR_RATE, "accuracyErrorRate");
-        putAlgorithmMapping(FunctionalSuitability.BELIEVABILITY, "believability");
-        putAlgorithmMapping(FunctionalSuitability.COMPLETENESS, "completeness");
-        putAlgorithmMapping(ResourceUsage.HOSTS, "pipeline_Hosts");
-        putAlgorithmMapping(AnalysisObservables.IS_VALID, "isValid");
-        putAlgorithmMapping(Scalability.ITEMS, "family_Items");
-        putAlgorithmMapping(TimeBehavior.LATENCY, "latency");
-        putAlgorithmMapping(FunctionalSuitability.RELEVANCY, "relevancy");
-        putAlgorithmMapping(TimeBehavior.THROUGHPUT_ITEMS, "throughputItems");
-        putAlgorithmMapping(TimeBehavior.THROUGHPUT_VOLUME, "throughputVolume");
-        putAlgorithmMapping(ResourceUsage.USED_MEMORY, "memoryUse");
-        putAlgorithmMapping(Scalability.VARIETY, "variety");
-        putAlgorithmMapping(Scalability.VELOCITY, "velocity");
-        putAlgorithmMapping(Scalability.VOLUME, "volume");
-        
-        put(FunctionalSuitability.ACCURACY_CONFIDENCE, "accuracyConfidence");
-        put(FunctionalSuitability.ACCURACY_ERROR_RATE, "accuracyErrorRate");
-        put(ResourceUsage.AVAILABLE, "available");
-        put(ResourceUsage.AVAILABLE_DFES, "availableMachines");
-        put(ResourceUsage.AVAILABLE_MEMORY, "availableMemory");
-        put(ResourceUsage.AVAILABLE_FREQUENCY, "availableFrequency");
-        put(ResourceUsage.BANDWIDTH, "bandwidth");
-        put(ResourceUsage.CAPACITY, "capacity");
-        put(FunctionalSuitability.COMPLETENESS, "completeness");
-        put(ResourceUsage.EXECUTORS, "executors");
-        put(ResourceUsage.HOSTS, "hosts");
-        put(AnalysisObservables.IS_VALID, "isValid");
-        put(AnalysisObservables.IS_ENACTING, "isEnacting");
-        put(Scalability.ITEMS, "items");
-        put(TimeBehavior.LATENCY, "latency");
-        put(ResourceUsage.LOAD, "load");
-        put(CloudResourceUsage.PING, "ping");
-        put(ResourceUsage.TASKS, "tasks");
-        put(TimeBehavior.THROUGHPUT_ITEMS, "throughputItems");
-        put(TimeBehavior.THROUGHPUT_VOLUME, "throughputVolume");
-        put(ResourceUsage.USED_DFES, "usedMachines");
-        put(CloudResourceUsage.USED_HARDDISC_MEM, "UsedHarddiscMem");
-        put(ResourceUsage.USED_MEMORY, "usedMemory");
-        put(CloudResourceUsage.USED_PROCESSORS, "UsedProcessors");
-        put(CloudResourceUsage.USED_WORKING_STORAGE, "UsedWorkingStorage");
-        put(Scalability.VELOCITY, "velocity");
-        put(Scalability.VOLATILITY, "volatility");
-        put(Scalability.VOLUME, "volume");
-    }
     
     /**
      * Part of the iterator, stores which kind of observable/variable mapper shall be used.
@@ -119,24 +64,28 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
         
         /**
          * Returns for the iterator in {@link IvmlElementIdentifier#getIDIterator(String)} the correct
-         * observable/variable mapper.
+         * mapped observable.
          * @param type The type as specified in the first segment of the ID.
-         * @return {@link IvmlElementIdentifier#RUNTIME_VAR_NORMALIZATION} by default or a specific one if necessary.
+         * @param observable An {@link IObservable#name()}.
+         * @return {@link ObservableMapping#mapGeneralObervable(String)} by default or a specific one if necessary.
          */
-        private static Map<String, String> getMapping(ObservableMappingType type) {
-            Map<String, String> mapping = RUNTIME_VAR_NORMALIZATION;
+        private static String getMapping(ObservableMappingType type, String observable) {
+            String variableName = null;
             
             if (null != type) {
                 switch (type) {
                 case ALGORITHM:
-                    mapping = RUNTIME_ALGORITHM_NORMALIZATION;
+                    variableName = ObservableMapping.mapAlgorithmObervable(observable);
                     break;
                 default:
-                        // Keep RUNTIME_VAR_NORMALIZATION
+                    variableName = ObservableMapping.mapGeneralObervable(observable);
+                    break;
                 }
+            } else {
+                variableName = ObservableMapping.mapGeneralObervable(observable);
             }
             
-            return mapping;
+            return variableName;
         }
     }
 
@@ -271,8 +220,7 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
                 } else if ((segments.size() - 1) == index) {
                     // Returns the observable
                     id = segments.get(index++);
-                    Map<String, String> mapping = ObservableMappingType.getMapping(type);
-                    String mappedValue = mapping.get(id);
+                    String mappedValue = ObservableMappingType.getMapping(type, id);
                     if (null != mappedValue) {
                         id = mappedValue;
                     }
@@ -377,7 +325,7 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
             if (null == varName) {
                 varName = variable.getDeclaration().getName();
             }
-            String normalizedName = REVERSE_RUNTIME_VAR_NORMALIZATION.get(varName);
+            String normalizedName = ObservableMapping.mapReverseGeneralObervable(varName);
             if (null != normalizedName) {
                 varName = ":" + normalizedName;
             }
@@ -401,26 +349,5 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
         }
         
         return result;
-    }
-    
-    /**
-     * Part of the static block, adds a mapping between class name of an obervable and the algorithm item
-     * to the map.
-     * @param observable The implementing obervable enumeration.
-     * @param variableName The name of the model element.
-     */
-    private static void putAlgorithmMapping(IObservable observable, String variableName) {
-        RUNTIME_ALGORITHM_NORMALIZATION.put(observable.name(), variableName);
-    }
-    /**
-     * Part of the static block, adds a mapping between class name of an obervable and the model item to the two
-     * maps. Not suitable for algorithms as they have different slot names for the same observables as the other
-     * elements.
-     * @param observable The implementing obervable enumeration.
-     * @param variableName The name of the model element.
-     */
-    private static void put(IObservable observable, String variableName) {
-        RUNTIME_VAR_NORMALIZATION.put(observable.name(), variableName);
-        REVERSE_RUNTIME_VAR_NORMALIZATION.put(variableName, observable.name());
     }
 }
