@@ -246,7 +246,7 @@ public class PipelineContentsContainer {
         gatherAlgorithms();
         gatherMappedNonFamilyElement(sources, QmConstants.SLOT_SOURCE_SOURCE, sourceMapping);
         gatherMappedNonFamilyElement(sinks, QmConstants.SLOT_SINK_SINK, sinkMapping);
-        // TODO SE: ReplaySinks
+        gatherMappedNonFamilyElement(replaySinks, QmConstants.SLOT_REPLAYSINK_SINK, sinkMapping);
     }
 
     /**
