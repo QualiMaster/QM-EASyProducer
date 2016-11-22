@@ -37,7 +37,7 @@ public class PipelineVisitor {
      * Constructor which will map runtime clones.
      * @param pipeline The pipeline for which the information should be extracted.
      */
-    public PipelineVisitor(IDecisionVariable pipeline) {
+    PipelineVisitor(IDecisionVariable pipeline) {
         this(pipeline, true);
     }
     
@@ -106,7 +106,10 @@ public class PipelineVisitor {
             } else if (QmConstants.TYPE_DATAMANAGEMENTELEMENT.equals(typeName)) {
                 container.addDataManagementElement(pipelineElement);
                 visitProcessingElement(pipelineElement);
-            } else if (QmConstants.TYPE_SINK.equals(typeName) || QmConstants.TYPE_REPLAYSINK.equals(typeName)) {
+            } else if (QmConstants.TYPE_REPLAYSINK.equals(typeName)) {
+                container.addReplaySink(pipelineElement);
+                // End visiting
+            } else if (QmConstants.TYPE_SINK.equals(typeName)) {
                 container.addSink(pipelineElement);
                 // End visiting
             } else {

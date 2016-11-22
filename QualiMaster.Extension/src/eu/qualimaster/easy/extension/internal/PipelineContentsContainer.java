@@ -56,6 +56,7 @@ public class PipelineContentsContainer {
     private List<IDecisionVariable> familyElements = new ArrayList<>();
     private List<IDecisionVariable> dataManagementElements = new ArrayList<>();
     private List<IDecisionVariable> sinks = new ArrayList<>();
+    private List<IDecisionVariable> replaySinks = new ArrayList<>();
    
     // Mapped runtime elements (collected when init() is called for the first time)
     private Map<String, IDecisionVariable> algorithmMapping = new HashMap<>();
@@ -73,11 +74,19 @@ public class PipelineContentsContainer {
     }
     
     /**
-     * Adds a sink of the pipeline.
-     * @param sink A sink of the pipeline.
+     * Adds a non ReplaySink of the pipeline.
+     * @param sink A non ReplaySink of the pipeline.
      */
     void addSink(IDecisionVariable sink) {
         sinks.add(sink);
+    }
+    
+    /**
+     * Adds a ReplaySink of the pipeline.
+     * @param replaySink A ReplaySink of the pipeline.
+     */
+    void addReplaySink(IDecisionVariable replaySink) {
+        replaySinks.add(replaySink);
     }
     
     /**
@@ -278,11 +287,19 @@ public class PipelineContentsContainer {
     }
     
     /**
-     * Returns a list of all member sinks of the visited pipeline.
-     * @return A unmodifiable list of sink elements of the pipeline, won't be <tt>null</tt>.
+     * Returns a list of all member non replay sinks of the visited pipeline.
+     * @return A unmodifiable list of non replay sink elements of the pipeline, won't be <tt>null</tt>.
      */
     public List<IDecisionVariable> getSinks() {
         return Collections.unmodifiableList(new ArrayList<>(sinks));
+    }
+    
+    /**
+     * Returns a list of all member replay sinks of the visited pipeline.
+     * @return A unmodifiable list of replay sink elements of the pipeline, won't be <tt>null</tt>.
+     */
+    public List<IDecisionVariable> getReplaySinks() {
+        return Collections.unmodifiableList(new ArrayList<>(replaySinks));
     }
     
     /**
@@ -298,13 +315,15 @@ public class PipelineContentsContainer {
      * @return A unmodifiable list of data management elements of the pipeline, won't be <tt>null</tt>.
      */
     public List<IDecisionVariable> getDataManagementElements() {
-        return Collections.unmodifiableList(new ArrayList<>(familyElements));
+        return Collections.unmodifiableList(new ArrayList<>(dataManagementElements));
     }
     
     @Override
     public String toString() {
-        return "Sources: " + sources + "\nFamilyElements: " + familyElements + "\nDataManagementElement: "
-            + dataManagementElements + "\nSinks: " + sinks;
+        return "Sources: " + sources
+            + "\nFamilyElements: " + familyElements
+            + "\nDataManagementElement: " + dataManagementElements
+            + "\nReplaySinks: " + replaySinks
+            + "\nSinks: " + sinks;
     }
-
 }

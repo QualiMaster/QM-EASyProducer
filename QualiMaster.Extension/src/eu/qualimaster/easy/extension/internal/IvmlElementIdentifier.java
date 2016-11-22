@@ -82,7 +82,7 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
         put(FunctionalSuitability.ACCURACY_CONFIDENCE, "accuracyConfidence");
         put(FunctionalSuitability.ACCURACY_ERROR_RATE, "accuracyErrorRate");
         put(ResourceUsage.AVAILABLE, "available");
-        put("AVAILABLE_DFES", "availableMachines");
+        put(ResourceUsage.AVAILABLE_DFES, "availableMachines");
         put(ResourceUsage.AVAILABLE_MEMORY, "availableMemory");
         put(ResourceUsage.AVAILABLE_FREQUENCY, "availableFrequency");
         put(ResourceUsage.BANDWIDTH, "bandwidth");
@@ -91,7 +91,7 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
         put(ResourceUsage.EXECUTORS, "executors");
         put(ResourceUsage.HOSTS, "hosts");
         put(AnalysisObservables.IS_VALID, "isValid");
-        put("IS_ENACTING", "isEnacting");
+        put(AnalysisObservables.IS_ENACTING, "isEnacting");
         put(Scalability.ITEMS, "items");
         put(TimeBehavior.LATENCY, "latency");
         put(ResourceUsage.LOAD, "load");
@@ -99,7 +99,7 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
         put(ResourceUsage.TASKS, "tasks");
         put(TimeBehavior.THROUGHPUT_ITEMS, "throughputItems");
         put(TimeBehavior.THROUGHPUT_VOLUME, "throughputVolume");
-        put("USED_DFES", "usedMachines");
+        put(ResourceUsage.USED_DFES, "usedMachines");
         put(CloudResourceUsage.USED_HARDDISC_MEM, "UsedHarddiscMem");
         put(ResourceUsage.USED_MEMORY, "usedMemory");
         put(CloudResourceUsage.USED_PROCESSORS, "UsedProcessors");
@@ -107,6 +107,37 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
         put(Scalability.VELOCITY, "velocity");
         put(Scalability.VOLATILITY, "volatility");
         put(Scalability.VOLUME, "volume");
+    }
+    
+    /**
+     * Part of the iterator, stores which kind of observable/variable mapper shall be used.
+     * @author El-Sharkawy
+     *
+     */
+    private static enum ObservableMappingType {
+        ALGORITHM;
+        
+        /**
+         * Returns for the iterator in {@link IvmlElementIdentifier#getIDIterator(String)} the correct
+         * observable/variable mapper.
+         * @param type The type as specified in the first segment of the ID.
+         * @return {@link IvmlElementIdentifier#RUNTIME_VAR_NORMALIZATION} by default or a specific one if necessary.
+         */
+        private static Map<String, String> getMapping(ObservableMappingType type) {
+            Map<String, String> mapping = RUNTIME_VAR_NORMALIZATION;
+            
+            if (null != type) {
+                switch (type) {
+                case ALGORITHM:
+                    mapping = RUNTIME_ALGORITHM_NORMALIZATION;
+                    break;
+                default:
+                        // Keep RUNTIME_VAR_NORMALIZATION
+                }
+            }
+            
+            return mapping;
+        }
     }
 
     /**
@@ -213,7 +244,7 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
         return new Iterator<String>() {
             
             private int index = 1;
-            private boolean isAlgorithm = false;
+            private ObservableMappingType type = null;
 
             @Override
             public boolean hasNext() {
@@ -223,27 +254,30 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
             @Override
             public String next() {
                 String id;
+                
                 if (1 == index) {
+                    // Returns the compound
                     index = Math.max(segments.size() - 2, 1);
                     String fistSegment = segments.get(0);
                     if (fistSegment.equals("PipelineElement")) {
                         id = fistSegment + FrozenSystemState.SEPARATOR + segments.get(1)
                             + FrozenSystemState.SEPARATOR + segments.get(index++);
                     } else {
-                        if (fistSegment.equals("Algorithm")) {
-                            isAlgorithm = true;
+                        if (fistSegment.equals(QmConstants.TYPE_ALGORITHM)) {
+                            type = ObservableMappingType.ALGORITHM;
                         }
                         id = fistSegment + FrozenSystemState.SEPARATOR + segments.get(index++);
                     }
                 } else if ((segments.size() - 1) == index) {
+                    // Returns the observable
                     id = segments.get(index++);
-                    Map<String, String> mapping = isAlgorithm ? RUNTIME_ALGORITHM_NORMALIZATION
-                        : RUNTIME_VAR_NORMALIZATION;
+                    Map<String, String> mapping = ObservableMappingType.getMapping(type);
                     String mappedValue = mapping.get(id);
                     if (null != mappedValue) {
                         id = mappedValue;
                     }
                 } else {
+                    // Should not be needed (would return an intermediate compound)
                     id = segments.get(index++);
                 }
 
@@ -270,11 +304,13 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
             cachedIDSegments.put(id, segments);
             
             String[] arraySegments = id.split(FrozenSystemState.SEPARATOR);
+            
+            // Special treatment for elements for which adaptation/monitoring copies are created
             if (QmConstants.TYPE_ALGORITHM.equals(arraySegments[0])) {
                 fillSegmentList(MappedInstanceType.ALGORITHM, arraySegments, segments);
-            } else if (QmConstants.TYPE_SOURCE.equals(arraySegments[0])) {
+            } else if (QmConstants.TYPE_DATASOURCE.equals(arraySegments[0])) {
                 fillSegmentList(MappedInstanceType.SOURCE, arraySegments, segments);
-            } else if (QmConstants.TYPE_SINK.equals(arraySegments[0])) {
+            } else if (QmConstants.TYPE_DATASINK.equals(arraySegments[0])) {
                 fillSegmentList(MappedInstanceType.SINK, arraySegments, segments);
             }
             
@@ -384,18 +420,7 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
      * @param variableName The name of the model element.
      */
     private static void put(IObservable observable, String variableName) {
-        put(observable.name(), variableName);
-    }
-    
-    /**
-     * Part of the static block, adds a mapping between class name of an obervable and the model item to the two
-     * maps. Not suitable for algorithms as they have different slot names for the same observables as the other
-     * elements.
-     * @param observableName The name of the implementing obervable enumeration.
-     * @param variableName The name of the model element.
-     */
-    private static void put(String observableName, String variableName) {
-        RUNTIME_VAR_NORMALIZATION.put(observableName, variableName);
-        REVERSE_RUNTIME_VAR_NORMALIZATION.put(variableName, observableName);
+        RUNTIME_VAR_NORMALIZATION.put(observable.name(), variableName);
+        REVERSE_RUNTIME_VAR_NORMALIZATION.put(variableName, observable.name());
     }
 }
