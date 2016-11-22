@@ -16,6 +16,7 @@
 package eu.qualimaster.easy.extension.internal;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -37,7 +38,7 @@ import net.ssehub.easy.varModel.model.values.ReferenceValue;
  * @author El-Sharkawy
  *
  */
-class PipelineContentsContainer {
+public class PipelineContentsContainer {
     
     /**
      * Denotes which kind of model element was mapped / shall be returned. 
@@ -117,7 +118,7 @@ class PipelineContentsContainer {
             if (null != familySlot) {
                 Configuration config = familySlot.getConfiguration();
                 ReferenceValue familyRef = (ReferenceValue) familySlot.getValue();
-                IDecisionVariable orgFamily = PipelineVisitor.extractVar(familyRef, config);
+                IDecisionVariable orgFamily = Utils.extractVariable(familyRef, config);
                 
                 ContainerValue referencedOrgAlgos = null;
                 if (null != orgFamily) {
@@ -143,7 +144,7 @@ class PipelineContentsContainer {
         
         for (int i = 0; i < lastIndex; i++) {
             ReferenceValue orgRef = (ReferenceValue) referencedOrgAlgos.getElement(i);
-            IDecisionVariable orgAlgorithm = PipelineVisitor.extractVar(orgRef, config);
+            IDecisionVariable orgAlgorithm = Utils.extractVariable(orgRef, config);
             String orgName = orgAlgorithm.getNestedElement(QmConstants.SLOT_NAME).getValue().getValue().toString();
             
             if (null != runtimeAglrotihms) {
@@ -198,29 +199,6 @@ class PipelineContentsContainer {
         return mappedVariable;
     }
     
-//    /**
-//     * Creates the sources structure, this includes the original sources
-//     * as well as the mapped runtime counterparts.
-//     */
-//    private void gatherSources() {
-//        for (int i = 0, end = sources.size(); i < end; i++) {
-//            IDecisionVariable sourceElement = sources.get(i);
-//            List<IDecisionVariable> runtimesources = getMappedMembers(sourceElement);
-//            IDecisionVariable sourceSlot = sourceElement.getNestedElement(QmConstants.SLOT_SOURCE_SOURCE);
-//            if (null != sourceSlot && null != runtimesources && !runtimesources.isEmpty()) {
-//                Configuration config = sourceSlot.getConfiguration();
-//                ReferenceValue sourceRef = (ReferenceValue) sourceSlot.getValue();
-//                IDecisionVariable orgSource = PipelineVisitor.extractVar(sourceRef, config);
-//                
-//                if (null != orgSource) {
-//                    String orgName = orgSource.getNestedElement(QmConstants.SLOT_NAME).getValue()
-//                            .getValue().toString();
-//                    sourceMapping.put(orgName, runtimesources.get(0));
-//                    allMappedVariables.add(runtimesources.get(0));
-//                }
-//            }
-//        }
-//    }
     
     /**
      * Creates the mapping structure for mapping runtime variables. This does not work for algorithms of a family,
@@ -240,7 +218,7 @@ class PipelineContentsContainer {
             if (null != pointerVariable && null != mappedRuntimeVariables && !mappedRuntimeVariables.isEmpty()) {
                 Configuration config = orignalVariable.getConfiguration();
                 ReferenceValue referencedValue = (ReferenceValue) pointerVariable.getValue();
-                IDecisionVariable orgReferencedVariable = PipelineVisitor.extractVar(referencedValue, config);
+                IDecisionVariable orgReferencedVariable = Utils.extractVariable(referencedValue, config);
                 
                 if (null != orgReferencedVariable) {
                     String orgName = orgReferencedVariable.getNestedElement(QmConstants.SLOT_NAME).getValue()
@@ -261,16 +239,7 @@ class PipelineContentsContainer {
         gatherMappedNonFamilyElement(sinks, QmConstants.SLOT_SINK_SINK, sinkMapping);
         // TODO SE: ReplaySinks
     }
-    
-//    /**
-//     * Returns the mapped algorithm instance for the given (configured) algorithm.
-//     * @param originalAlgorithmName The user defined name of the algorithm.
-//     * @return The configured name of the original algorithm from the model.
-//     */
-//    public IDecisionVariable getMappedAlgorithm(String originalAlgorithmName) {
-//        return algorithmMapping.get(originalAlgorithmName);
-//    }
-//    
+
     /**
      * Returns the mapped instance for the given (configured) item.
      * @param type Specifies for which kind of pipeline element the mapped element shall be returned.
@@ -298,6 +267,38 @@ class PipelineContentsContainer {
         }
         
         return result;
+    }
+    
+    /**
+     * Returns a list of all member sources of the visited pipeline.
+     * @return A unmodifiable list of source elements of the pipeline, won't be <tt>null</tt>.
+     */
+    public List<IDecisionVariable> getSources() {
+        return Collections.unmodifiableList(new ArrayList<>(sources));
+    }
+    
+    /**
+     * Returns a list of all member sinks of the visited pipeline.
+     * @return A unmodifiable list of sink elements of the pipeline, won't be <tt>null</tt>.
+     */
+    public List<IDecisionVariable> getSinks() {
+        return Collections.unmodifiableList(new ArrayList<>(sinks));
+    }
+    
+    /**
+     * Returns a list of all member family elements of the visited pipeline.
+     * @return A unmodifiable list of family elements of the pipeline, won't be <tt>null</tt>.
+     */
+    public List<IDecisionVariable> getFamilyElements() {
+        return Collections.unmodifiableList(new ArrayList<>(familyElements));
+    }
+    
+    /**
+     * Returns a list of all member data management elements of the visited pipeline.
+     * @return A unmodifiable list of data management elements of the pipeline, won't be <tt>null</tt>.
+     */
+    public List<IDecisionVariable> getDataManagementElements() {
+        return Collections.unmodifiableList(new ArrayList<>(familyElements));
     }
     
     @Override
