@@ -15,8 +15,8 @@
  */
 package eu.qualimaster.easy.extension.internal;
 
-import eu.qualimaster.coordination.InitializationMode;
 import eu.qualimaster.coordination.CoordinationConfiguration;
+import eu.qualimaster.infrastructure.InitializationMode;
 import net.ssehub.easy.instantiation.core.model.vilTypes.IVilType;
 import net.ssehub.easy.instantiation.core.model.vilTypes.Instantiator;
 

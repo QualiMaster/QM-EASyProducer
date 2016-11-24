@@ -1,4 +1,3 @@
-eu.qualimaster.coordination.InitializationMode
 eu.qualimaster.coordination.ParallelismChangeRequest
 eu.qualimaster.coordination.commands.AbstractCommandContainer
 eu.qualimaster.coordination.commands.AbstractPipelineCommand
@@ -22,6 +21,7 @@ eu.qualimaster.adaptation.events.SourceVolumeAdaptationEvent
 eu.qualimaster.events.AbstractEvent
 eu.qualimaster.events.IEvent
 eu.qualimaster.infrastructure.InfrastructurePart
+eu.qualimaster.infrastructure.InitializationMode
 eu.qualimaster.infrastructure.PipelineOptions
 eu.qualimaster.monitoring.events.AbstractPipelineElementEnactmentCompletedMonitoringEvent
 eu.qualimaster.monitoring.events.FrozenSystemState
