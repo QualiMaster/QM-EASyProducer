@@ -2,7 +2,6 @@ package eu.qualimaster.easy.extension.internal;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 /*
  * Copyright 2009-2016 University of Hildesheim, Software Systems Engineering
  *
@@ -21,10 +20,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
+import eu.qualimaster.easy.extension.ObservableMapping;
 import eu.qualimaster.easy.extension.QmConstants;
 import eu.qualimaster.easy.extension.internal.PipelineContentsContainer.MappedInstanceType;
 import eu.qualimaster.monitoring.events.FrozenSystemState;
@@ -53,33 +52,41 @@ import net.ssehub.easy.varModel.model.values.ValueFactory;
  */
 public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElementIdentifier.ObservableTuple> {
 
-    private static final Map<String, String> RUNTIME_VAR_NORMALIZATION = new HashMap<String, String>();
-    private static final Set<String> TOPLEVEL_VAR_NORMALIZATION = new HashSet<String>();
-
-    static {
-        RUNTIME_VAR_NORMALIZATION.put("AVAILABLE", "available");
-        RUNTIME_VAR_NORMALIZATION.put("AVAILABLE_DFES", "availableMachines");
-        RUNTIME_VAR_NORMALIZATION.put("AVAILABLE_MEMORY", "availableMemory");
-        RUNTIME_VAR_NORMALIZATION.put("AVAILABLE_FREQUENCY", "availableFrequency");
-        RUNTIME_VAR_NORMALIZATION.put("BANDWIDTH", "bandwidth");
-        RUNTIME_VAR_NORMALIZATION.put("CAPACITY", "capacity");
-        RUNTIME_VAR_NORMALIZATION.put("EXECUTORS", "executors");
-        RUNTIME_VAR_NORMALIZATION.put("HOSTS", "hosts");
-        RUNTIME_VAR_NORMALIZATION.put("IS_VALID", "isValid");
-        RUNTIME_VAR_NORMALIZATION.put("IS_ENACTING", "isEnacting");
-        RUNTIME_VAR_NORMALIZATION.put("ITEMS", "items");
-        RUNTIME_VAR_NORMALIZATION.put("LATENCY", "latency");
-        RUNTIME_VAR_NORMALIZATION.put("LOAD", "load");
-        RUNTIME_VAR_NORMALIZATION.put("PING", "ping");
-        RUNTIME_VAR_NORMALIZATION.put("THROUGHPUT_ITEMS", "throughputItems");
-        RUNTIME_VAR_NORMALIZATION.put("THROUGHPUT_VOLUME", "throughputVolume");
-        RUNTIME_VAR_NORMALIZATION.put("USED_DFES", "usedMachines");
-        RUNTIME_VAR_NORMALIZATION.put("USED_HARDDISC_MEM", "UsedHarddiscMem");
-        RUNTIME_VAR_NORMALIZATION.put("USED_MEMORY", "usedMemory");
-        RUNTIME_VAR_NORMALIZATION.put("USED_PROCESSORS", "UsedProcessors");
-        RUNTIME_VAR_NORMALIZATION.put("USED_WORKING_STORAGE", "UsedWorkingStorage");
+    private static final String MAIN_PROJECT_ID = "Infrastructure:";
+    
+    /**
+     * Part of the iterator, stores which kind of observable/variable mapper shall be used.
+     * @author El-Sharkawy
+     *
+     */
+    private static enum ObservableMappingType {
+        ALGORITHM;
         
-        TOPLEVEL_VAR_NORMALIZATION.add("Infrastructure");
+        /**
+         * Returns for the iterator in {@link IvmlElementIdentifier#getIDIterator(String)} the correct
+         * mapped observable.
+         * @param type The type as specified in the first segment of the ID.
+         * @param observable An {@link IObservable#name()}.
+         * @return {@link ObservableMapping#mapGeneralObervable(String)} by default or a specific one if necessary.
+         */
+        private static String getMapping(ObservableMappingType type, String observable) {
+            String variableName = null;
+            
+            if (null != type) {
+                switch (type) {
+                case ALGORITHM:
+                    variableName = ObservableMapping.mapAlgorithmObervable(observable);
+                    break;
+                default:
+                    variableName = ObservableMapping.mapGeneralObervable(observable);
+                    break;
+                }
+            } else {
+                variableName = ObservableMapping.mapGeneralObervable(observable);
+            }
+            
+            return variableName;
+        }
     }
 
     /**
@@ -175,7 +182,7 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
 
     @Override
     protected boolean isNestedVariable(String id) {
-        return null != id && !TOPLEVEL_VAR_NORMALIZATION.contains(id)
+        return null != id && !id.startsWith(MAIN_PROJECT_ID)
             && StringUtils.countMatches(id, FrozenSystemState.SEPARATOR) > 1;
     }
 
@@ -186,6 +193,7 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
         return new Iterator<String>() {
             
             private int index = 1;
+            private ObservableMappingType type = null;
 
             @Override
             public boolean hasNext() {
@@ -195,21 +203,29 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
             @Override
             public String next() {
                 String id;
+                
                 if (1 == index) {
+                    // Returns the compound
                     index = Math.max(segments.size() - 2, 1);
-                    if (segments.get(0).equals("PipelineElement")) {
-                        id = segments.get(0) + FrozenSystemState.SEPARATOR + segments.get(1)
+                    String fistSegment = segments.get(0);
+                    if (fistSegment.equals("PipelineElement")) {
+                        id = fistSegment + FrozenSystemState.SEPARATOR + segments.get(1)
                             + FrozenSystemState.SEPARATOR + segments.get(index++);
                     } else {
-                        id = segments.get(0) + FrozenSystemState.SEPARATOR + segments.get(index++);
+                        if (fistSegment.equals(QmConstants.TYPE_ALGORITHM)) {
+                            type = ObservableMappingType.ALGORITHM;
+                        }
+                        id = fistSegment + FrozenSystemState.SEPARATOR + segments.get(index++);
                     }
                 } else if ((segments.size() - 1) == index) {
+                    // Returns the observable
                     id = segments.get(index++);
-                    String mappedValue = RUNTIME_VAR_NORMALIZATION.get(id);
+                    String mappedValue = ObservableMappingType.getMapping(type, id);
                     if (null != mappedValue) {
                         id = mappedValue;
                     }
                 } else {
+                    // Should not be needed (would return an intermediate compound)
                     id = segments.get(index++);
                 }
 
@@ -236,11 +252,13 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
             cachedIDSegments.put(id, segments);
             
             String[] arraySegments = id.split(FrozenSystemState.SEPARATOR);
+            
+            // Special treatment for elements for which adaptation/monitoring copies are created
             if (QmConstants.TYPE_ALGORITHM.equals(arraySegments[0])) {
                 fillSegmentList(MappedInstanceType.ALGORITHM, arraySegments, segments);
-            } else if (QmConstants.TYPE_SOURCE.equals(arraySegments[0])) {
+            } else if (QmConstants.TYPE_DATASOURCE.equals(arraySegments[0])) {
                 fillSegmentList(MappedInstanceType.SOURCE, arraySegments, segments);
-            } else if (QmConstants.TYPE_SINK.equals(arraySegments[0])) {
+            } else if (QmConstants.TYPE_DATASINK.equals(arraySegments[0])) {
                 fillSegmentList(MappedInstanceType.SINK, arraySegments, segments);
             }
             
@@ -302,6 +320,16 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
                     : VariableHelper.getName(variable);                
             }
             id = prefix + FrozenSystemState.SEPARATOR + key;
+        } else {
+            String varName = VariableHelper.getName(variable);
+            if (null == varName) {
+                varName = variable.getDeclaration().getName();
+            }
+            String normalizedName = ObservableMapping.mapReverseGeneralObervable(varName);
+            if (null != normalizedName) {
+                varName = ":" + normalizedName;
+            }
+            id = MAIN_PROJECT_ID + varName;
         }
 
         return id;

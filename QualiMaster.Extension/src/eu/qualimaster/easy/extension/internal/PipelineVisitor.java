@@ -26,17 +26,30 @@ import net.ssehub.easy.varModel.model.values.ReferenceValue;
  * @author El-Sharkawy
  *
  */
-class PipelineVisitor {
+public class PipelineVisitor {
 
     private PipelineContentsContainer container;
     private Configuration config;
     private boolean containerInitialized;
+    private boolean initializeRuntimeMapping;
     
     /**
-     * Sole constructor.
+     * Constructor which will map runtime clones.
      * @param pipeline The pipeline for which the information should be extracted.
      */
     PipelineVisitor(IDecisionVariable pipeline) {
+        this(pipeline, true);
+    }
+    
+    /**
+     * Constructor for deciding whether runtime instances shall be mapped or whether this is not needed. 
+     * @param pipeline The pipeline for which the information should be extracted.
+     * @param initializeRuntimeMapping <tt>true</tt> runtime variables will be mapped, <tt>false</tt> mapping is not
+     * needed. Mapping (<tt>true</tt>) is only needed during adaptation, no mapping (<tt>false</tt>) is needed
+     * in QM-Iconf application.
+     */
+    public PipelineVisitor(IDecisionVariable pipeline, boolean initializeRuntimeMapping) {
+        this.initializeRuntimeMapping = initializeRuntimeMapping;
         container = new PipelineContentsContainer();
         containerInitialized = false;
         this.config = pipeline.getConfiguration();
@@ -50,8 +63,8 @@ class PipelineVisitor {
      * Returns the gathered information (directly available after calling the constructor).
      * @return The referenced variables of the pipeline.
      */
-    PipelineContentsContainer getPipelineContents() {
-        if (!containerInitialized) {
+    public PipelineContentsContainer getPipelineContents() {
+        if (!containerInitialized && initializeRuntimeMapping) {
             containerInitialized = true;
             container.init();
         }
@@ -93,7 +106,10 @@ class PipelineVisitor {
             } else if (QmConstants.TYPE_DATAMANAGEMENTELEMENT.equals(typeName)) {
                 container.addDataManagementElement(pipelineElement);
                 visitProcessingElement(pipelineElement);
-            } else if (QmConstants.TYPE_SINK.equals(typeName) || QmConstants.TYPE_REPLAYSINK.equals(typeName)) {
+            } else if (QmConstants.TYPE_REPLAYSINK.equals(typeName)) {
+                container.addReplaySink(pipelineElement);
+                // End visiting
+            } else if (QmConstants.TYPE_SINK.equals(typeName)) {
                 container.addSink(pipelineElement);
                 // End visiting
             } else {
@@ -134,24 +150,6 @@ class PipelineVisitor {
      * @return The referenced {@link IDecisionVariable} or in case of any errors <tt>null</tt>.
      */
     private IDecisionVariable extractVar(ReferenceValue refValue) {
-        return extractVar(refValue, config);
-    }
-    
-    /**
-     * Extracts an {@link IDecisionVariable} from the given {@link ReferenceValue}.
-     * @param refValue A value pointing to an element of a pipeline.
-     * @param config The complete configuration form where to take the {@link IDecisionVariable}.
-     * @return The referenced {@link IDecisionVariable} or in case of any errors <tt>null</tt>.
-     */
-    static IDecisionVariable extractVar(ReferenceValue refValue, Configuration config) {
-        IDecisionVariable result = null;
-        if (null != refValue.getValue()) {
-            result = config.getDecision(refValue.getValue());
-        } else {
-            Bundle.getLogger(PipelineVisitor.class).error("Expressions are currently not supported for extracting "
-                + "IDecisionVariables from a ReferenceValue");
-        }
-        
-        return result;
+        return Utils.extractVariable(refValue, config);
     }
 }
