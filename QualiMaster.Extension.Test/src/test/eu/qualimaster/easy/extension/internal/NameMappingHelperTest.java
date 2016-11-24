@@ -20,13 +20,16 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 import eu.qualimaster.coordination.CoordinationManager;
+import eu.qualimaster.coordination.INameMapping;
 import eu.qualimaster.coordination.NameMapping;
 import eu.qualimaster.easy.extension.internal.NameMappingHelper;
+import eu.qualimaster.easy.extension.internal.SubPipelineHelper;
+
 import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * Tests the name mapping helper.
+ * Tests the name mapping helpers.
  * 
  * @author Holger Eichelberger
  */
@@ -40,11 +43,7 @@ public class NameMappingHelperTest {
     @Test
     public void testNameMapping() throws IOException {
         final String pipName = "PriorityPip";
-        File testdir = new File(System.getProperty("qm.base.dir", "."), "testdata");
-        File file = new File(testdir, "genSubTopoMapping.xml");
-        FileInputStream in = new FileInputStream(file);
-        NameMapping mapping = new NameMapping(pipName, in);
-        in.close();
+        INameMapping mapping = loadNameMapping("genSubTopoMapping.xml", pipName);
         CoordinationManager.registerTestMapping(mapping);
         Assert.assertEquals("PriorityPip_FamilyElement0", 
             NameMappingHelper.getImplementationName(pipName, "FinancialCorrelation"));
@@ -54,4 +53,52 @@ public class NameMappingHelperTest {
             NameMappingHelper.getImplementationName("MyPip", "FinancialCorrelation1"));
         CoordinationManager.unregisterNameMapping(mapping);
     }
+
+    /**
+     * Tests the sub-pipeline helper on a mapping file which does not expose a sub-pipeline.
+     * 
+     * @throws IOException shall not occur
+     */
+    @Test
+    public void testIsSubPipeline1() throws IOException {
+        final String pipName = "PriorityPip";
+        INameMapping mapping = loadNameMapping("genSubTopoMapping.xml", pipName);
+        CoordinationManager.registerTestMapping(mapping);
+        Assert.assertEquals(false, SubPipelineHelper.isSubPipeline(pipName, "aaa"));
+        CoordinationManager.unregisterNameMapping(mapping);
+    }
+
+    /**
+     * Tests the sub-pipeline helper on a mapping file which does not expose a sub-pipeline.
+     * 
+     * @throws IOException shall not occur
+     */
+    @Test
+    public void testIsSubPipeline2() throws IOException {
+        final String pipName = "RandomPip";
+        INameMapping mapping = loadNameMapping("randomSubTopoMapping.xml", pipName);
+        CoordinationManager.registerTestMapping(mapping);
+        Assert.assertEquals(false, SubPipelineHelper.isSubPipeline(pipName, "RandomPip"));
+        Assert.assertEquals(true, SubPipelineHelper.isSubPipeline(pipName, "RandomSubPipeline1"));
+        CoordinationManager.unregisterNameMapping(mapping);
+    }
+
+    /**
+     * Loads a given name mapping.
+     * 
+     * @param fileName the file name within the testdata folder
+     * @param pipName the pipeline name
+     * @return the name mapping
+     * @throws IOException in case of I/O problems
+     */
+    private INameMapping loadNameMapping(String fileName, String pipName) throws IOException {
+        NameMapping mapping;
+        File testdir = new File(System.getProperty("qm.base.dir", "."), "testdata");
+        File file = new File(testdir, fileName);
+        FileInputStream in = new FileInputStream(file);
+        mapping = new NameMapping(pipName, in);
+        in.close();
+        return mapping;
+    }
+
 }

@@ -472,6 +472,7 @@ public class Registration implements IRegistration {
         registerInstantiator(SubTopologyScalingHelper.class, instantiators);
         registerInstantiator(InitializationModeHelper.class, instantiators);
         registerInstantiator(NameMappingHelper.class, instantiators);
+        registerInstantiator(SubPipelineHelper.class, instantiators);
 
         registerInstantiator(AlgorithmPrediction.class, instantiators);
         registerInstantiator(ParameterPrediction.class, instantiators);
