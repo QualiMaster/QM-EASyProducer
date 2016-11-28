@@ -53,6 +53,9 @@ public class SubTopologyScalingHelper implements IVilType {
         java.util.Map<Object, Object> tmp = new HashMap<Object, Object>(); 
         INameMapping mapping = AdaptationManager.getNameMapping(pipeline);
         Algorithm alg = mapping.getAlgorithm(algorithm);
+        if (null == alg) {
+            alg = mapping.getAlgorithmByImplName(algorithm);
+        }
         if (null != alg) {
             IScalingDescriptor desc = alg.getScalingDescriptor();
             if (null != desc) {
@@ -82,6 +85,9 @@ public class SubTopologyScalingHelper implements IVilType {
         java.util.Map<Object, Object> tmp = new HashMap<Object, Object>(); 
         INameMapping mapping = AdaptationManager.getNameMapping(pipeline);
         Algorithm alg = mapping.getAlgorithm(algorithm);
+        if (null == alg) {
+            alg = mapping.getAlgorithmByImplName(algorithm);
+        }
         if (null != alg) {
             IScalingDescriptor desc = alg.getScalingDescriptor();
             if (null != desc) {

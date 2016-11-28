@@ -91,7 +91,7 @@ public class NameMappingHelperTest {
      * @return the name mapping
      * @throws IOException in case of I/O problems
      */
-    private INameMapping loadNameMapping(String fileName, String pipName) throws IOException {
+    static INameMapping loadNameMapping(String fileName, String pipName) throws IOException {
         NameMapping mapping;
         File testdir = new File(System.getProperty("qm.base.dir", "."), "testdata");
         File file = new File(testdir, fileName);
