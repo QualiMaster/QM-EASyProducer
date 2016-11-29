@@ -16,16 +16,20 @@
 package eu.qualimaster.easy.extension.modelop;
 
 import eu.qualimaster.easy.extension.QmConstants;
+import net.ssehub.easy.varModel.confModel.AbstractConfigurationStatisticsVisitor;
 
 /**
  * Statistical information of the QualiMaster (Meta-) Model.
  * @author El-Sharkawy
  *
  */
-public class ModelStatistics {
+public class ModelStatistics extends AbstractConfigurationStatisticsVisitor.ConfigStatistics {
     
+    private int nSWAlgorithms = 0;
+    private int nHWAlgorithms = 0;
+    private int nSPAlgorithms = 0;
+
     // General Structure
-    private int nAlgorithms = 0;
     private int nFamilies = 0;
     private int nGeneralMachines = 0;
     
@@ -56,14 +60,21 @@ public class ModelStatistics {
      */
     void incInstance(String typeName) {
         switch (typeName) {
-        // General Structure
-        case QmConstants.TYPE_ALGORITHM:
-            nAlgorithms++;
+        // Algorithms
+        case QmConstants.TYPE_SOFTWARE_ALGORITHM:
+            nSWAlgorithms++;
             break;
+        case QmConstants.TYPE_HARDWARE_ALGORITHM:
+            nHWAlgorithms++;
+            break;
+        case QmConstants.TYPE_SUBPIPELINE_ALGORITHM:
+            nSPAlgorithms++;
+            break;
+        // General Structure
         case QmConstants.TYPE_FAMILY:
             nFamilies++;
             break;
-        case QmConstants.TYPE_HWNODE:
+        case QmConstants.TYPE_MACHINE:
             nGeneralMachines++;
             break;
         // Pipelines
@@ -115,11 +126,26 @@ public class ModelStatistics {
     }
 
     /**
-     * Returns the number of algorithm instances.
+     * Returns the number of software algorithm instances.
      * @return Will be &ge; 0.
      */
-    public int noOfAlgorithms() {
-        return nAlgorithms;
+    public int noOfSWAlgorithms() {
+        return nSWAlgorithms;
+    }
+    
+    /**
+     * Returns the number of hardware algorithm instances.
+     * @return Will be &ge; 0.
+     */
+    public int noOfHWAlgorithms() {
+        return nHWAlgorithms;
+    }
+    /**
+     * Returns the number of sub pipeline algorithm instances.
+     * @return Will be &ge; 0.
+     */
+    public int noOfSPAlgorithms() {
+        return nSPAlgorithms;
     }
 
     /**
@@ -210,7 +236,7 @@ public class ModelStatistics {
      * Returns the number of constraints defined on project level.
      * @return Will be &ge; 0.
      */
-    public int getnConstraints() {
+    public int noOfConstraints() {
         return nConstraints;
     }
 
@@ -218,7 +244,7 @@ public class ModelStatistics {
      * Returns the number of user defined operations.
      * @return Will be &ge; 0.
      */
-    public int getnOperations() {
+    public int noOfOperations() {
         return nOperations;
     }
 }

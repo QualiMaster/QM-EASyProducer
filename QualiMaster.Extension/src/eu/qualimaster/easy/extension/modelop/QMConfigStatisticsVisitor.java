@@ -27,15 +27,22 @@ import net.ssehub.easy.varModel.model.datatypes.IDatatype;
  */
 public class QMConfigStatisticsVisitor extends AbstractConfigurationStatisticsVisitor {
 
-    private ModelStatistics statistics = new ModelStatistics();
+    /**
+     * Creates a fresh model statistics visitor for the QualiMaster (Meta-) Model.
+     */
+    public QMConfigStatisticsVisitor() {
+        super(new ModelStatistics());
+    }
     
     @Override
     protected void specialTreatment(IDecisionVariable variable) {
-        IDatatype type = variable.getDeclaration().getType();
-        String typeName = type.getClass().getSimpleName();
-        
-        if (null != typeName) {
-            statistics.incInstance(typeName);
+        if (!variable.isNested()) {
+            IDatatype type = variable.getDeclaration().getType();
+            String typeName = type.getName();
+            
+            if (null != typeName) {
+                getStatistics().incInstance(typeName);
+            }
         }
     }
 
@@ -43,8 +50,8 @@ public class QMConfigStatisticsVisitor extends AbstractConfigurationStatisticsVi
     protected void specialTreatment(Project mainProject) {
         QMModelStatistics modelVisitor = new QMModelStatistics(mainProject);
         mainProject.accept(modelVisitor);
-        statistics.setStaticConstraints(modelVisitor.noOfConstraints());
-        statistics.setOperations(modelVisitor.noOfOperations());
+        getStatistics().setStaticConstraints(modelVisitor.noOfConstraints());
+        getStatistics().setOperations(modelVisitor.noOfOperations());
     }
 
     /**
@@ -52,7 +59,7 @@ public class QMConfigStatisticsVisitor extends AbstractConfigurationStatisticsVi
      * @return The statistics of the QM (Meta-) Model, will be empty if the visit method was not called before.
      */
     public ModelStatistics getStatistics() {
-        return statistics;
+        return (ModelStatistics) super.getStatistics();
     }
 
 }
