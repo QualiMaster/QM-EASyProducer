@@ -44,8 +44,14 @@ import net.ssehub.easy.varModel.model.filter.FilterType;
  */
 class QMModelStatistics extends AbstractProjectVisitor {
     
-    private int nConstraints;
-    private int nOperations;
+    private boolean visitingCompound = false;
+    
+    private int nConstraints = 0;
+    private int nOperations = 0;
+    private int nTopLevelDeclarations = 0;
+    private int nNestedDeclarations = 0;
+    private int nTopLevelAnnotations = 0;
+    private int nNestedAnnotations = 0;
 
     /**
      * Sole constructor.
@@ -71,14 +77,54 @@ class QMModelStatistics extends AbstractProjectVisitor {
         return nOperations;
     }
     
+    /**
+     * Returns the number of declarations nested inside the project (not part of compounds).
+     * @return Will be &ge; 0.
+     */
+    int noOfToplevelDeclarations() {
+        return nTopLevelDeclarations;
+    }
+    
+    /**
+     * Returns the number of declarations nested in compounds.
+     * @return Will be &ge; 0.
+     */
+    int noOfNestedDeclarations() {
+        return nNestedDeclarations;
+    }
+    
+    /**
+     * Returns the number of annotations nested in compounds.
+     * @return Will be &ge; 0.
+     */
+    int noOfNestedAnnotations() {
+        return nNestedAnnotations;
+    }
+    
+    /**
+     * Returns the number of annotations nested inside the project (not part of compounds).
+     * @return Will be &ge; 0.
+     */
+    int noOfToplevelAnnotations() {
+        return nTopLevelAnnotations;
+    }
+    
     @Override
     public void visitDecisionVariableDeclaration(DecisionVariableDeclaration decl) {
-        // Not needed
+        if (visitingCompound) {
+            nNestedDeclarations++;
+        } else {
+            nTopLevelDeclarations++;
+        }
     }
 
     @Override
     public void visitAttribute(Attribute attribute) {
-        // Not needed
+        if (visitingCompound) {
+            nNestedAnnotations++;
+        } else {
+            nTopLevelAnnotations++;
+        }
     }
 
     @Override
@@ -113,7 +159,9 @@ class QMModelStatistics extends AbstractProjectVisitor {
 
     @Override
     public void visitAttributeAssignment(AttributeAssignment assignment) {
-        // Not needed
+        for (int i = 0, end = assignment.getModelElementCount(); i < end; i++) {
+            assignment.getModelElement(i).accept(this);
+        }
     }
 
     @Override
@@ -133,7 +181,13 @@ class QMModelStatistics extends AbstractProjectVisitor {
 
     @Override
     public void visitCompound(Compound compound) {
-        // Not needed
+        visitingCompound = true;
+        
+        for (int i = 0, end = compound.getModelElementCount(); i < end; i++) {
+            compound.getModelElement(i).accept(this);
+        }
+        
+        visitingCompound = false;
     }
 
     @Override
