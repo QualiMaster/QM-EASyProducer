@@ -52,6 +52,10 @@ public class QMConfigStatisticsVisitor extends AbstractConfigurationStatisticsVi
         mainProject.accept(modelVisitor);
         getStatistics().setStaticConstraints(modelVisitor.noOfConstraints());
         getStatistics().setOperations(modelVisitor.noOfOperations());
+        getStatistics().setTopLevelDeclarations(modelVisitor.noOfToplevelDeclarations());
+        getStatistics().setNestedDeclarations(modelVisitor.noOfNestedDeclarations());
+        getStatistics().setTopLevelAnnotations(modelVisitor.noOfToplevelAnnotations());
+        getStatistics().setNestedAnnotations(modelVisitor.noOfNestedAnnotations());
     }
 
     /**
