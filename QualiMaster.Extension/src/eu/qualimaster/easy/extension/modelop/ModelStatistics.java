@@ -48,6 +48,10 @@ public class ModelStatistics extends AbstractConfigurationStatisticsVisitor.Conf
     // Static information
     private int nConstraints;
     private int nOperations;
+    private int nTopLevelDeclarations;
+    private int nNestedDeclarations;
+    private int nTopLevelAnnotations;
+    private int nNestedAnnotations;
     
     /**
      * Constructor shall only be called by the {@link QMConfigStatisticsVisitor}.
@@ -110,7 +114,7 @@ public class ModelStatistics extends AbstractConfigurationStatisticsVisitor.Conf
     }
     
     /**
-     * Sets the number of static constraints (nested directly in {@link net.ssehub.easy.varModel.model.Project}s.
+     * Sets the number of static constraints (nested directly in {@link net.ssehub.easy.varModel.model.Project}s).
      * @param nConstraints Should be &ge; 0.
      */
     void setStaticConstraints(int nConstraints) {
@@ -123,6 +127,38 @@ public class ModelStatistics extends AbstractConfigurationStatisticsVisitor.Conf
      */
     void setOperations(int nOperations) {
         this.nOperations = nOperations;
+    }
+    
+    /**
+     * Sets the number of static declarations (nested directly in {@link net.ssehub.easy.varModel.model.Project}s).
+     * @param nTopLevelDeclarations Should be &ge; 0.
+     */
+    void setTopLevelDeclarations(int nTopLevelDeclarations) {
+        this.nTopLevelDeclarations = nTopLevelDeclarations;
+    }
+    
+    /**
+     * Sets the number of static declarations (nested in Compounds).
+     * @param nNestedDeclarations Should be &ge; 0.
+     */
+    void setNestedDeclarations(int nNestedDeclarations) {
+        this.nNestedDeclarations = nNestedDeclarations;
+    }
+    
+    /**
+     * Sets the number of static annotations (nested directly in {@link net.ssehub.easy.varModel.model.Project}s).
+     * @param nTopLevelAnnotations Should be &ge; 0.
+     */
+    void setTopLevelAnnotations(int nTopLevelAnnotations) {
+        this.nTopLevelAnnotations = nTopLevelAnnotations;
+    }
+    
+    /**
+     * Sets the number of static annotations (nested in Compounds).
+     * @param nNestedAnnotations Should be &ge; 0.
+     */
+    void setNestedAnnotations(int nNestedAnnotations) {
+        this.nNestedAnnotations = nNestedAnnotations;
     }
 
     /**
@@ -246,5 +282,36 @@ public class ModelStatistics extends AbstractConfigurationStatisticsVisitor.Conf
      */
     public int noOfOperations() {
         return nOperations;
+    }
+    
+    /** Returns the number of declarations nested inside the project (not part of compounds).
+     * @return Will be &ge; 0.
+     */
+    public int noOfToplevelDeclarations() {
+        return nTopLevelDeclarations;
+    }
+   
+    /**
+     * Returns the number of declarations nested in compounds.
+     * @return Will be &ge; 0.
+     */
+    public int noOfNestedDeclarations() {
+        return nNestedDeclarations;
+    }
+   
+    /**
+     * Returns the number of annotations nested in compounds.
+     * @return Will be &ge; 0.
+     */
+    public int noOfNestedAnnotations() {
+        return nNestedAnnotations;
+    }
+   
+    /**
+     * Returns the number of annotations nested inside the project (not part of compounds).
+     * @return Will be &ge; 0.
+     */
+    public int noOfToplevelAnnotations() {
+        return nTopLevelAnnotations;
     }
 }
