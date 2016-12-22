@@ -15,6 +15,13 @@
  */
 package eu.qualimaster.easy.extension.internal;
 
+import static eu.qualimaster.easy.extension.QmConstants.ANNOTATION_BINDING_TIME;
+import static eu.qualimaster.easy.extension.QmConstants.CONST_BINDING_TIME_COMPILE;
+import static eu.qualimaster.easy.extension.QmConstants.CONST_BINDING_TIME_RUNTIME;
+import static eu.qualimaster.easy.extension.QmConstants.CONST_BINDING_TIME_RUNTIME_MON;
+import static eu.qualimaster.easy.extension.QmConstants.SLOT_FAMILY_MEMBERS;
+import static eu.qualimaster.easy.extension.QmConstants.TYPE_BINDING_TIME;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,11 +45,11 @@ import net.ssehub.easy.varModel.model.datatypes.Compound;
 import net.ssehub.easy.varModel.model.datatypes.EnumLiteral;
 import net.ssehub.easy.varModel.model.datatypes.FreezeVariableType;
 import net.ssehub.easy.varModel.model.datatypes.IDatatype;
+import net.ssehub.easy.varModel.model.values.ContainerValue;
 import net.ssehub.easy.varModel.model.values.ReferenceValue;
+import net.ssehub.easy.varModel.model.values.Value;
 import net.ssehub.easy.varModel.model.values.ValueDoesNotMatchTypeException;
 import net.ssehub.easy.varModel.model.values.ValueFactory;
-
-import static eu.qualimaster.easy.extension.QmConstants.*;
 
 /**
  * Utility methods.
@@ -263,6 +270,27 @@ public class Utils {
                 + "IDecisionVariables from a ReferenceValue");
         }
 
+        return result;
+    }
+    
+    /**
+     * Extracts all referenced {@link IDecisionVariable}s from a container of {@link ReferenceValue}s.
+     * @param refValues A value pointing other declarations, must not use an expression.
+     * @param config The complete configuration form where to take the {@link IDecisionVariable}.
+     * @return The referenced {@link IDecisionVariable}s or an empty list in case of any errors.
+     */
+    public static List<IDecisionVariable> extractVariables(ContainerValue refValues, Configuration config) {
+        List<IDecisionVariable> result = new ArrayList<IDecisionVariable>();
+        for (int i = 0, end = refValues.getElementSize(); i < end; i++) {
+            Value nestedValue = refValues.getElement(i);
+            if (nestedValue instanceof ReferenceValue) {
+                IDecisionVariable referrencedVar = extractVariable((ReferenceValue) nestedValue, config);
+                if (null != referrencedVar) {
+                    result.add(referrencedVar);
+                }
+            }
+        }
+        
         return result;
     }
 

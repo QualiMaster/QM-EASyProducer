@@ -50,7 +50,12 @@ public class PipelineVisitor {
      */
     public PipelineVisitor(IDecisionVariable pipeline, boolean initializeRuntimeMapping) {
         this.initializeRuntimeMapping = initializeRuntimeMapping;
-        container = new PipelineContentsContainer();
+        String pipelineName = VariableHelper.getName(pipeline);
+        if (null == pipelineName) {
+            pipelineName = pipeline.getDeclaration().getName();
+        }
+        
+        container = new PipelineContentsContainer(pipelineName);
         containerInitialized = false;
         this.config = pipeline.getConfiguration();
         ContainerValue sources = (ContainerValue) pipeline

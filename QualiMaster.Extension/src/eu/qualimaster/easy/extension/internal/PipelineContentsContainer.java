@@ -51,6 +51,10 @@ public class PipelineContentsContainer {
     
     private static Set<IDecisionVariable> allMappedVariables = new HashSet<>();
     
+    // Used for debugging purpose.
+    @SuppressWarnings("unused")
+    private String pipelineName;
+    
     // Element structure of pipeline (collected through visiting)
     private List<IDecisionVariable> sources = new ArrayList<>();
     private List<IDecisionVariable> familyElements = new ArrayList<>();
@@ -64,6 +68,21 @@ public class PipelineContentsContainer {
     private Map<String, IDecisionVariable> sinkMapping = new HashMap<>();
     
     private Models phase = null;
+    
+    /**
+     * Default constructor.
+     */
+    public PipelineContentsContainer() {
+        this("<Unknown Pipeline>");
+    }
+    
+    /**
+     * Constructor for debugging purpose.
+     * @param pipelineName The name of the pipeline. Is only used for debugging purpose.
+     */
+    public PipelineContentsContainer(String pipelineName) {
+        this.pipelineName = pipelineName;
+    }
     
     /**
      * Adds a source of the pipeline.

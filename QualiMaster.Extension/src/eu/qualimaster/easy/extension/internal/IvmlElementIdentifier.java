@@ -33,13 +33,16 @@ import eu.qualimaster.observables.IObservable;
 import net.ssehub.easy.instantiation.core.model.vilTypes.configuration.AbstractIvmlVariable;
 import net.ssehub.easy.instantiation.core.model.vilTypes.configuration.IvmlElement;
 import net.ssehub.easy.instantiation.rt.core.model.confModel.AbstractVariableIdentifier;
+import net.ssehub.easy.varModel.confModel.AssignmentState;
 import net.ssehub.easy.varModel.confModel.Configuration;
+import net.ssehub.easy.varModel.confModel.ConfigurationException;
 import net.ssehub.easy.varModel.confModel.IDecisionVariable;
 import net.ssehub.easy.varModel.model.ModelQueryException;
 import net.ssehub.easy.varModel.model.datatypes.BooleanType;
 import net.ssehub.easy.varModel.model.datatypes.IDatatype;
 import net.ssehub.easy.varModel.model.datatypes.IntegerType;
 import net.ssehub.easy.varModel.model.values.BooleanValue;
+import net.ssehub.easy.varModel.model.values.ContainerValue;
 import net.ssehub.easy.varModel.model.values.Value;
 import net.ssehub.easy.varModel.model.values.ValueDoesNotMatchTypeException;
 import net.ssehub.easy.varModel.model.values.ValueFactory;
@@ -349,5 +352,61 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
         }
         
         return result;
+    }
+    
+    @Override
+    protected void assignValue(IDecisionVariable variable, Value value) throws ConfigurationException {
+        super.assignValue(variable, value);
+        if (variable.getParent() instanceof IDecisionVariable) {
+            IDecisionVariable parentVariable = (IDecisionVariable) variable.getParent();
+            String variableName = variable.getDeclaration().getName();
+            String typeName = parentVariable.getDeclaration().getType().getName();
+            
+            if (QmConstants.TYPE_PIPELINE.equals(typeName) && "hosts".equals(variableName)) {
+                // Assign pipeline_Hosts to all algorithms of pipeline
+                String pipeline = parentVariable.getDeclaration().getName();
+                PipelineContentsContainer infos = getPipelineInfos(pipeline);
+                if (null != infos) {
+                    List<IDecisionVariable> familyElements = infos.getFamilyElements();
+                    for (IDecisionVariable familyElement : familyElements) {
+                        setValueForAvailableAlgorithms(value, familyElement, "pipeline_Hosts");
+                    }
+                }
+            } else if (QmConstants.TYPE_FAMILYELEMENT.equals(typeName) && "items".equals(variableName)) {
+                // Assign family_Items to all algorithms of family element
+                setValueForAvailableAlgorithms(value, parentVariable, "family_Items");
+            }
+        }
+    }
+
+    /**
+     * Sets the specified value to all available algorithms of the given family element.
+     * @param value The value to set.
+     * @param familyElement A family element of a pipeline.
+     * @param slot The slot to configure with the given value.
+     * @throws ConfigurationException in case that the types of 
+     *   {@link #getDeclaration()} and <code>value</code> do not comply
+     */
+    private void setValueForAvailableAlgorithms(Value value, IDecisionVariable familyElement, String slot)
+        throws ConfigurationException {
+        
+        IDecisionVariable availableAlgos = familyElement.getNestedElement(QmConstants.SLOT_FAMILYELEMENT_AVAILABLE);
+        List<IDecisionVariable> algos = null;
+        if (null != availableAlgos) {
+            Value refferencedAlgos = availableAlgos.getValue();
+            if (null != refferencedAlgos && refferencedAlgos instanceof ContainerValue) {
+                ContainerValue container = (ContainerValue) refferencedAlgos;
+                algos = Utils.extractVariables(container, familyElement.getConfiguration());
+            }
+        }
+        // Set same value for all available algorithms
+        if (null != algos) {
+            for (IDecisionVariable algorithm : algos) {
+                IDecisionVariable algoSlot = algorithm.getNestedElement(slot);
+                if (null != algoSlot) {
+                    algoSlot.setValue(value, AssignmentState.ASSIGNED);
+                }
+            }
+        }
     }
 }

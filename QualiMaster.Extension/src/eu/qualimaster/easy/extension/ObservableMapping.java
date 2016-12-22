@@ -95,7 +95,8 @@ public class ObservableMapping {
         put(FunctionalSuitability.ACCURACY_CONFIDENCE, "accuracyConfidence");
         put(FunctionalSuitability.ACCURACY_ERROR_RATE, "accuracyErrorRate");
         put(ResourceUsage.AVAILABLE, "available");
-        put(ResourceUsage.AVAILABLE_DFES, "availableMachines");
+        put(ResourceUsage.AVAILABLE_DFES, "availableDFEs");
+//        put(ResourceUsage.AVAILABLE_DFES, "availableMachines");
         put(ResourceUsage.AVAILABLE_MEMORY, "availableMemory");
         put(ResourceUsage.AVAILABLE_FREQUENCY, "availableFrequency");
         put(ResourceUsage.BANDWIDTH, "bandwidth");
@@ -112,7 +113,8 @@ public class ObservableMapping {
         put(ResourceUsage.TASKS, "tasks");
         put(TimeBehavior.THROUGHPUT_ITEMS, "throughputItems");
         put(TimeBehavior.THROUGHPUT_VOLUME, "throughputVolume");
-        put(ResourceUsage.USED_DFES, "usedMachines");
+        put(ResourceUsage.USED_DFES, "usedDFEs");
+//        put(ResourceUsage.USED_DFES, "usedMachines");
         put(CloudResourceUsage.USED_HARDDISC_MEM, "UsedHarddiscMem");
         put(ResourceUsage.USED_MEMORY, "usedMemory");
         put(CloudResourceUsage.USED_PROCESSORS, "UsedProcessors");
