@@ -55,7 +55,7 @@ import net.ssehub.easy.varModel.model.values.ValueFactory;
  */
 public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElementIdentifier.ObservableTuple> {
 
-    private static final String MAIN_PROJECT_ID = "Infrastructure:";
+    private static final String MAIN_PROJECT_ID = FrozenSystemState.INFRASTRUCTURE + FrozenSystemState.SEPARATOR;
     
     /**
      * Part of the iterator, stores which kind of observable/variable mapper shall be used.
@@ -70,7 +70,7 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
          * mapped observable.
          * @param type The type as specified in the first segment of the ID.
          * @param observable An {@link IObservable#name()}.
-         * @return {@link ObservableMapping#mapGeneralObervable(String)} by default or a specific one if necessary.
+         * @return {@link ObservableMapping#mapGeneralObservable(String)} by default or a specific one if necessary.
          */
         private static String getMapping(ObservableMappingType type, String observable) {
             String variableName = null;
@@ -78,14 +78,14 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
             if (null != type) {
                 switch (type) {
                 case ALGORITHM:
-                    variableName = ObservableMapping.mapAlgorithmObervable(observable);
+                    variableName = ObservableMapping.mapAlgorithmObservable(observable);
                     break;
                 default:
-                    variableName = ObservableMapping.mapGeneralObervable(observable);
+                    variableName = ObservableMapping.mapGeneralObservable(observable);
                     break;
                 }
             } else {
-                variableName = ObservableMapping.mapGeneralObervable(observable);
+                variableName = ObservableMapping.mapGeneralObservable(observable);
             }
             
             return variableName;
@@ -226,6 +226,8 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
                     String mappedValue = ObservableMappingType.getMapping(type, id);
                     if (null != mappedValue) {
                         id = mappedValue;
+                    }  else {
+                        id = null;
                     }
                 } else {
                     // Should not be needed (would return an intermediate compound)
@@ -328,7 +330,7 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
             if (null == varName) {
                 varName = variable.getDeclaration().getName();
             }
-            String normalizedName = ObservableMapping.mapReverseGeneralObervable(varName);
+            String normalizedName = ObservableMapping.mapReverseGeneralObservable(varName);
             if (null != normalizedName) {
                 varName = ":" + normalizedName;
             }
@@ -378,6 +380,11 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
             }
         }
     }
+    
+    @Override
+    protected AssignmentState getAssignmentState() {
+        return AssignmentState.USER_ASSIGNED;
+    }
 
     /**
      * Sets the specified value to all available algorithms of the given family element.
@@ -404,7 +411,7 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
             for (IDecisionVariable algorithm : algos) {
                 IDecisionVariable algoSlot = algorithm.getNestedElement(slot);
                 if (null != algoSlot) {
-                    algoSlot.setValue(value, AssignmentState.ASSIGNED);
+                    algoSlot.setValue(value, getAssignmentState());
                 }
             }
         }

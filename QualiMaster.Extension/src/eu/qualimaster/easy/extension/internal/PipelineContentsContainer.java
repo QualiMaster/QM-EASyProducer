@@ -163,11 +163,11 @@ public class PipelineContentsContainer {
      * Part of {@link #gatherAlgorithms()}, collects one (original) algorithm together with its mapped counterpart.
      * @param config The top level configuration, needed for querying {@link IDecisionVariable}s.
      * @param referencedOrgAlgos A container value containing reference values to algorithms.
-     * @param runtimeAglrotihms A list of already mapped counterparts. Maybe <tt>null</tt>,
+     * @param runtimeAlgorithms A list of already mapped counterparts. Maybe <tt>null</tt>,
      *     in this case no mapping will be created.
      */
     private void collectAlgorithmFromFamily(Configuration config, ContainerValue referencedOrgAlgos,
-        List<IDecisionVariable> runtimeAglrotihms) {
+        List<IDecisionVariable> runtimeAlgorithms) {
         int lastIndex = null != referencedOrgAlgos ? referencedOrgAlgos.getElementSize() : 0;
         
         for (int i = 0; i < lastIndex; i++) {
@@ -175,13 +175,13 @@ public class PipelineContentsContainer {
             IDecisionVariable orgAlgorithm = Utils.extractVariable(orgRef, config);
             String orgName = orgAlgorithm.getNestedElement(QmConstants.SLOT_NAME).getValue().getValue().toString();
             
-            if (null != runtimeAglrotihms) {
+            if (null != runtimeAlgorithms) {
                 IDecisionVariable mappedAlgorithm = null;
-                for (int j = 0, end = runtimeAglrotihms.size(); j < end && null == mappedAlgorithm; j++) {
-                    IDecisionVariable tmpAlgo = runtimeAglrotihms.get(j);
+                for (int j = 0; j < runtimeAlgorithms.size() && null == mappedAlgorithm; j++) { // due to deletion
+                    IDecisionVariable tmpAlgo = runtimeAlgorithms.get(j);
                     if (tmpAlgo.getNestedElement(QmConstants.SLOT_NAME).getValue().getValue().equals(orgName)) {
                         mappedAlgorithm = tmpAlgo;
-                        runtimeAglrotihms.remove(j);
+                        runtimeAlgorithms.remove(j);
                     }
                 }
                 
