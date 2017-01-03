@@ -15,6 +15,9 @@
  */
 package eu.qualimaster.easy.extension.internal;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import eu.qualimaster.easy.extension.QmConstants;
 import net.ssehub.easy.varModel.confModel.Configuration;
 import net.ssehub.easy.varModel.confModel.IDecisionVariable;
@@ -32,6 +35,7 @@ public class PipelineVisitor {
     private Configuration config;
     private boolean containerInitialized;
     private boolean initializeRuntimeMapping;
+    private Set<IDecisionVariable> done = new HashSet<IDecisionVariable>();
     
     /**
      * Constructor which will map runtime clones.
@@ -81,7 +85,8 @@ public class PipelineVisitor {
      * @param pipelineElement The currently visited element (node or flow) of the pipeline.
      */
     private void visitPipelineElement(IDecisionVariable pipelineElement) {
-        if (null != pipelineElement) {
+        if (null != pipelineElement && !done.contains(pipelineElement)) {
+            done.add(pipelineElement);
             String typeName = pipelineElement.getDeclaration().getType().getName();
             
             if (QmConstants.TYPE_SOURCE.equals(typeName)) {

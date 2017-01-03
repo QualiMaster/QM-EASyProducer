@@ -19,6 +19,9 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
+import eu.qualimaster.coordination.events.ModelUpdatedEvent;
+import eu.qualimaster.events.EventHandler;
+import eu.qualimaster.events.EventManager;
 import net.ssehub.easy.instantiation.core.model.vilTypes.IVilType;
 import net.ssehub.easy.instantiation.core.model.vilTypes.Instantiator;
 import net.ssehub.easy.instantiation.core.model.vilTypes.configuration.Configuration;
@@ -34,6 +37,33 @@ public class BindValuesInstantiator implements IVilType {
     
     private static Map<net.ssehub.easy.varModel.confModel.Configuration,
         AdaptiveConfiguration<IvmlElementIdentifier.ObservableTuple>> configMapping = new HashMap<>();
+
+    /**
+     * Handles updates of the coordination model.
+     * 
+     * @author Holger Eichelberger
+     */
+    private static class ModelUpdateEventHandler extends EventHandler<ModelUpdatedEvent> {
+
+        /**
+         * Creates a handler instance.
+         */
+        protected ModelUpdateEventHandler() {
+            super(ModelUpdatedEvent.class);
+        }
+
+        @Override
+        protected void handle(ModelUpdatedEvent event) {
+            synchronized (configMapping) {
+                configMapping.clear(); // clean up and force re-build
+            }
+        }
+        
+    }
+
+    static {
+        EventManager.register(new ModelUpdateEventHandler());
+    }
     
     /**
      * Binds the values of the given mapping to the configuration.
@@ -41,18 +71,20 @@ public class BindValuesInstantiator implements IVilType {
      * @param bindings The new values to set in form of <tt>&lt;id for a (nested) variable, value&gt;</tt>
      */
     public static void storeValueBinding(Configuration configuration, Map<String, Object> bindings) {
-        AdaptiveConfiguration<IvmlElementIdentifier.ObservableTuple> aConfig =
-            configMapping.get(configuration.getConfiguration());
-        if (null == aConfig) {
-            net.ssehub.easy.varModel.confModel.Configuration config = configuration.getConfiguration();
-            aConfig = new AdaptiveConfiguration<>(config, new IvmlElementIdentifier(config));
-            configMapping.put(configuration.getConfiguration(), aConfig);
-        }
+        synchronized (configMapping) {
+            AdaptiveConfiguration<IvmlElementIdentifier.ObservableTuple> aConfig =
+                    configMapping.get(configuration.getConfiguration());
+            if (null == aConfig) {
+                net.ssehub.easy.varModel.confModel.Configuration config = configuration.getConfiguration();
+                aConfig = new AdaptiveConfiguration<>(config, new IvmlElementIdentifier(config));
+                configMapping.put(configuration.getConfiguration(), aConfig);
+            }
 
-        aConfig.addValues(bindings);
-        
-        // Will change the configuration as a side effect
-        aConfig.takeOverValues();
+            aConfig.addValues(bindings);
+
+            // Will change the configuration as a side effect
+            aConfig.takeOverValues();
+        }
     }
 
     /**

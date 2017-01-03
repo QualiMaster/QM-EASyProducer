@@ -1,7 +1,3 @@
-package eu.qualimaster.easy.extension.internal;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 /*
  * Copyright 2009-2016 University of Hildesheim, Software Systems Engineering
  *
@@ -17,15 +13,24 @@ import java.util.HashMap;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package eu.qualimaster.easy.extension.internal;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
+import eu.qualimaster.coordination.events.AlgorithmProfilingEvent;
 import eu.qualimaster.easy.extension.ObservableMapping;
 import eu.qualimaster.easy.extension.QmConstants;
 import eu.qualimaster.easy.extension.internal.PipelineContentsContainer.MappedInstanceType;
+import eu.qualimaster.events.EventHandler;
+import eu.qualimaster.events.EventManager;
 import eu.qualimaster.monitoring.events.FrozenSystemState;
 import eu.qualimaster.monitoring.systemState.TypeMapper;
 import eu.qualimaster.monitoring.systemState.TypeMapper.TypeCharacterizer;
@@ -56,6 +61,41 @@ import net.ssehub.easy.varModel.model.values.ValueFactory;
 public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElementIdentifier.ObservableTuple> {
 
     private static final String MAIN_PROJECT_ID = FrozenSystemState.INFRASTRUCTURE + FrozenSystemState.SEPARATOR;
+    private static final Set<String> PROFILING_PIPELINES =  new HashSet<String>();
+    
+    /**
+     * Handles profiling lifecycle information.
+     * 
+     * @author Holger Eichelberger
+     */
+    private static class ProfilingEventHandler extends EventHandler<AlgorithmProfilingEvent> {
+
+        /**
+         * Creates a handler instance.
+         */
+        protected ProfilingEventHandler() {
+            super(AlgorithmProfilingEvent.class);
+        }
+
+        @Override
+        protected void handle(AlgorithmProfilingEvent event) {
+            switch(event.getStatus()) {
+            case START:
+                PROFILING_PIPELINES.add(event.getPipeline());
+                break;
+            case END:
+                PROFILING_PIPELINES.remove(event.getPipeline());
+                break;
+            default:
+                break;
+            }
+        }
+        
+    }
+    
+    static {
+        EventManager.register(new ProfilingEventHandler());
+    }
     
     /**
      * Part of the iterator, stores which kind of observable/variable mapper shall be used.
@@ -297,8 +337,10 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
                     + arraySegments[2]);
             }
         } else {
-            Bundle.getLogger(IvmlElementIdentifier.class).warn("No pipeline information found for: "
-                + arraySegments[1]);
+            String pipName = arraySegments[1];
+            if (!PROFILING_PIPELINES.contains(pipName)) {
+                Bundle.getLogger(IvmlElementIdentifier.class).warn("No pipeline information found for: " + pipName);
+            }
         }
     }
     

@@ -14,6 +14,7 @@ eu.qualimaster.coordination.commands.PipelineCommand
 eu.qualimaster.coordination.commands.ProfileAlgorithmCommand
 eu.qualimaster.coordination.commands.ReplayCommand
 eu.qualimaster.coordination.commands.ScheduleWavefrontAdaptationCommand
+eu.qualimaster.coordination.events.ModelUpdatedEvent
 eu.qualimaster.adaptation.events.AdaptationEvent
 eu.qualimaster.adaptation.events.AlgorithmConfigurationAdaptationEvent
 eu.qualimaster.adaptation.events.ParameterConfigurationAdaptationEvent
