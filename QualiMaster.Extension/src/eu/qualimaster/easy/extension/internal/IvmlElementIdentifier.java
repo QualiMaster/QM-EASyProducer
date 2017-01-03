@@ -230,8 +230,8 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
     }
 
     @Override
-    protected Iterator<String> getIDIterator(final String id) {
-        final List<String> segments = splitID(id);
+    protected Iterator<String> getIDIterator(final String observableID) {
+        final List<String> segments = splitID(observableID);
         
         return new Iterator<String>() {
             
@@ -247,31 +247,36 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
             public String next() {
                 String id;
                 
-                if (1 == index) {
-                    // Returns the compound
-                    index = Math.max(segments.size() - 2, 1);
-                    String fistSegment = segments.get(0);
-                    if (fistSegment.equals("PipelineElement")) {
-                        id = fistSegment + FrozenSystemState.SEPARATOR + segments.get(1)
-                            + FrozenSystemState.SEPARATOR + segments.get(index++);
-                    } else {
-                        if (fistSegment.equals(QmConstants.TYPE_ALGORITHM)) {
-                            type = ObservableMappingType.ALGORITHM;
+                try {
+                    if (1 == index) {
+                        // Returns the compound
+                        index = Math.max(segments.size() - 2, 1);
+                        String fistSegment = segments.get(0);
+                        if (fistSegment.equals("PipelineElement")) {
+                            id = fistSegment + FrozenSystemState.SEPARATOR + segments.get(1)
+                                + FrozenSystemState.SEPARATOR + segments.get(index++);
+                        } else {
+                            if (fistSegment.equals(QmConstants.TYPE_ALGORITHM)) {
+                                type = ObservableMappingType.ALGORITHM;
+                            }
+                            id = fistSegment + FrozenSystemState.SEPARATOR + segments.get(index++);
                         }
-                        id = fistSegment + FrozenSystemState.SEPARATOR + segments.get(index++);
+                    } else if ((segments.size() - 1) == index) {
+                        // Returns the observable
+                        id = segments.get(index++);
+                        String mappedValue = ObservableMappingType.getMapping(type, id);
+                        if (null != mappedValue) {
+                            id = mappedValue;
+                        }  else {
+                            id = null;
+                        }
+                    } else {
+                        // Should not be needed (would return an intermediate compound)
+                        id = segments.get(index++);
                     }
-                } else if ((segments.size() - 1) == index) {
-                    // Returns the observable
-                    id = segments.get(index++);
-                    String mappedValue = ObservableMappingType.getMapping(type, id);
-                    if (null != mappedValue) {
-                        id = mappedValue;
-                    }  else {
-                        id = null;
-                    }
-                } else {
-                    // Should not be needed (would return an intermediate compound)
-                    id = segments.get(index++);
+                } catch (ArrayIndexOutOfBoundsException exc) {
+                    throw new RuntimeException("Unable to split \"" + observableID + "\" into sufficient segments."
+                        , exc);
                 }
 
                 return id;
@@ -279,7 +284,8 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
 
             @Override
             public void remove() {
-                throw new UnsupportedOperationException("Removing segments are not supported. Tried this on: " + id);
+                throw new UnsupportedOperationException("Removing segments are not supported. Tried this on: "
+                    + observableID);
             }
         };
     }
