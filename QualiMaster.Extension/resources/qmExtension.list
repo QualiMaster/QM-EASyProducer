@@ -52,3 +52,4 @@ eu.qualimaster.common.shedding.DefaultLoadShedders
 eu.qualimaster.common.shedding.DefaultLoadSheddingParameter
 eu.qualimaster.common.shedding.ILoadShedderDescriptor
 eu.qualimaster.common.shedding.ILoadSheddingParameter
+eu.qualimaster.common.signal.ConnectTaskMonitoringEvent

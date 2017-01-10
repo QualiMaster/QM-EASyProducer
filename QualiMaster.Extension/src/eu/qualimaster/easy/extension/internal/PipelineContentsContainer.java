@@ -23,11 +23,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import eu.qualimaster.adaptation.AdaptationManager;
+import eu.qualimaster.coordination.INameMapping;
 import eu.qualimaster.coordination.RepositoryConnector;
 import eu.qualimaster.coordination.RuntimeVariableMapping;
 import eu.qualimaster.coordination.RepositoryConnector.Models;
 import eu.qualimaster.coordination.RepositoryConnector.Phase;
 import eu.qualimaster.easy.extension.QmConstants;
+import eu.qualimaster.monitoring.MonitoringManager;
 import net.ssehub.easy.varModel.confModel.Configuration;
 import net.ssehub.easy.varModel.confModel.IDecisionVariable;
 import net.ssehub.easy.varModel.model.values.ContainerValue;
@@ -35,8 +38,9 @@ import net.ssehub.easy.varModel.model.values.ReferenceValue;
 
 /**
  * Stores information of a pipeline, which is relevant for the {@link IvmlElementIdentifier}.
+ * 
  * @author El-Sharkawy
- *
+ * @author Holger Eichelberger
  */
 public class PipelineContentsContainer {
     
@@ -51,8 +55,6 @@ public class PipelineContentsContainer {
     
     private static Set<IDecisionVariable> allMappedVariables = new HashSet<>();
     
-    // Used for debugging purpose.
-    @SuppressWarnings("unused")
     private String pipelineName;
     
     // Element structure of pipeline (collected through visiting)
@@ -67,7 +69,7 @@ public class PipelineContentsContainer {
     private Map<String, IDecisionVariable> sourceMapping = new HashMap<>();
     private Map<String, IDecisionVariable> sinkMapping = new HashMap<>();
     
-    private Models phase = null;
+    private Models models = null;
     
     /**
      * Default constructor.
@@ -170,6 +172,7 @@ public class PipelineContentsContainer {
         List<IDecisionVariable> runtimeAlgorithms) {
         int lastIndex = null != referencedOrgAlgos ? referencedOrgAlgos.getElementSize() : 0;
         
+        INameMapping nMapping = getNameMapping();
         for (int i = 0; i < lastIndex; i++) {
             ReferenceValue orgRef = (ReferenceValue) referencedOrgAlgos.getElement(i);
             IDecisionVariable orgAlgorithm = Utils.extractVariable(orgRef, config);
@@ -187,6 +190,10 @@ public class PipelineContentsContainer {
                 
                 if (null != mappedAlgorithm) {
                     algorithmMapping.put(orgName, mappedAlgorithm);
+                    String impl = NameMappingHelper.getAlgorithmImplName(nMapping, orgName);
+                    if (null != impl && !impl.equals(orgName)) {
+                        algorithmMapping.put(impl, mappedAlgorithm);
+                    }
                     allMappedVariables.add(mappedAlgorithm);
                 }
             }
@@ -201,32 +208,12 @@ public class PipelineContentsContainer {
      */
     private List<IDecisionVariable> getMappedMembers(IDecisionVariable originalVariable) {
         List<IDecisionVariable> mappedVariable = null;
-        if (phase != null) {
-            mappedVariable = phase.getVariableMapping().getMappedVariables(originalVariable);
-        } else {
-            Models tmpPhase = RepositoryConnector.getModels(Phase.ADAPTATION);
-            RuntimeVariableMapping mapping = tmpPhase.getVariableMapping();
-            if (null != mapping) {
-                mappedVariable = mapping.getMappedVariables(originalVariable);
-                if (null != mappedVariable) {
-                    phase = tmpPhase;
-                }
-            }
-            if (null == mappedVariable) {
-                tmpPhase = RepositoryConnector.getModels(Phase.MONITORING);
-                mapping = tmpPhase.getVariableMapping();
-                if (null != mapping) {
-                    mappedVariable = mapping.getMappedVariables(originalVariable);
-                    if (null != mappedVariable) {
-                        phase = tmpPhase;
-                    }
-                }
-            }
+        Models models = getModels();
+        if (null != models) {
+            mappedVariable = models.getVariableMapping().getMappedVariables(originalVariable);
         }
-        
         return mappedVariable;
     }
-    
     
     /**
      * Creates the mapping structure for mapping runtime variables. This does not work for algorithms of a family,
@@ -239,6 +226,7 @@ public class PipelineContentsContainer {
     private void gatherMappedNonFamilyElement(List<IDecisionVariable> orignalVariables, String slotName,
         Map<String, IDecisionVariable> mapping) {
         
+        INameMapping nMapping = getNameMapping();
         for (int i = 0, end = orignalVariables.size(); i < end; i++) {
             IDecisionVariable orignalVariable = orignalVariables.get(i);
             List<IDecisionVariable> mappedRuntimeVariables = getMappedMembers(orignalVariable);
@@ -251,11 +239,61 @@ public class PipelineContentsContainer {
                 if (null != orgReferencedVariable) {
                     String orgName = orgReferencedVariable.getNestedElement(QmConstants.SLOT_NAME).getValue()
                         .getValue().toString();
-                    mapping.put(orgName, mappedRuntimeVariables.get(0));
+                    IDecisionVariable var = mappedRuntimeVariables.get(0);
+                    mapping.put(orgName, var);
+                    String impl = NameMappingHelper.getPipelineElementImplName(nMapping, orgName);
+                    if (null != impl && !impl.equals(orgName)) {
+                        mapping.put(impl, var);
+                    }
                     allMappedVariables.add(mappedRuntimeVariables.get(0));
                 }
             }
         }
+    }
+    
+    /**
+     * Returns (and initializes lazily) the underlying models instance.
+     * 
+     * @return the models
+     */
+    private Models getModels() {
+        if (null == models) {
+            Models tmpModels = RepositoryConnector.getModels(Phase.ADAPTATION);
+            RuntimeVariableMapping mapping = tmpModels.getVariableMapping();
+            if (null != mapping) {
+                models = tmpModels;
+            }
+            if (null == models) {
+                tmpModels = RepositoryConnector.getModels(Phase.MONITORING);
+                mapping = tmpModels.getVariableMapping();
+                if (null != mapping) {
+                    models = tmpModels;
+                }
+            }
+        }
+        return models;
+    }
+    
+    /**
+     * Returns the responsible name mapping.
+     * 
+     * @return the name mapping
+     */
+    private INameMapping getNameMapping() {
+        INameMapping result = null;
+        Models models = getModels();
+        // just to keep layer separation!
+        if (null != models) {
+            if (Phase.ADAPTATION == models.getPhase()) {
+                AdaptationManager.getNameMapping(pipelineName);
+            } else if (Phase.MONITORING == models.getPhase()) {
+                MonitoringManager.getNameMapping(pipelineName);
+            }
+        }
+        if (null == result) { // fallback (adaptation)
+            result = NameMappingHelper.getNameMapping(pipelineName);
+        }
+        return result;
     }
     
     /**
@@ -345,4 +383,5 @@ public class PipelineContentsContainer {
             + "\nReplaySinks: " + replaySinks
             + "\nSinks: " + sinks;
     }
+    
 }
