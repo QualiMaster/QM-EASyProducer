@@ -245,6 +245,12 @@ public class PipelineContentsContainer {
                     if (null != impl && !impl.equals(orgName)) {
                         mapping.put(impl, var);
                     }
+                    // sources and sinks may currently occur as "algorithms"
+                    algorithmMapping.put(orgName, var);
+                    impl = NameMappingHelper.getAlgorithmImplName(nMapping, orgName);
+                    if (null != impl && !impl.equals(orgName)) {
+                        algorithmMapping.put(impl, var);
+                    }                    
                     allMappedVariables.add(mappedRuntimeVariables.get(0));
                 }
             }

@@ -340,7 +340,7 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
                 segments.add(arraySegments[arraySegments.length - 1]);
             } else {
                 Bundle.getLogger(IvmlElementIdentifier.class).warn("No mapped variable found for: "
-                    + arraySegments[2]);
+                    + arraySegments[2] + " with type " + type);
             }
         } else {
             String pipName = arraySegments[1];
