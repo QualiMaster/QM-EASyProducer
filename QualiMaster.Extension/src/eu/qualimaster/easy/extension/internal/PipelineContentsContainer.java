@@ -27,6 +27,7 @@ import eu.qualimaster.adaptation.AdaptationManager;
 import eu.qualimaster.coordination.INameMapping;
 import eu.qualimaster.coordination.RepositoryConnector;
 import eu.qualimaster.coordination.RuntimeVariableMapping;
+import eu.qualimaster.coordination.RepositoryConnector.IPhase;
 import eu.qualimaster.coordination.RepositoryConnector.Models;
 import eu.qualimaster.coordination.RepositoryConnector.Phase;
 import eu.qualimaster.easy.extension.QmConstants;
@@ -245,12 +246,14 @@ public class PipelineContentsContainer {
                     if (null != impl && !impl.equals(orgName)) {
                         mapping.put(impl, var);
                     }
-                    // sources and sinks may currently occur as "algorithms"
-                    algorithmMapping.put(orgName, var);
+                    // sources and sinks may currently occur as "algorithms" - this is ok as respective signals
+                    // are sent. Indicate a mapping without variable so that no warnings are issued. mapping to var
+                    // can lead to accidental overriding of values
+                    algorithmMapping.put(orgName, null);
                     impl = NameMappingHelper.getAlgorithmImplName(nMapping, orgName);
                     if (null != impl && !impl.equals(orgName)) {
-                        algorithmMapping.put(impl, var);
-                    }                    
+                        algorithmMapping.put(impl, null);
+                    }
                     allMappedVariables.add(mappedRuntimeVariables.get(0));
                 }
             }
@@ -264,16 +267,23 @@ public class PipelineContentsContainer {
      */
     private Models getModels() {
         if (null == models) {
-            Models tmpModels = RepositoryConnector.getModels(Phase.ADAPTATION);
-            RuntimeVariableMapping mapping = tmpModels.getVariableMapping();
-            if (null != mapping) {
-                models = tmpModels;
+            // try it via the phase set before VIL execution
+            IPhase phase = RepositoryConnector.getPhase(Thread.currentThread());
+            if (null != phase) {
+                models = RepositoryConnector.getModels(phase);
             }
-            if (null == models) {
-                tmpModels = RepositoryConnector.getModels(Phase.MONITORING);
-                mapping = tmpModels.getVariableMapping();
+            if (null == models) { // fallback of original code, assumes that monitoring called first
+                Models tmpModels = RepositoryConnector.getModels(Phase.ADAPTATION);
+                RuntimeVariableMapping mapping = tmpModels.getVariableMapping();
                 if (null != mapping) {
                     models = tmpModels;
+                }
+                if (null == models) {
+                    tmpModels = RepositoryConnector.getModels(Phase.MONITORING);
+                    mapping = tmpModels.getVariableMapping();
+                    if (null != mapping) {
+                        models = tmpModels;
+                    }
                 }
             }
         }
@@ -331,6 +341,35 @@ public class PipelineContentsContainer {
                 break;
             case SINK:
                 result = sinkMapping.get(orgName);
+                break;
+            default:
+                Bundle.getLogger(PipelineContentsContainer.class).error("Undefined type passed: " + type.name());
+                break;
+            }
+        }
+        
+        return result;
+    }
+
+    /**
+     * Returns whether there is a mapping (not necessarily a mapped instance) for the given (configured) item.
+     * @param type Specifies for which kind of pipeline element the mapped element shall be returned.
+     * @param orgName The user defined name of the variable.
+     * @return <code>true</code> for mapping, <code>false</code> else
+     */
+    public boolean hasMapping(MappedInstanceType type, String orgName) {
+        boolean result = false;
+        
+        if (null != type) {
+            switch (type) {
+            case SOURCE:
+                result = sourceMapping.containsKey(orgName);
+                break;
+            case ALGORITHM:
+                result = algorithmMapping.containsKey(orgName);
+                break;
+            case SINK:
+                result = sinkMapping.containsKey(orgName);
                 break;
             default:
                 Bundle.getLogger(PipelineContentsContainer.class).error("Undefined type passed: " + type.name());

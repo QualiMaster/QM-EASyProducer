@@ -193,7 +193,6 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
                     pipeline = tmpPip;
                 }
             }
-            
             if (null != pipeline) {
                 PipelineVisitor visitor = new PipelineVisitor(pipeline);
                 infos = visitor.getPipelineContents();
@@ -339,8 +338,10 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
                 segments.add(mappedVar.getDeclaration().getName());
                 segments.add(arraySegments[arraySegments.length - 1]);
             } else {
-                Bundle.getLogger(IvmlElementIdentifier.class).warn("No mapped variable found for: "
-                    + arraySegments[2] + " with type " + type);
+                if (!infos.hasMapping(type, arraySegments[2])) {
+                    Bundle.getLogger(IvmlElementIdentifier.class).warn("No mapped variable found for: "
+                        + arraySegments[1] + "/" + arraySegments[2] + " with type " + type);
+                }
             }
         } else {
             String pipName = arraySegments[1];
