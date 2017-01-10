@@ -306,9 +306,6 @@ public class PipelineContentsContainer {
                 MonitoringManager.getNameMapping(pipelineName);
             }
         }
-        if (null == result) { // fallback (adaptation)
-            result = NameMappingHelper.getNameMapping(pipelineName);
-        }
         return result;
     }
     
