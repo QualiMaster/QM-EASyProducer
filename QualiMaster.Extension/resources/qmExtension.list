@@ -1,3 +1,4 @@
+eu.qualimaster.coordination.ParallelismChangeRequest
 eu.qualimaster.coordination.commands.AbstractCommandContainer
 eu.qualimaster.coordination.commands.AbstractPipelineCommand
 eu.qualimaster.coordination.commands.AbstractPipelineElementCommand
@@ -14,7 +15,6 @@ eu.qualimaster.coordination.commands.ProfileAlgorithmCommand
 eu.qualimaster.coordination.commands.ReplayCommand
 eu.qualimaster.coordination.commands.ScheduleWavefrontAdaptationCommand
 eu.qualimaster.coordination.events.ModelUpdatedEvent
-eu.qualimaster.coordination.ParallelismChangeRequest
 eu.qualimaster.adaptation.events.AdaptationEvent
 eu.qualimaster.adaptation.events.AlgorithmConfigurationAdaptationEvent
 eu.qualimaster.adaptation.events.ParameterConfigurationAdaptationEvent
@@ -52,4 +52,3 @@ eu.qualimaster.common.shedding.DefaultLoadShedders
 eu.qualimaster.common.shedding.DefaultLoadSheddingParameter
 eu.qualimaster.common.shedding.ILoadShedderDescriptor
 eu.qualimaster.common.shedding.ILoadSheddingParameter
-eu.qualimaster.common.signal.ConnectTaskMonitoringEvent

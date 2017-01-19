@@ -16,18 +16,17 @@
 package eu.qualimaster.easy.extension.internal;
 
 import java.io.Serializable;
-import java.util.HashMap;
 
+import eu.qualimaster.common.QMInternal;
 import eu.qualimaster.observables.IObservable;
-import net.ssehub.easy.instantiation.core.model.common.VilException;
 import net.ssehub.easy.instantiation.core.model.vilTypes.IVilType;
 import net.ssehub.easy.instantiation.core.model.vilTypes.Instantiator;
 import net.ssehub.easy.instantiation.core.model.vilTypes.Map;
 import net.ssehub.easy.instantiation.core.model.vilTypes.OperationMeta;
 import net.ssehub.easy.instantiation.core.model.vilTypes.ParameterMeta;
 import net.ssehub.easy.instantiation.core.model.vilTypes.Set;
-import net.ssehub.easy.instantiation.core.model.vilTypes.TypeDescriptor;
-import net.ssehub.easy.instantiation.rt.core.model.rtVil.types.RtVilTypeRegistry;
+
+import static eu.qualimaster.easy.extension.internal.PredictionUtils.*;
 
 /**
  * Performs observation predictions for pipeline elements.
@@ -149,59 +148,29 @@ public class AlgorithmPrediction implements IVilType {
         Set<IObservable> observables, 
         @ParameterMeta(generics = {Object.class, Serializable.class}) // serializable is not known to VIL -> any/object
         Map<Object, Serializable> targetValues) {
-        return toResult(IMPL.algorithmPrediction(pipeline, pipelineElement, algorithms.toMappedSet(), 
-            observables.toMappedSet(), toMappedMap(targetValues)));
-    }
-    
-    /**
-     * Translates a VIL map to a Java map.
-     * 
-     * @param <K> the key type
-     * @param <V> the value type
-     * @param map the map to be translated (may be <b>null</b>)
-     * @return the translated map (may be <b>null</b> if <code>map</code> is <b>null</b>)
-     */
-    static <K, V> java.util.Map<K, V> toMappedMap(Map<K, V> map) {
-        java.util.Map<K, V> result;
-        if (null != map) {
-            result = map.toMappedMap();
-        } else {
-            result = null;
-        }
-        return result;
+        return transferMap(IMPL.algorithmPrediction(pipeline, pipelineElement, algorithms.toMappedSet(), 
+            observables.toMappedSet(), toMappedMap(targetValues)), String.class, IObservable.class, Double.class);
     }
 
     /**
-     * Translates the Java result instance to a VIL result instance.
+     * Creates a request to obtain the prediction for multiple algorithms applicable in this 
+     * in this situation (including varying parameters).
      * 
-     * @param res the Java result instance
-     * @return the corresponding VIL result instance, always a result even if empty
+     * @param pipeline the pipeline to predict for
+     * @param pipelineElement the pipeline element
+     * @param algorithms the algorithms to take into account
+     * @param observables the observables
+     * @return the predictions per algorithm/observables, if not possible individual predictions may be <b>null</b>
+     *     or the entire result may be <b>null</b> if there is no prediction at all
      */
-    static Map<String, Map<IObservable, Double>> toResult(
-        java.util.Map<String, java.util.Map<IObservable, Double>> res) {
-
-        TypeDescriptor<?>[] predTypesInner = TypeDescriptor.createArray(2);
-        predTypesInner[0] = RtVilTypeRegistry.INSTANCE.getType(IObservable.class);
-        predTypesInner[1] = RtVilTypeRegistry.realType();
-        TypeDescriptor<?>[] predTypes = TypeDescriptor.createArray(2);
-        predTypes[0] = RtVilTypeRegistry.stringType();
-        try {
-            predTypes[1] = RtVilTypeRegistry.getMapType(predTypesInner);
-        } catch (VilException e) {
-            predTypes[1] = RtVilTypeRegistry.anyType();
-        }
-        
-        java.util.Map<Object, Object> resTemp = new HashMap<Object, Object>();
-        if (null != res) {
-            for (java.util.Map.Entry<String, java.util.Map<IObservable, Double>> ent : res.entrySet()) {
-                String key = ent.getKey();
-                java.util.Map<IObservable, Double> inner = ent.getValue();
-                java.util.Map<Object, Object> tmpInner = new HashMap<Object, Object>();
-                tmpInner.putAll(inner);
-                resTemp.put(key, new Map<IObservable, Double>(tmpInner, predTypesInner));
-            }
-        }
-        return new Map<>(resTemp, predTypes);
+    @QMInternal
+    static AlgorithmPredictionResult algorithmPredictionEx(String pipeline, String pipelineElement, 
+            @ParameterMeta(generics = {String.class}) 
+            Set<String> algorithms, 
+            @ParameterMeta(generics = {IObservable.class}) 
+            Set<IObservable> observables) {
+        return IMPL.algorithmPredictionEx(pipeline, pipelineElement, algorithms.toMappedSet(), 
+            observables.toMappedSet());
     }
 
 }

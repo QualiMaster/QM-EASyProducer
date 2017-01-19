@@ -24,6 +24,7 @@ import net.ssehub.easy.instantiation.core.model.vilTypes.Invisible;
 import net.ssehub.easy.instantiation.core.model.vilTypes.Map;
 import net.ssehub.easy.instantiation.core.model.vilTypes.OperationMeta;
 import net.ssehub.easy.instantiation.core.model.vilTypes.ParameterMeta;
+import net.ssehub.easy.instantiation.core.model.vilTypes.Set;
 import net.ssehub.easy.instantiation.core.model.vilTypes.TypeDescriptor;
 import net.ssehub.easy.instantiation.core.model.vilTypes.TypeRegistry;
 
@@ -36,13 +37,13 @@ import net.ssehub.easy.instantiation.core.model.vilTypes.TypeRegistry;
 public class Weighting implements IVilType {
 
     /**
-     * Implements a weighting of mass predictions.
+     * Implements a weighting for mass predictions.
      * 
      * @param predictions the predictions given as name-observable-prediction mapping, may be <b>null</b>, entries 
      *     may be <b>null</b>
      * @param weighting the weighting of the observables, negative weights invert the value by subtracting from the 
      *     respective maximum
-     * @return the "best" solution in terms of the name
+     * @return the "best" solution in terms of the name as maximum of weighted average sums
      */
     @OperationMeta(returnGenerics = {String.class, Double.class})
     public static Map<String, Double> weightAll(
@@ -50,10 +51,32 @@ public class Weighting implements IVilType {
         Map<String, Map<IObservable, Double>> predictions, 
         @ParameterMeta(generics = {IObservable.class, Double.class}) 
         Map<IObservable, Double> weighting) {
+        return weightAll(predictions, weighting, null);
+    }
+    
+    /**
+     * Implements a weighting for mass predictions.
+     * 
+     * @param predictions the predictions given as name-observable-prediction mapping, may be <b>null</b>, entries 
+     *     may be <b>null</b>
+     * @param weighting the weighting of the observables, negative weights invert the value by subtracting from the 
+     *     respective maximum
+     * @param costs the costs, i.e., observables to be counted negative
+     * @return the "best" solution in terms of the name as maximum of weighted average sums
+     */
+    @OperationMeta(returnGenerics = {String.class, Double.class})
+    public static Map<String, Double> weightAll(
+        @ParameterMeta(generics = {String.class, Map.class, IObservable.class, Double.class}) 
+        Map<String, Map<IObservable, Double>> predictions, 
+        @ParameterMeta(generics = {IObservable.class, Double.class}) 
+        Map<IObservable, Double> weighting, 
+        @ParameterMeta(generics = {IObservable.class})
+        Set<IObservable> costs) {
         TypeDescriptor<?>[] types = TypeDescriptor.createArray(2);
         types[0] = TypeRegistry.stringType();
         types[1] = TypeRegistry.realType();
-        return new Map<String, Double>(new HashMap<Object, Object>(weightAllImpl(predictions, weighting)), types);
+        return new Map<String, Double>(new HashMap<Object, Object>(weightAllImpl(predictions, weighting, costs)), 
+            types);
     }
     
     /**
@@ -63,21 +86,25 @@ public class Weighting implements IVilType {
      *     may be <b>null</b>
      * @param weighting the weighting of the observables, negative weights invert the value by subtracting from the 
      *     respective maximum
-     * @return the "best" solution in terms of the name
+     * @param costs the costs, i.e., observables to be counted negative (may be <b>null</b> for no costs)
+     * @return the "best" solution in terms of the name as the maximum the average weighted value if no 
+     *     <code>costs</code>, the maximum weighted sum if <code>costs</code>
      */
     @Invisible
     public static java.util.Map<String, Double> weightAllImpl(
         @ParameterMeta(generics = {String.class, Map.class, IObservable.class, Double.class}) 
         Map<String, Map<IObservable, Double>> predictions, 
         @ParameterMeta(generics = {IObservable.class, Double.class}) 
-        Map<IObservable, Double> weighting) {
+        Map<IObservable, Double> weighting,
+        @ParameterMeta(generics = {IObservable.class})
+        Set<IObservable> costs) {
  
         HashMap<String, Double> result = new HashMap<String, Double>();
         if (null != predictions && null != weighting) {
             MaxProcessor maxProcessor = new MaxProcessor();
             processPredictions(predictions, weighting, maxProcessor);
 
-            UpdateProcessor updateProcessor = new UpdateProcessor(maxProcessor, weighting, result);
+            UpdateProcessor updateProcessor = new UpdateProcessor(maxProcessor, weighting, result, costs);
             processPredictions(predictions, weighting, updateProcessor);
         }
         return result;
@@ -184,6 +211,7 @@ public class Weighting implements IVilType {
         private HashMap<IObservable, Double> max;
         private Map<IObservable, Double> weighting;
         private HashMap<String, Double> result;
+        private Set<IObservable> costs;
         private double sum = 0;
         private double weights = 0;
 
@@ -194,11 +222,14 @@ public class Weighting implements IVilType {
          * @param weighting contains the weightings, negative weights invert the value by subtracting from the 
      *     respective maximum
          * @param result filled with results (changed as a side effect)
+         * @param costs weights to be counted negative
          */
-        private UpdateProcessor(MaxProcessor max, Map<IObservable, Double> weighting, HashMap<String, Double> result) {
+        private UpdateProcessor(MaxProcessor max, Map<IObservable, Double> weighting, HashMap<String, Double> result, 
+            Set<IObservable> costs) {
             this.max = max.getResult();
             this.weighting = weighting;
             this.result = result;
+            this.costs = costs;
         }
 
         @Override
@@ -216,6 +247,9 @@ public class Weighting implements IVilType {
                     }
                     sum += p * weight;
                 }
+                if (null != costs && costs.includes(obs)) {
+                    weights *= -1;
+                }
                 weights += weight;
             }
         }
@@ -223,10 +257,14 @@ public class Weighting implements IVilType {
         @Override
         public void postProcess(String name) {
             double algVal;
-            if (weights != 0) {
-                algVal = sum / weights;
+            if (null != costs) {
+                if (weights != 0) {
+                    algVal = sum / weights;
+                } else {
+                    algVal = 0;
+                }
             } else {
-                algVal = 0;
+                algVal = sum;
             }
             result.put(name, algVal);
             

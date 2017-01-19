@@ -24,6 +24,8 @@ import eu.qualimaster.monitoring.events.AlgorithmProfilePredictionRequest;
 import eu.qualimaster.monitoring.events.AlgorithmProfilePredictionResponse;
 import eu.qualimaster.observables.IObservable;
 
+import static eu.qualimaster.easy.extension.internal.PredictionUtils.*;
+
 /**
  * Implements the algorithm (profile) predictor based on the Monitoring Layer (via synchronous event communication).
  * 
@@ -86,6 +88,33 @@ class AlgorithmPredictorImpl extends AlgorithmPredictor {
         return resp.getMassPrediction();
     }
 
+    /**
+     * Creates a request to obtain the prediction for multiple algorithms applicable in this 
+     * in this situation (including varying parameters).
+     * 
+     * @param pipeline the pipeline to predict for
+     * @param pipelineElement the pipeline element
+     * @param algorithms the algorithms to take into account
+     * @param observables the observables
+     * @return the predictionsper algorithm/observables, if not possible individual predictions may be <b>null</b>
+     *     or the entire result may be <b>null</b> if there is no prediction at all
+     */
+    public AlgorithmPredictionResult algorithmPredictionEx(String pipeline, String pipelineElement, 
+        Set<String> algorithms, Set<IObservable> observables) {
+        // although type transfer shall be done in AlgorithmPredictor, we accept the type transfer here 
+        AlgorithmPredictionResult res = null;
+        AlgorithmProfilePredictionRequest req = new AlgorithmProfilePredictionRequest(pipeline, 
+            pipelineElement, algorithms, observables, null);
+        req.doMultiAlgorithmPrediction();
+        AlgorithmProfilePredictionResponse resp = waitFor(req);
+        if (null != resp) {
+            res = new AlgorithmPredictionResult(
+                transferMap(resp.getMassPrediction(), String.class, IObservable.class, Double.class),
+                transferMap(resp.getParameters(), String.class, Object.class, Serializable.class));
+        }
+        return res;
+    }
+    
     /**
      * Waits for a response to the given <code>request</code>.
      * 

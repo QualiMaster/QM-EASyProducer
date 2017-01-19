@@ -303,17 +303,19 @@ public class Registration implements IRegistration {
     /**
      * Registers the Java artifacts, instantiators and types.
      * 
-     * @param jarLocations optional (authoritive) Jar locations to search separated by pathSeparator, 
+     * @param jarLocations optional (authoritative) Jar locations to search separated by pathSeparator, 
      *   use <b>null</b> to ignore
+     * @return the processed classes
      */
-    public static final void register(String jarLocations) {
+    public static final List<Class<?>> register(String jarLocations) {
+        List<Class<?>> toImport = null;
         if (!registered) {
             registered = true;
             RtVilStorage.setStorageHint(true); // will provide storage at runtime -> AdaptationLayer internal
             RtVilTypeRegistry.setTypeAnalyzer(ANALYZER);
             TypeRegistry regSave = ReflectionResolver.setTypeRegistry(RtVilTypeRegistry.INSTANCE);
 
-            List<Class<?>> toImport = new LinkedList<Class<?>>();
+            toImport = new LinkedList<Class<?>>();
             if (null == jarLocations) {
                 readClassList(toImport, loader, "");
                 if (toImport.isEmpty()) { // maven without, Eclipse with resources...
@@ -331,25 +333,9 @@ public class Registration implements IRegistration {
             } catch (VilException e) {
                 LOGGING.error("While registering " + e.getMessage(), e);
             }
-            if (debug) {
-                Collections.sort(toImport, new ClassNameComparator());
-                for (Class<?> cls : toImport) {
-                    String name = ANALYZER.getVilName(cls);
-                    TypeDescriptor<?> desc = RtVilTypeRegistry.INSTANCE.getType(name);
-                    if (null != desc) {
-                        System.out.println("    * " + desc.getName() + " / " + desc.getQualifiedName());
-                        for (int f = 0; f < desc.getFieldCount(); f++) {
-                            FieldDescriptor fDesc = desc.getField(f);
-                            System.out.println("        * " + fDesc.getSignature());
-                        }
-                        printOperations(desc);
-                    } else {
-                        System.out.println("NOT FOUND " + cls.getName());
-                    }
-                }
-            }
             ReflectionResolver.setTypeRegistry(regSave);
         }
+        return toImport;
     }
 
     /**
@@ -449,13 +435,40 @@ public class Registration implements IRegistration {
     }
     
     /**
+     * Prints a list of classes.
+     * 
+     * @param toPrint the classes to print (may be <b>null</b> then ignored)
+     */
+    private void printClasses(List<Class<?>> toPrint) {
+        if (debug && null != toPrint) {
+            Collections.sort(toPrint, new ClassNameComparator());
+            for (Class<?> cls : toPrint) {
+                String name = ANALYZER.getVilName(cls);
+                TypeDescriptor<?> desc = RtVilTypeRegistry.INSTANCE.getType(name);
+                if (null != desc) {
+                    System.out.println("    * " + desc.getName() + " / " + desc.getQualifiedName());
+                    for (int f = 0; f < desc.getFieldCount(); f++) {
+                        FieldDescriptor fDesc = desc.getField(f);
+                        System.out.println("        * " + fDesc.getSignature());
+                    }
+                    printOperations(desc);
+                } else {
+                    System.out.println("NOT FOUND " + cls.getName());
+                }
+            }
+        }
+    }
+    
+    /**
      * Private method to activate plugin.
      * 
      * @param context Context.
      */
     protected void activate(ComponentContext context) {
-        // this is not the official way of using DS but the official way is unstable
-        register(null);
+        // this is not the official way of using DS but the official way is instable
+        List<Class<?>> toPrint = register(null);
+        registerType(AlgorithmPredictionResult.class, toPrint);
+        printClasses(toPrint);
 
         RtVilTypeRegistry.setTypeAnalyzer(ANALYZER);
         TypeRegistry regSave = ReflectionResolver.setTypeRegistry(RtVilTypeRegistry.INSTANCE);
@@ -475,6 +488,7 @@ public class Registration implements IRegistration {
         registerInstantiator(SubPipelineHelper.class, instantiators);
 
         registerInstantiator(AlgorithmPrediction.class, instantiators);
+        registerInstantiator(AlgorithmPredictionEx.class, instantiators);
         registerInstantiator(ParameterPrediction.class, instantiators);
         registerInstantiator(SourceVolumePrediction.class, instantiators);
         registerInstantiator(ConstraintViolationConverter.class, instantiators);
@@ -497,6 +511,19 @@ public class Registration implements IRegistration {
     }
 
     // checkstyle: stop exception type check
+
+    /**
+     * Registers a single type.
+     * 
+     * @param cls the class to register
+     * @param classes optional set to collect registered classes, may be <b>null</b> for no recording
+     */
+    private void registerType(Class<? extends IVilType> cls, List<Class<?>> classes) {
+        RtVilTypeRegistry.INSTANCE.register(cls);
+        if (null != classes) {
+            classes.add(cls);
+        }
+    }
 
     /**
      * Handles the registration of an instantiator.

@@ -93,4 +93,20 @@ public class AlgorithmPredictor {
         return null;
     }
 
+    /**
+     * Creates a request to obtain the prediction for multiple algorithms applicable in this 
+     * in this situation (including varying parameters).
+     * 
+     * @param pipeline the pipeline to predict for
+     * @param pipelineElement the pipeline element
+     * @param algorithms the algorithms to take into account
+     * @param observables the observables
+     * @return the predictions per algorithm/observables, if not possible individual predictions may be <b>null</b>
+     *     or the entire result may be <b>null</b> if there is no prediction at all
+     */
+    public AlgorithmPredictionResult algorithmPredictionEx(String pipeline, String pipelineElement, 
+        Set<String> algorithms, Set<IObservable> observables) {
+        return null;
+    }
+    
 }

@@ -25,6 +25,8 @@ import net.ssehub.easy.instantiation.core.model.vilTypes.OperationMeta;
 import net.ssehub.easy.instantiation.core.model.vilTypes.ParameterMeta;
 import net.ssehub.easy.instantiation.core.model.vilTypes.Set;
 
+import static eu.qualimaster.easy.extension.internal.PredictionUtils.*;
+
 /**
  * Performs parameter predictions for pipeline elements.
  * 
@@ -52,8 +54,9 @@ public class ParameterPrediction implements IVilType {
         Set<IObservable> observables, 
         @ParameterMeta(generics = {Object.class, Serializable.class}) // serializable is not known -> any/object
         Map<Object, Serializable> targetValues) {
-        return AlgorithmPrediction.toResult(AlgorithmPrediction.getInstance().parameterPrediction(pipeline, 
-            pipelineElement, parameter, observables.toMappedSet(), AlgorithmPrediction.toMappedMap(targetValues)));
+        return transferMap(AlgorithmPrediction.getInstance().parameterPrediction(pipeline, 
+            pipelineElement, parameter, observables.toMappedSet(), toMappedMap(targetValues)), 
+            String.class, IObservable.class, Double.class);
     }
 
 }

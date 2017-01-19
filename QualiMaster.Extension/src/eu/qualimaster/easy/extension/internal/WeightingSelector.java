@@ -20,6 +20,7 @@ import net.ssehub.easy.instantiation.core.model.vilTypes.IVilType;
 import net.ssehub.easy.instantiation.core.model.vilTypes.Instantiator;
 import net.ssehub.easy.instantiation.core.model.vilTypes.Map;
 import net.ssehub.easy.instantiation.core.model.vilTypes.ParameterMeta;
+import net.ssehub.easy.instantiation.core.model.vilTypes.Set;
 
 /**
  * A simple selection of the "best" alternative via weighted values/predictions.
@@ -28,6 +29,23 @@ import net.ssehub.easy.instantiation.core.model.vilTypes.ParameterMeta;
  */
 @Instantiator("weightingSelection")
 public class WeightingSelector implements IVilType {
+
+    /**
+     * Implements a simple weighting of mass predictions.
+     * 
+     * @param predictions the predictions given as name-observable-prediction mapping, may be <b>null</b>, entries 
+     *     may be <b>null</b>
+     * @param weighting the weighting of the observables, negative weights invert the value by subtracting from the 
+     *     respective maximum
+     * @return the "best" solution in terms of the name of the element with maximum average weighted sum
+     */
+    public static String weightingSelection(
+        @ParameterMeta(generics = {String.class, Map.class, IObservable.class, Double.class}) 
+        Map<String, Map<IObservable, Double>> predictions, 
+        @ParameterMeta(generics = {IObservable.class, Double.class}) 
+        Map<IObservable, Double> weighting) {
+        return weightingSelection(predictions, weighting, null);
+    }
     
     /**
      * Implements a simple weighting of mass predictions.
@@ -36,15 +54,19 @@ public class WeightingSelector implements IVilType {
      *     may be <b>null</b>
      * @param weighting the weighting of the observables, negative weights invert the value by subtracting from the 
      *     respective maximum
-     * @return the "best" solution in terms of the name
+     * @param costs observables to be treated as costs (implicit negative weights, may be <b>null</b> for none)
+     * @return the "best" solution in terms of the name, the maximum average weighted value if no <code>costs</code>, 
+     *     the maximum weighted sum if <code>costs</code>
      */
     public static String weightingSelection(
         @ParameterMeta(generics = {String.class, Map.class, IObservable.class, Double.class}) 
         Map<String, Map<IObservable, Double>> predictions, 
         @ParameterMeta(generics = {IObservable.class, Double.class}) 
-        Map<IObservable, Double> weighting) {
+        Map<IObservable, Double> weighting, 
+        @ParameterMeta(generics = {IObservable.class}) 
+        Set<IObservable> costs) {
         
-        java.util.Map<String, Double> weighted = Weighting.weightAllImpl(predictions, weighting);
+        java.util.Map<String, Double> weighted = Weighting.weightAllImpl(predictions, weighting, costs);
         String best = null;
         double bestVal = 0;
         for (java.util.Map.Entry<String, Double> ent : weighted.entrySet()) {
