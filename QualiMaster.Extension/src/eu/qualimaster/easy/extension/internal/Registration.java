@@ -305,17 +305,15 @@ public class Registration implements IRegistration {
      * 
      * @param jarLocations optional (authoritative) Jar locations to search separated by pathSeparator, 
      *   use <b>null</b> to ignore
-     * @return the processed classes
      */
-    public static final List<Class<?>> register(String jarLocations) {
-        List<Class<?>> toImport = null;
+    public static final void register(String jarLocations) {
         if (!registered) {
             registered = true;
             RtVilStorage.setStorageHint(true); // will provide storage at runtime -> AdaptationLayer internal
             RtVilTypeRegistry.setTypeAnalyzer(ANALYZER);
             TypeRegistry regSave = ReflectionResolver.setTypeRegistry(RtVilTypeRegistry.INSTANCE);
 
-            toImport = new LinkedList<Class<?>>();
+            List<Class<?>> toImport = new LinkedList<Class<?>>();
             if (null == jarLocations) {
                 readClassList(toImport, loader, "");
                 if (toImport.isEmpty()) { // maven without, Eclipse with resources...
@@ -334,8 +332,11 @@ public class Registration implements IRegistration {
                 LOGGING.error("While registering " + e.getMessage(), e);
             }
             ReflectionResolver.setTypeRegistry(regSave);
+            List<Class<?>> toPrint = new ArrayList<Class<?>>();
+            toPrint.addAll(toImport);
+            registerType(AlgorithmPredictionResult.class, toPrint);
+            printClasses(toPrint);
         }
-        return toImport;
     }
 
     /**
@@ -431,7 +432,6 @@ public class Registration implements IRegistration {
         } catch (NoClassDefFoundError e) {
             LOGGING.info("Loading " + className + ": " + e.getMessage());
         } 
-
     }
     
     /**
@@ -439,12 +439,18 @@ public class Registration implements IRegistration {
      * 
      * @param toPrint the classes to print (may be <b>null</b> then ignored)
      */
-    private void printClasses(List<Class<?>> toPrint) {
+    private static void printClasses(List<Class<?>> toPrint) {
         if (debug && null != toPrint) {
             Collections.sort(toPrint, new ClassNameComparator());
             for (Class<?> cls : toPrint) {
                 String name = ANALYZER.getVilName(cls);
                 TypeDescriptor<?> desc = RtVilTypeRegistry.INSTANCE.getType(name);
+                if (null == desc) {
+                    if (name.startsWith("qualimaster::")) {
+                        String tmp = name.substring(13);
+                        desc = RtVilTypeRegistry.INSTANCE.getType(tmp);
+                    }
+                }
                 if (null != desc) {
                     System.out.println("    * " + desc.getName() + " / " + desc.getQualifiedName());
                     for (int f = 0; f < desc.getFieldCount(); f++) {
@@ -466,9 +472,7 @@ public class Registration implements IRegistration {
      */
     protected void activate(ComponentContext context) {
         // this is not the official way of using DS but the official way is instable
-        List<Class<?>> toPrint = register(null);
-        registerType(AlgorithmPredictionResult.class, toPrint);
-        printClasses(toPrint);
+        register(null);
 
         RtVilTypeRegistry.setTypeAnalyzer(ANALYZER);
         TypeRegistry regSave = ReflectionResolver.setTypeRegistry(RtVilTypeRegistry.INSTANCE);
@@ -518,10 +522,14 @@ public class Registration implements IRegistration {
      * @param cls the class to register
      * @param classes optional set to collect registered classes, may be <b>null</b> for no recording
      */
-    private void registerType(Class<? extends IVilType> cls, List<Class<?>> classes) {
-        RtVilTypeRegistry.INSTANCE.register(cls);
-        if (null != classes) {
-            classes.add(cls);
+    private static void registerType(Class<? extends IVilType> cls, List<Class<?>> classes) {
+        try {
+            RtVilTypeRegistry.INSTANCE.registerType(cls);
+            if (null != classes) {
+                classes.add(cls);
+            }
+        } catch (VilException e) {
+            LOGGING.info("Registering " + cls.getName() + ": " + e.getMessage());            
         }
     }
 

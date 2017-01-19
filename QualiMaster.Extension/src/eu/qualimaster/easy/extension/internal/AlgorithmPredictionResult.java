@@ -17,7 +17,6 @@ package eu.qualimaster.easy.extension.internal;
 
 import java.io.Serializable;
 
-import eu.qualimaster.common.QMInternal;
 import eu.qualimaster.monitoring.events.AlgorithmProfilePredictionResponse;
 import eu.qualimaster.observables.IObservable;
 import net.ssehub.easy.instantiation.core.model.vilTypes.IVilType;
@@ -42,7 +41,6 @@ public class AlgorithmPredictionResult implements IVilType {
      * @param predictions the predictions
      * @param parameters the related required parameters to enact the predictions
      */
-    @QMInternal
     AlgorithmPredictionResult(Map<String, Map<IObservable, Double>> predictions, 
         Map<String, Map<Object, Serializable>> parameters) {
         this.predictions = predictions;
