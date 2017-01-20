@@ -18,6 +18,7 @@ package eu.qualimaster.easy.extension.internal;
 import java.util.Collection;
 
 import eu.qualimaster.adaptation.AdaptationManager;
+import eu.qualimaster.common.QMInternal;
 import eu.qualimaster.coordination.INameMapping;
 import eu.qualimaster.coordination.INameMapping.ISubPipeline;
 import net.ssehub.easy.instantiation.core.model.vilTypes.IVilType;
@@ -40,8 +41,20 @@ public class SubPipelineHelper implements IVilType {
      * @return <code>true</code> if <code>subPipelineName</code> is a sub-pipeline of <code>pipelineName</code>
      */
     public static boolean isSubPipeline(String pipelineName, String subPipelineName) {
+        return isSubPipeline(AdaptationManager.getNameMapping(pipelineName), pipelineName, subPipelineName);
+    }
+
+    /**
+     * Returns whether a given <code>subPipelineName</code> indicates a sub-pipeline of <code>pipelineName</code>.
+     *
+     * @param mapping the name mapping to use
+     * @param pipelineName the name of the pipeline
+     * @param subPipelineName the name of the sub-pipeline
+     * @return <code>true</code> if <code>subPipelineName</code> is a sub-pipeline of <code>pipelineName</code>
+     */
+    @QMInternal
+    public static boolean isSubPipeline(INameMapping mapping, String pipelineName, String subPipelineName) {
         boolean result = false;
-        INameMapping mapping = AdaptationManager.getNameMapping(pipelineName);
         if (null != mapping) {
             Collection<ISubPipeline> sub = mapping.getSubPipelines();
             if (null != sub) {
