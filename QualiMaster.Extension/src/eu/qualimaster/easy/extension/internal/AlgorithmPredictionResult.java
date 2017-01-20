@@ -17,11 +17,11 @@ package eu.qualimaster.easy.extension.internal;
 
 import java.io.Serializable;
 
+import eu.qualimaster.common.QMGenerics;
 import eu.qualimaster.monitoring.events.AlgorithmProfilePredictionResponse;
 import eu.qualimaster.observables.IObservable;
 import net.ssehub.easy.instantiation.core.model.vilTypes.IVilType;
 import net.ssehub.easy.instantiation.core.model.vilTypes.Map;
-import net.ssehub.easy.instantiation.core.model.vilTypes.OperationMeta;
 
 /**
  * The result of a multi-algorithm mass prediction. Please note that the access happens via algorithm
@@ -63,7 +63,7 @@ public class AlgorithmPredictionResult implements IVilType {
      * 
      * @return the predictions as mapping of algorithm identifiers to predicted values per observables
      */
-    @OperationMeta(returnGenerics = {String.class, Map.class, IObservable.class, Double.class})
+    @QMGenerics(types = {String.class, Map.class, IObservable.class, Double.class})
     public Map<String, Map<IObservable, Double>> getPredictions() {
         return predictions;
     }
@@ -74,7 +74,7 @@ public class AlgorithmPredictionResult implements IVilType {
      * @return a mapping of algorithm identifiers to parameters, parameters may contain distribution 
      * settings given as observables such as tasks and executors
      */
-    @OperationMeta(returnGenerics = {String.class, Map.class, Object.class, Serializable.class})
+    @QMGenerics(types = {String.class, Map.class, Object.class, Serializable.class})
     public Map<String, Map<Object, Serializable>> getParameters() {
         return parameters;
     }

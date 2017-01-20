@@ -331,10 +331,10 @@ public class Registration implements IRegistration {
             } catch (VilException e) {
                 LOGGING.error("While registering " + e.getMessage(), e);
             }
-            ReflectionResolver.setTypeRegistry(regSave);
             List<Class<?>> toPrint = new ArrayList<Class<?>>();
             toPrint.addAll(toImport);
             registerType(AlgorithmPredictionResult.class, toPrint);
+            ReflectionResolver.setTypeRegistry(regSave);
             printClasses(toPrint);
         }
     }
@@ -519,12 +519,12 @@ public class Registration implements IRegistration {
     /**
      * Registers a single type.
      * 
-     * @param cls the class to register
+     * @param cls the class to register; use QM annotations instead of VIL annotations!
      * @param classes optional set to collect registered classes, may be <b>null</b> for no recording
      */
     private static void registerType(Class<? extends IVilType> cls, List<Class<?>> classes) {
         try {
-            RtVilTypeRegistry.INSTANCE.registerType(cls);
+            RtVilTypeRegistry.registerRtType(cls);
             if (null != classes) {
                 classes.add(cls);
             }
