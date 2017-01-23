@@ -413,6 +413,7 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
             String variableName = variable.getDeclaration().getName();
             String typeName = parentVariable.getDeclaration().getType().getName();
             
+            // TODO use reasoner to propagate this via IVML
             if (QmConstants.TYPE_PIPELINE.equals(typeName) && "hosts".equals(variableName)) {
                 // Assign pipeline_Hosts to all algorithms of pipeline
                 String pipeline = parentVariable.getDeclaration().getName();
@@ -426,6 +427,9 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
             } else if (QmConstants.TYPE_FAMILYELEMENT.equals(typeName) && "items".equals(variableName)) {
                 // Assign family_Items to all algorithms of family element
                 setValueForAvailableAlgorithms(value, parentVariable, "family_Items");
+            } else if (QmConstants.TYPE_FAMILYELEMENT.equals(typeName) && "predecessorItems".equals(variableName)) {
+                // Assign family_PredecessorItems to all algorithms of family element
+                setValueForAvailableAlgorithms(value, parentVariable, "family_PredecessorItems");
             }
         }
     }
