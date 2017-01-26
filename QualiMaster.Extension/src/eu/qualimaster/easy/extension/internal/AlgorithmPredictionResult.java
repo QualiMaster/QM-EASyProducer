@@ -79,4 +79,9 @@ public class AlgorithmPredictionResult implements IVilType {
         return parameters;
     }
     
+    @Override
+    public String toString() {
+        return "predictions: " + predictions + " parameters: " + parameters;
+    }
+    
 }
