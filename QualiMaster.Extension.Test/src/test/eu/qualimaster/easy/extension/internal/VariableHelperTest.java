@@ -28,6 +28,8 @@ import net.ssehub.easy.varModel.model.DecisionVariableDeclaration;
 import net.ssehub.easy.varModel.model.Project;
 import net.ssehub.easy.varModel.model.datatypes.BooleanType;
 import net.ssehub.easy.varModel.model.datatypes.Compound;
+import net.ssehub.easy.varModel.model.datatypes.IntegerType;
+import net.ssehub.easy.varModel.model.datatypes.RealType;
 import net.ssehub.easy.varModel.model.datatypes.StringType;
 import net.ssehub.easy.varModel.model.values.ValueDoesNotMatchTypeException;
 import net.ssehub.easy.varModel.model.values.ValueFactory;
@@ -50,6 +52,10 @@ public class VariableHelperTest {
     public void testGetBooleanHasValue() throws ValueDoesNotMatchTypeException, CSTSemanticException {
         final String boolVarName = "enabled";
         final Boolean boolVarValue = Boolean.TRUE;
+        final String doubleVarName = "dVal";
+        final Double doubleVarValue = 25.7;
+        final String integerVarName = "iVal";
+        final Integer integerVarValue = 21;
         
         Project project = new Project("test");
         Compound cmp1 = new Compound("test", project);
@@ -62,6 +68,14 @@ public class VariableHelperTest {
             BooleanType.TYPE, cmp2);
         cmp2.add(boolSlot);
         project.add(cmp2);
+        DecisionVariableDeclaration doubleSlot = new DecisionVariableDeclaration(doubleVarName, 
+            RealType.TYPE, cmp2);
+        cmp2.add(doubleSlot);
+        project.add(cmp2);
+        DecisionVariableDeclaration intSlot = new DecisionVariableDeclaration(integerVarName, 
+            IntegerType.TYPE, cmp2);
+        cmp2.add(intSlot);
+        project.add(cmp2);
 
         final String name = "var2Name";
         DecisionVariableDeclaration var1 = new DecisionVariableDeclaration("var1", cmp1, project);
@@ -69,7 +83,8 @@ public class VariableHelperTest {
         project.add(var1);
         DecisionVariableDeclaration var2 = new DecisionVariableDeclaration("var2", cmp2, project);
         var2.setValue(new ConstantValue(ValueFactory.createValue(cmp2, 
-            new Object[]{QmConstants.SLOT_NAME, name, boolVarName, boolVarValue})));
+            new Object[]{QmConstants.SLOT_NAME, name, boolVarName, boolVarValue, doubleVarName, doubleVarValue, 
+                integerVarName, integerVarValue})));
         project.add(var2);
         
         Configuration cfg = new Configuration(project);
@@ -83,7 +98,15 @@ public class VariableHelperTest {
         Assert.assertNull(VariableHelper.getBoolean(varVar1, boolVarName));
         Assert.assertNull(VariableHelper.getBoolean(varVar2, QmConstants.SLOT_NAME));
         Assert.assertEquals(boolVarValue, VariableHelper.getBoolean(varVar2, boolVarName));
-        
+
+        Assert.assertNull(VariableHelper.getDouble(null, doubleVarName));
+        Assert.assertNull(VariableHelper.getDouble(varVar1, doubleVarName));
+        Assert.assertEquals(doubleVarValue, VariableHelper.getDouble(varVar2, doubleVarName));
+        Assert.assertNull(VariableHelper.getInteger(null, integerVarName));
+        Assert.assertNull(VariableHelper.getInteger(varVar1, integerVarName));
+        Assert.assertEquals(integerVarValue, VariableHelper.getInteger(varVar2, integerVarName));
+        Assert.assertEquals(Double.valueOf(integerVarValue), VariableHelper.getDouble(varVar2, integerVarName));
+
         Assert.assertFalse(VariableHelper.hasName(null, name));
         Assert.assertFalse(VariableHelper.hasName(varVar1, name)); 
         Assert.assertTrue(VariableHelper.hasName(varVar2, name));

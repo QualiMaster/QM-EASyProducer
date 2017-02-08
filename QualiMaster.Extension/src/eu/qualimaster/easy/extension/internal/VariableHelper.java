@@ -23,6 +23,7 @@ import net.ssehub.easy.varModel.confModel.IDecisionVariable;
 import net.ssehub.easy.varModel.model.datatypes.IDatatype;
 import net.ssehub.easy.varModel.model.values.BooleanValue;
 import net.ssehub.easy.varModel.model.values.IntValue;
+import net.ssehub.easy.varModel.model.values.RealValue;
 import net.ssehub.easy.varModel.model.values.StringValue;
 import net.ssehub.easy.varModel.model.values.Value;
 
@@ -130,6 +131,33 @@ public class VariableHelper {
                 Value value = nested.getValue();
                 if (value instanceof IntValue) {
                     result = ((IntValue) value).getValue();
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Returns the value of a double compound slot.
+     * 
+     * @param var the variable to look into (may be <b>null</b>)
+     * @param name the name of the slot
+     * @return the double value of the slot, <b>null</b> if there is no variable, no slot or no integer value in 
+     *     the slot 
+     */
+    public static final Double getDouble(IDecisionVariable var, String name) {
+        Double result = null;
+        if (null != var) {
+            IDecisionVariable nested = var.getNestedElement(name);
+            if (null != nested) {
+                Value value = nested.getValue();
+                if (value instanceof RealValue) {
+                    result = ((RealValue) value).getValue();
+                } else if (value instanceof IntValue) {
+                    Integer tmp = ((IntValue) value).getValue();
+                    if (null != tmp) {
+                        result = tmp.doubleValue();
+                    }
                 }
             }
         }
