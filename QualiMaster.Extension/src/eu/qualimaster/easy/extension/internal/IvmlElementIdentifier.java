@@ -430,6 +430,10 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
             } else if (QmConstants.TYPE_FAMILYELEMENT.equals(typeName) && "predecessorItems".equals(variableName)) {
                 // Assign family_PredecessorItems to all algorithms of family element
                 setValueForAvailableAlgorithms(value, parentVariable, "family_PredecessorItems");
+            } else if (QmConstants.TYPE_FAMILYELEMENT.equals(typeName) 
+                && "predictedItemsThreshold".equals(variableName)) {
+                // Assign family_PredictedItemsThreshold to all algorithms of family element
+                setValueForAvailableAlgorithms(value, parentVariable, "family_PredictedItemsThreshold");
             }
         }
     }
