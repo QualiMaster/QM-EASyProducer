@@ -261,8 +261,7 @@ public class PipelineHelper implements IVilType {
         String name, String varName) {
         IDecisionVariable result = null;
         try {
-            AbstractVariable pips = ModelQuery.findVariable(config.getProject(), 
-                QmConstants.VAR_PIPELINES_PIPELINES, null);
+            AbstractVariable pips = ModelQuery.findVariable(config.getProject(), varName, null);
             IDecisionVariable pipsVar = config.getDecision(pips);
             if (null != pipsVar) {
                 for (int n = 0; null == result && n < pipsVar.getNestedElementsCount(); n++) {
