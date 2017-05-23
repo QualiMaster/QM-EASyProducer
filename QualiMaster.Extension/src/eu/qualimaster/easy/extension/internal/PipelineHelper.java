@@ -245,6 +245,20 @@ public class PipelineHelper implements IVilType {
     @QMInternal
     public static IDecisionVariable obtainPipelineByName(net.ssehub.easy.varModel.confModel.Configuration config, 
         String name) {
+        return obtainPipelineByName(config, name, QmConstants.VAR_PIPELINES_PIPELINES);
+    }
+
+    /**
+     * Returns a pipeline from the configuration from a given variable containing pipelines.
+     * 
+     * @param config the configuration
+     * @param name the name of the pipeline
+     * @param varName the variable containing the pipelines
+     * @return the pipeline or <b>null</b> if it does not exist
+     */
+    @QMInternal
+    public static IDecisionVariable obtainPipelineByName(net.ssehub.easy.varModel.confModel.Configuration config, 
+        String name, String varName) {
         IDecisionVariable result = null;
         try {
             AbstractVariable pips = ModelQuery.findVariable(config.getProject(), 
