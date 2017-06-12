@@ -158,7 +158,7 @@ public class QualiMasterConfigurationSaver extends net.ssehub.easy.varModel.conf
             int pos = ((ContainerValue) containerValue).indexOf(value);
             if (pos >= 0) {
                 try {
-                    Value indexValue = ValueFactory.createValue(IntegerType.TYPE, pos);
+                    Value indexValue = ValueFactory.createValue(IntegerType.TYPE, OclKeyWords.toIvmlIndex(pos));
                     result = new OCLFeatureCall(new Variable(decl), OclKeyWords.INDEX_ACCESS, 
                         new ConstantValue(indexValue));
                 } catch (ValueDoesNotMatchTypeException ex) {

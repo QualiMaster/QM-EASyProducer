@@ -47,6 +47,7 @@ import net.ssehub.easy.varModel.model.datatypes.ConstraintType;
 import net.ssehub.easy.varModel.model.datatypes.Container;
 import net.ssehub.easy.varModel.model.datatypes.IDatatype;
 import net.ssehub.easy.varModel.model.datatypes.IntegerType;
+import net.ssehub.easy.varModel.model.datatypes.OclKeyWords;
 import net.ssehub.easy.varModel.model.values.Value;
 import net.ssehub.easy.varModel.model.values.ValueDoesNotMatchTypeException;
 import net.ssehub.easy.varModel.model.values.ValueFactory;
@@ -470,8 +471,9 @@ public class AlgorithmProfileHelper {
     private static ConstraintSyntaxTree createRefToTuple(DecisionVariableDeclaration var, String slotName, int index) 
         throws CSTSemanticException, ValueDoesNotMatchTypeException {
         ConstraintSyntaxTree slotAccess = new CompoundAccess(new Variable(var), slotName);
-        ConstraintSyntaxTree indexExpr = new ConstantValue(ValueFactory.createValue(IntegerType.TYPE, index));
-        ConstraintSyntaxTree result = new OCLFeatureCall(slotAccess, "[]", indexExpr);
+        ConstraintSyntaxTree indexExpr = new ConstantValue(ValueFactory.createValue(IntegerType.TYPE, 
+            OclKeyWords.toIvmlIndex(index)));
+        ConstraintSyntaxTree result = new OCLFeatureCall(slotAccess, OclKeyWords.INDEX_ACCESS, indexExpr);
         result.inferDatatype();
         return result;
     }
