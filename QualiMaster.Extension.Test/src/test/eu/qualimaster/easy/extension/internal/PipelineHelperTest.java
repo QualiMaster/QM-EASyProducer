@@ -81,7 +81,7 @@ public class PipelineHelperTest {
      * @return the created compound type
      */
     private static Compound createCompoundWithName(String name, Project project, Compound refines) {
-        Compound result = new Compound(name, project, refines);
+        Compound result = new Compound(name, project, refines); // legacy, consider only one refines
         DecisionVariableDeclaration nameDecl = new DecisionVariableDeclaration(SLOT_NAME, StringType.TYPE, result);
         result.add(nameDecl);
         project.add(result);
