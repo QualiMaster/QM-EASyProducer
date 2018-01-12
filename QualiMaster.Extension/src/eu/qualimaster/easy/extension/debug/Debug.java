@@ -14,7 +14,6 @@ import net.ssehub.easy.instantiation.rt.core.model.rtVil.RtVilModel;
 import net.ssehub.easy.instantiation.rt.core.model.rtVil.Script;
 import net.ssehub.easy.reasoning.core.frontend.ReasonerFrontend;
 import net.ssehub.easy.reasoning.core.reasoner.ReasonerConfiguration;
-import net.ssehub.easy.reasoning.core.reasoner.ReasonerConfiguration.IAdditionalInformationLogger;
 import net.ssehub.easy.varModel.confModel.Configuration;
 import net.ssehub.easy.varModel.management.VarModel;
 import net.ssehub.easy.varModel.model.Project;
@@ -50,12 +49,7 @@ public class Debug extends AbstractDebug {
 
     static {
         CONFIGURATION.setRuntimeMode(true);
-        CONFIGURATION.setAdditionalInformationLogger(new IAdditionalInformationLogger() {
-            
-            @Override
-            public void info(String arg0) {
-            }
-        });
+        CONFIGURATION.setAdditionalInformationLogger(ReasonerConfiguration.ADDITIONAL_INFO_LOG_NONE);
     }
     
     // checkstyle: stop exception type check
