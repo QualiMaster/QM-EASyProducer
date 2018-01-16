@@ -34,7 +34,6 @@ public class DebugModelPruning extends AbstractDebug {
     static {
         RCONFIG = new ReasonerConfiguration();
         RCONFIG.enableCustomMessages();
-        RCONFIG.setFreshConfiguration(false);
     }
 
     // checkstyle: stop exception type check
@@ -66,7 +65,7 @@ public class DebugModelPruning extends AbstractDebug {
         Script script = RepositoryHelper.obtainModel(BuildModel.INSTANCE, "QM", null);
         
         // Validate model before instantiation as it is done in QM-IConf
-        ReasonerFrontend.getInstance().check(config.getProject(), config, RCONFIG, ProgressObserver.NO_OBSERVER);
+        ReasonerFrontend.getInstance().propagate(config.getProject(), config, RCONFIG, ProgressObserver.NO_OBSERVER);
         
         // Model Modifier
         ModelModifier modifier = new ModelModifier(pruneFolder, project, modelLocation, new QMPlatformProvider() {
@@ -78,7 +77,7 @@ public class DebugModelPruning extends AbstractDebug {
             
             @Override
             public void reason(Configuration config) {
-                ReasonerFrontend.getInstance().check(config.getProject(), config, RCONFIG,
+                ReasonerFrontend.getInstance().propagate(config.getProject(), config, RCONFIG,
                     ProgressObserver.NO_OBSERVER);
             }
         });
