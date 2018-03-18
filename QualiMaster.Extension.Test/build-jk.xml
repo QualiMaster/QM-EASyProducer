@@ -45,7 +45,7 @@
 		<pathelement path="${libs.vil.core}"/>
 		<pathelement path="${libs.vil.ui}"/>
 		<pathelement path="../QualiMaster.Extension/build/jar/QualiMaster.Extension.jar"/>
-        <fileset dir="../QualiMaster.Extension/lib">
+        <fileset dir="../lib.QualiMaster">
             <include name="**/*.jar" />
         </fileset>
         <fileset dir="lib">
