@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
-	<classpathentry kind="lib" path="lib/CoordinationLayer.jar"/>
-	<classpathentry kind="lib" path="lib/QualiMaster.Events.jar"/>
-	<classpathentry kind="lib" path="lib/AdaptationLayer.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
@@ -16,9 +13,5 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="src" path="resources"/>
-	<classpathentry kind="lib" path="lib/slf4j-api-1.7.5.jar"/>
-	<classpathentry kind="lib" path="lib/DataManagementLayer.jar"/>
-	<classpathentry kind="lib" path="lib/MonitoringLayer.jar"/>
-	<classpathentry kind="lib" path="lib/StormCommons.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

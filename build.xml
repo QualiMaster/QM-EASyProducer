@@ -2,7 +2,12 @@
 <project name="QualiMaster.Ex" default="compile" basedir=".">	
 
 	<target name="compile">
-        <echo>#########################################</echo>
+		<echo>############################</echo>
+        <echo>###  Assembling QM-Lib   ###</echo>
+        <echo>############################</echo>
+        <ant dir="libs.QualiMaster" antfile="${build.script.name}" />
+
+	    <echo>#########################################</echo>
         <echo>###  Compiling QualiMaster.Extension  ###</echo>
         <echo>#########################################</echo>
         <ant dir="QualiMaster.Extension" antfile="build-jk.xml" />

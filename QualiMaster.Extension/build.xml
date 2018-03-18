@@ -6,7 +6,7 @@
     <property name="src.dir" value="src"/>
     <property name="doc.dir" value="doc"/>
     <property name="dist.dir" value="dist"/>
-    <property name="lib.dir" value="lib"/>
+    <property name="lib.dir" value="../libs.QualiMaster/lib"/>
     <property name="javacSource" value="1.6"/>
     <property name="javacTarget" value="1.6"/>
     <property name="javacEncoding" value="iso-8859-1"/>
@@ -32,23 +32,23 @@
             <pom file="pom.xml" id="pom"/>
             <remoteRepository refid="qm.repository" />
         </artifact:dependencies>
-        <copy file="${eu.qualimaster:QualiMaster.Events:jar}" tofile="lib/QualiMaster.Events.jar" />
-        <copy file="${eu.qualimaster:CoordinationLayer:jar}" tofile="lib/CoordinationLayer.jar" />
-        <copy file="${eu.qualimaster:AdaptationLayer:jar}" tofile="lib/AdaptationLayer.jar" />
-        <copy file="${eu.qualimaster:MonitoringLayer:jar}" tofile="lib/MonitoringLayer.jar" />
-        <copy file="${eu.qualimaster:DataManagementLayer:jar}" tofile="lib/DataManagementLayer.jar" />
-        <copy file="${eu.qualimaster:StormCommons:jar}" tofile="lib/StormCommons.jar" />
+        <copy file="${eu.qualimaster:QualiMaster.Events:jar}" tofile="${lib.dir}/QualiMaster.Events.jar" />
+        <copy file="${eu.qualimaster:CoordinationLayer:jar}" tofile="${lib.dir}/CoordinationLayer.jar" />
+        <copy file="${eu.qualimaster:AdaptationLayer:jar}" tofile="${lib.dir}/AdaptationLayer.jar" />
+        <copy file="${eu.qualimaster:MonitoringLayer:jar}" tofile="${lib.dir}/MonitoringLayer.jar" />
+        <copy file="${eu.qualimaster:DataManagementLayer:jar}" tofile="${lib.dir}/DataManagementLayer.jar" />
+        <copy file="${eu.qualimaster:StormCommons:jar}" tofile="${lib.dir}/StormCommons.jar" />
         <echoproperties/>        
         <java classname="eu.qualimaster.easy.extension.internal.Registration" fork="true">
             <classpath>
                 <pathelement location="target/classes"/>
-                <pathelement location="lib/AdaptationLayer.jar"/>
-                <pathelement location="lib/MonitoringLayer.jar"/>
-                <pathelement location="lib/CoordinationLayer.jar"/>
-                <pathelement location="lib/DataManagementLayer.jar"/>
-                <pathelement location="lib/QualiMaster.Events.jar"/>
-                <pathelement location="lib/StormCommons.jar"/>
-                <pathelement location="lib/slf4j-api-1.7.5.jar"/>
+                <pathelement location="${lib.dir}/AdaptationLayer.jar"/>
+                <pathelement location="${lib.dir}/MonitoringLayer.jar"/>
+                <pathelement location="${lib.dir}/CoordinationLayer.jar"/>
+                <pathelement location="${lib.dir}/DataManagementLayer.jar"/>
+                <pathelement location="${lib.dir}/QualiMaster.Events.jar"/>
+                <pathelement location="${lib.dir}/StormCommons.jar"/>
+                <pathelement location="${lib.dir}/slf4j-api-1.7.5.jar"/>
                 <pathelement location="${net.ssehub.easy.runtime:EASy:jar}"/>
                 <pathelement location="${org.apache.storm:storm-core:jar}"/>
                 <pathelement location="${eu.qualimaster:SpassMeterIntegration:jar}"/>
