@@ -71,4 +71,4 @@ Export-Package: eu.qualimaster,
  eu.qualimaster.monitoring.volumePrediction,
  eu.qualimaster.observables,
  eu.qualimaster.pipeline
-Bundle-RequiredExecutionEnvironment: JavaSE-9
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
