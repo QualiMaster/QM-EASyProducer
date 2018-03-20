@@ -5,7 +5,7 @@
 		<echo>############################</echo>
         <echo>###  Assembling QM-Lib   ###</echo>
         <echo>############################</echo>
-        <ant dir="libs.QualiMaster" antfile="${build.script.name}" />
+        <ant dir="libs.QualiMaster" antfile="build-jk.xml" />
 
 	    <echo>#########################################</echo>
         <echo>###  Compiling QualiMaster.Extension  ###</echo>
