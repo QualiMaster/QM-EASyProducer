@@ -17,11 +17,12 @@
        uri="antlib:org.apache.maven.artifact.ant"
        classpathref="maven-ant-tasks.classpath" />
 		
-    <!-- THIS IS A REALLY HYBRID BUILD BETWEEN OSGI AND MAVEN/QM-INFRASTRUCTURE  -->
+    <!-- THIS IS A HYBRID BUILD BETWEEN OSGI AND MAVEN/QM-INFRASTRUCTURE  -->
     
 	<path id ="includes">
 		<!-- Model -->
         <pathelement path="${libs.utils}"/>
+        <pathelement path="${libs.libs.common.io}"/>
         <pathelement path="${libs.model}"/>
         <pathelement path="${libs.vil.core}"/>
         <pathelement path="${libs.template.core}"/>
