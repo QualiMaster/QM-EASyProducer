@@ -19,6 +19,7 @@ import net.ssehub.easy.instantiation.core.model.vilTypes.IProjectDescriptor;
 import net.ssehub.easy.producer.core.persistence.standard.StandaloneProjectDescriptor;
 import net.ssehub.easy.reasoning.core.frontend.ReasonerFrontend;
 import net.ssehub.easy.reasoning.core.reasoner.ReasonerConfiguration;
+import net.ssehub.easy.reasoning.core.reasoner.ReasoningResult;
 import net.ssehub.easy.varModel.confModel.Configuration;
 import net.ssehub.easy.varModel.management.VarModel;
 import net.ssehub.easy.varModel.model.Project;
@@ -65,7 +66,9 @@ public class DebugModelPruning extends AbstractDebug {
         Script script = RepositoryHelper.obtainModel(BuildModel.INSTANCE, "QM", null);
         
         // Validate model before instantiation as it is done in QM-IConf
-        ReasonerFrontend.getInstance().propagate(config.getProject(), config, RCONFIG, ProgressObserver.NO_OBSERVER);
+        ReasoningResult rr = ReasonerFrontend.getInstance().propagate(config.getProject(), config, RCONFIG, 
+            ProgressObserver.NO_OBSERVER);
+        rr.logInformation(config.getProject(), RCONFIG);
         
         // Model Modifier
         ModelModifier modifier = new ModelModifier(pruneFolder, project, modelLocation, new QMPlatformProvider() {
@@ -77,8 +80,9 @@ public class DebugModelPruning extends AbstractDebug {
             
             @Override
             public void reason(Configuration config) {
-                ReasonerFrontend.getInstance().propagate(config.getProject(), config, RCONFIG,
+                ReasoningResult rr = ReasonerFrontend.getInstance().propagate(config.getProject(), config, RCONFIG,
                     ProgressObserver.NO_OBSERVER);
+                rr.logInformation(config.getProject(), RCONFIG);
             }
         });
         Executor executor = modifier.createExecutor();

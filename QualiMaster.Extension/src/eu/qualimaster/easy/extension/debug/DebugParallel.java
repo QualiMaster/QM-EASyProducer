@@ -24,6 +24,7 @@ import net.ssehub.easy.basics.modelManagement.ModelManagementException;
 import net.ssehub.easy.basics.progress.ProgressObserver;
 import net.ssehub.easy.reasoning.core.frontend.ReasonerFrontend;
 import net.ssehub.easy.reasoning.core.reasoner.ReasonerConfiguration;
+import net.ssehub.easy.reasoning.core.reasoner.ReasoningResult;
 import net.ssehub.easy.varModel.confModel.Configuration;
 import net.ssehub.easy.varModel.management.VarModel;
 import net.ssehub.easy.varModel.model.Project;
@@ -70,8 +71,9 @@ public class DebugParallel extends AbstractDebug {
             while (count.getAndDecrement() > 0) {
                 System.out.println("> " + name);
                 try {
-                    ReasonerFrontend.getInstance().propagate(cfg.getProject(), cfg, RCFG, 
+                    ReasoningResult rr = ReasonerFrontend.getInstance().propagate(cfg.getProject(), cfg, RCFG, 
                         ProgressObserver.NO_OBSERVER);
+                    rr.logInformation(cfg.getProject(), RCFG);
                 } catch (Throwable t) {
                     t.printStackTrace();
                 }
