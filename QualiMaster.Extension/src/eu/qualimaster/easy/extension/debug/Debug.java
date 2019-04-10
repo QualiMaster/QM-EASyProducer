@@ -5,6 +5,11 @@ import java.io.IOException;
 
 import eu.qualimaster.adaptation.events.AdaptationEvent;
 import eu.qualimaster.coordination.RepositoryHelper;
+import eu.qualimaster.coordination.RuntimeVariableMapping;
+import eu.qualimaster.coordination.RepositoryConnector.Phase;
+import eu.qualimaster.coordination.RepositoryConnector.Models;
+import eu.qualimaster.easy.extension.internal.ConfigurationInitializer;
+import eu.qualimaster.easy.extension.internal.CoordinationHelper;
 import eu.qualimaster.monitoring.events.FrozenSystemState;
 import net.ssehub.easy.basics.modelManagement.ModelInitializer;
 import net.ssehub.easy.basics.modelManagement.ModelManagementException;
@@ -16,6 +21,7 @@ import net.ssehub.easy.reasoning.core.frontend.ReasonerFrontend;
 import net.ssehub.easy.reasoning.core.reasoner.ReasonerConfiguration;
 import net.ssehub.easy.varModel.confModel.Configuration;
 import net.ssehub.easy.varModel.management.VarModel;
+import net.ssehub.easy.varModel.model.ModelQueryException;
 import net.ssehub.easy.varModel.model.Project;
 
 /*
@@ -102,8 +108,9 @@ public class Debug extends AbstractDebug {
      * @param args location of the model, requested functionality (none: just load the model, monitor: process 
      *   file/monitoring_ in sequence, adapt: process file/adaptation_ in sequence)
      * @throws ModelManagementException shall not occur
+     * @throws ModelQueryException shall not occur
      */
-    public static void main(String[] args) throws ModelManagementException {
+    public static void main(String[] args) throws ModelManagementException, ModelQueryException {
         if (0 == args.length) {
             System.out.println("qualimaster.debug: <model location> [monitor|adapt]");
             System.exit(0);
@@ -114,21 +121,29 @@ public class Debug extends AbstractDebug {
                 System.exit(0);
             }
             String prefix = null;
+            Phase phase = Phase.MONITORING;
             if (args.length > 1) {
                 if ("monitor".equals(args[1])) {
                     prefix = "monitoring_";     
                 } else if ("adapt".equals(args[1])) {
                     prefix = "adaptation_";
+                    phase = Phase.ADAPTATION;
                 }
             }
 
+            RepositoryHelper.setInitializer(new RepositoryHelper.NullConnectorInitializer());
+            CoordinationHelper.setInTesting(true);
             initialize();
             
             ModelInitializer.registerLoader(ProgressObserver.NO_OBSERVER);
             ModelInitializer.addLocation(modelLocation, ProgressObserver.NO_OBSERVER);
             Project project = RepositoryHelper.obtainModel(VarModel.INSTANCE, "QM", null);
             Script rtVilModel = RepositoryHelper.obtainModel(RtVilModel.INSTANCE, "QM", null);
-            Configuration config = RepositoryHelper.createConfiguration(project, "TESTING");
+            RuntimeVariableMapping rMapping = new RuntimeVariableMapping();
+            Configuration config = RepositoryHelper.createConfiguration(project, "TESTING", rMapping);
+            rMapping = ConfigurationInitializer.createVariableMapping(config, rMapping);
+            new Models(phase, config, rtVilModel, null, rMapping); // registers itself
+
             System.out.println("Model loaded...");
             
             if (null != prefix) {

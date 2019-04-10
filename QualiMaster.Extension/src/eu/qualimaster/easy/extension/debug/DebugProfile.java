@@ -72,7 +72,7 @@ public class DebugProfile extends AbstractDebug {
             Project project = RepositoryHelper.obtainModel(VarModel.INSTANCE, "QM", null);
             
             // create descriptor before clearing the location - in infrastructure pass vil directly/resolve VIL
-            Configuration monConfig = RepositoryHelper.createConfiguration(project, "MONITORING");
+            Configuration monConfig = RepositoryHelper.createConfiguration(project, "MONITORING", null);
             QmProjectDescriptor source = new QmProjectDescriptor(tmp);
             try {
                 ProfileData data = AlgorithmProfileHelper.createProfilePipeline(monConfig, "ProfileTestPip", 
