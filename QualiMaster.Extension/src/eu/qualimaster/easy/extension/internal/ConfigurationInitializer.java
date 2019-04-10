@@ -109,7 +109,7 @@ public class ConfigurationInitializer {
             if (null != mapping) {
                 copier.setAssignmentListener(new VariableValueCopier.IAssignmentListener() {
                     
-                    //@Override
+                    @Override
                     public void notifyCreated(IDecisionVariable origin, IDecisionVariable target) {
                         mapping.addVariableMapping(origin, target);
                     }

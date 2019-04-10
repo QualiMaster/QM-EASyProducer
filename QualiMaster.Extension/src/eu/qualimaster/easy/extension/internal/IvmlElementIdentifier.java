@@ -25,6 +25,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
+import eu.qualimaster.coordination.RuntimeVariableMapping;
 import eu.qualimaster.coordination.events.AlgorithmProfilingEvent;
 import eu.qualimaster.easy.extension.ObservableMapping;
 import eu.qualimaster.easy.extension.QmConstants;
@@ -35,6 +36,7 @@ import eu.qualimaster.monitoring.events.FrozenSystemState;
 import eu.qualimaster.monitoring.systemState.TypeMapper;
 import eu.qualimaster.monitoring.systemState.TypeMapper.TypeCharacterizer;
 import eu.qualimaster.observables.IObservable;
+import net.ssehub.easy.instantiation.core.model.common.VilException;
 import net.ssehub.easy.instantiation.core.model.vilTypes.configuration.AbstractIvmlVariable;
 import net.ssehub.easy.instantiation.core.model.vilTypes.configuration.IvmlElement;
 import net.ssehub.easy.instantiation.rt.core.model.confModel.AbstractVariableIdentifier;
@@ -46,6 +48,7 @@ import net.ssehub.easy.varModel.model.ModelQueryException;
 import net.ssehub.easy.varModel.model.datatypes.BooleanType;
 import net.ssehub.easy.varModel.model.datatypes.IDatatype;
 import net.ssehub.easy.varModel.model.datatypes.IntegerType;
+import net.ssehub.easy.varModel.model.datatypes.TypeQueries;
 import net.ssehub.easy.varModel.model.values.BooleanValue;
 import net.ssehub.easy.varModel.model.values.ContainerValue;
 import net.ssehub.easy.varModel.model.values.Value;
@@ -161,12 +164,17 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
     private List<IDecisionVariable> pipelines;
     private Map<String, PipelineContentsContainer> pipelineInfos;
     private Map<String, List<String>> cachedIDSegments;
+    private RuntimeVariableMapping rMapping;
     
     /**
      * Sole constructor for this class.
      * @param config The used configuration, needed to perform queries.
+     * @param rMapping the runtime variable mapping containing variables that have been cloned/copied 
+     *   to store individual monitoring information per pipeline (may be <b>null</b> for none, then 
+     *   monitoring values are bound to the originally configured variables, not the clones, i.e., are
+     *   the same for all pipelines)
      */
-    public IvmlElementIdentifier(Configuration config) {
+    public IvmlElementIdentifier(Configuration config, RuntimeVariableMapping rMapping) {
         pipelines = new ArrayList<>();
         for (IDecisionVariable variable : config) {
             if (variable.getDeclaration().getType().getName().equals(QmConstants.TYPE_PIPELINE)) {
@@ -176,6 +184,7 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
 
         cachedIDSegments = new HashMap<>();
         pipelineInfos = new HashMap<>();
+        this.rMapping = rMapping;
     }
     
     /**
@@ -218,7 +227,6 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
                         + (null == variable.observable ? null : variable.observable.name());
             }
         }
-
         return id;
     }
 
@@ -228,14 +236,17 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
             && StringUtils.countMatches(id, FrozenSystemState.SEPARATOR) > 1;
     }
 
+    // assumption
+    //  - not called for top-level variables
+    //  - nested: return variable (... nested variables) ... slot
     @Override
     protected Iterator<String> getIDIterator(final String observableID) {
         final List<String> segments = splitID(observableID);
-        
         return new Iterator<String>() {
             
             private int index = 1;
             private ObservableMappingType type = null;
+            private String slotOverride = null;
 
             @Override
             public boolean hasNext() {
@@ -250,24 +261,34 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
                     if (1 == index) {
                         // Returns the compound
                         index = Math.max(segments.size() - 2, 1);
-                        String fistSegment = segments.get(0);
-                        if (fistSegment.equals("PipelineElement")) {
-                            id = fistSegment + FrozenSystemState.SEPARATOR + segments.get(1)
+                        String firstSegment = segments.get(0);
+                        if (firstSegment.equals(FrozenSystemState.PIPELINE_ELEMENT)) {
+                            id = firstSegment + FrozenSystemState.SEPARATOR + segments.get(1)
                                 + FrozenSystemState.SEPARATOR + segments.get(index++);
+                        } else if (firstSegment.equals(FrozenSystemState.ACTUAL)) {
+                            // Map to pipeline element and its SLOT_ACTUAL, value will be adjusted accordingly
+                            id = FrozenSystemState.PIPELINE_ELEMENT + FrozenSystemState.SEPARATOR + segments.get(1)
+                                + FrozenSystemState.SEPARATOR + segments.get(2);
+                            index++;
+                            slotOverride = QmConstants.SLOT_ACTUAL;
                         } else {
-                            if (fistSegment.equals(QmConstants.TYPE_ALGORITHM)) {
+                            if (firstSegment.equals(FrozenSystemState.ALGORITHM)) {
                                 type = ObservableMappingType.ALGORITHM;
                             }
-                            id = fistSegment + FrozenSystemState.SEPARATOR + segments.get(index++);
+                            id = firstSegment + FrozenSystemState.SEPARATOR + segments.get(index++);
                         }
                     } else if ((segments.size() - 1) == index) {
-                        // Returns the observable
-                        id = segments.get(index++);
-                        String mappedValue = ObservableMappingType.getMapping(type, id);
-                        if (null != mappedValue) {
-                            id = mappedValue;
-                        }  else {
-                            id = null;
+                        if (null != slotOverride) {
+                            id = slotOverride;
+                        } else {
+                            // Returns the observable
+                            id = segments.get(index++);
+                            String mappedValue = ObservableMappingType.getMapping(type, id);
+                            if (null != mappedValue) {
+                                id = mappedValue;
+                            }  else {
+                                id = null;
+                            }
                         }
                     } else {
                         // Should not be needed (would return an intermediate compound)
@@ -277,7 +298,6 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
                     throw new RuntimeException("Unable to split \"" + observableID + "\" into sufficient segments."
                         , exc);
                 }
-
                 return id;
             }
 
@@ -304,14 +324,13 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
             String[] arraySegments = id.split(FrozenSystemState.SEPARATOR);
             
             // Special treatment for elements for which adaptation/monitoring copies are created
-            if (QmConstants.TYPE_ALGORITHM.equals(arraySegments[0])) {
+            if (FrozenSystemState.ALGORITHM.equals(arraySegments[0])) {
                 fillSegmentList(MappedInstanceType.ALGORITHM, arraySegments, segments);
-            } else if (QmConstants.TYPE_DATASOURCE.equals(arraySegments[0])) {
+            } else if (FrozenSystemState.DATASOURCE.equals(arraySegments[0])) {
                 fillSegmentList(MappedInstanceType.SOURCE, arraySegments, segments);
-            } else if (QmConstants.TYPE_DATASINK.equals(arraySegments[0])) {
+            } else if (FrozenSystemState.DATASINK.equals(arraySegments[0])) {
                 fillSegmentList(MappedInstanceType.SINK, arraySegments, segments);
-            }
-            
+            }            
             // Default operation and fall back
             if (segments.isEmpty()) {
                 for (int i = 0; i < arraySegments.length; i++) {
@@ -381,27 +400,75 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
             }
             String normalizedName = ObservableMapping.mapReverseGeneralObservable(varName);
             if (null != normalizedName) {
-                varName = ":" + normalizedName;
+                varName = /*":" +*/ normalizedName;
             }
             id = MAIN_PROJECT_ID + varName;
         }
-
         return id;
+    }
+    
+    @Override
+    protected Object mapValue(String id, Object oValue) {
+        Object result = oValue;        
+        if (id.startsWith(FrozenSystemState.ACTUAL + FrozenSystemState.SEPARATOR)) {
+            // if this is a change of an algorithm, extract the value from the path
+            int ePos = id.lastIndexOf(FrozenSystemState.SEPARATOR);
+            if (ePos > 0) {
+                int sPos = id.lastIndexOf(FrozenSystemState.SEPARATOR, ePos - 1);
+                if (sPos > 0) {
+                    result = id.substring(sPos + 1, ePos);
+                }
+            } else {
+                Bundle.getLogger(IvmlElementIdentifier.class).warn("Active id " + id
+                    + "does not comply to structure conventions: Active:pipelineElement:algorithm:observable. "
+                    + "Ignoring algorithm change");
+            }
+        }
+        return result;
+    }
+    
+    @Override
+    protected IDecisionVariable mapVariable(IDecisionVariable variable) {
+        IDecisionVariable result = variable;
+        if (null != rMapping) {
+            result = rMapping.getMappedCopy(variable); // either variable or mapped, never null
+        }
+        return result;
     }
 
     @Override
-    protected Value toIVMLValue(IDecisionVariable trgVariable, Object oValue) throws ValueDoesNotMatchTypeException {
-        IDatatype type = trgVariable.getDeclaration().getType();
+    protected Value toIVMLValue(IDecisionVariable trgVariable, Object oValue) 
+        throws ValueDoesNotMatchTypeException {
         Value result = null;
-        if (IntegerType.TYPE.isAssignableFrom(type) && oValue instanceof Double) {
-            oValue = ((Double) oValue).intValue();
-        } else if (BooleanType.TYPE.isAssignableFrom(type) && oValue instanceof Double) {
-            result = ((Double) oValue) >= 0.5 ? BooleanValue.TRUE : BooleanValue.FALSE;
+        IDatatype type = trgVariable.getDeclaration().getType();
+        if (TypeQueries.isReference(type) && trgVariable.getDeclaration().getName().equals(QmConstants.SLOT_ACTUAL)) {
+            IDecisionVariable available = null;
+            if (trgVariable.getParent() instanceof IDecisionVariable) {
+                try {
+                    available = PipelineHelper.getAvailable((IDecisionVariable) trgVariable.getParent(), 
+                        oValue.toString());
+                } catch (VilException e) {
+                    Bundle.getLogger(IvmlElementIdentifier.class).warn("Please check model structure! Cannot find "
+                        + "slots  for available on " + trgVariable.getQualifiedName() + ". Ignoring algorithm change.");
+                }
+            }
+            if (null != available) {
+                result = ValueFactory.createValue(trgVariable.getDeclaration().getType(), available.getDeclaration());
+            } else {
+                Bundle.getLogger(IvmlElementIdentifier.class).warn("Cannot find active algorithm for " + oValue 
+                    + " in the available algorithms of " + trgVariable.getQualifiedName() 
+                    + ". Ignoring algorithm change");
+            }
+        } else {
+            if (IntegerType.TYPE.isAssignableFrom(type) && oValue instanceof Double) {
+                oValue = ((Double) oValue).intValue();
+            } else if (BooleanType.TYPE.isAssignableFrom(type) && oValue instanceof Double) {
+                result = ((Double) oValue) >= 0.5 ? BooleanValue.TRUE : BooleanValue.FALSE;
+            }
+            if (null == result) {
+                result = ValueFactory.createValue(type, oValue);
+            }
         }
-        if (null == result) {
-            result = ValueFactory.createValue(type, oValue);
-        }
-        
         return result;
     }
     
@@ -413,7 +480,7 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
             String variableName = variable.getDeclaration().getName();
             String typeName = parentVariable.getDeclaration().getType().getName();
             
-            // TODO use reasoner to propagate this via IVML
+            // TODO use reasoner to propagate this within Model/via IVML
             if (QmConstants.TYPE_PIPELINE.equals(typeName) && "hosts".equals(variableName)) {
                 // Assign pipeline_Hosts to all algorithms of pipeline
                 String pipeline = parentVariable.getDeclaration().getName();
@@ -424,16 +491,17 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
                         setValueForAvailableAlgorithms(value, familyElement, "pipeline_Hosts");
                     }
                 }
-            } else if (QmConstants.TYPE_FAMILYELEMENT.equals(typeName) && "items".equals(variableName)) {
-                // Assign family_Items to all algorithms of family element
-                setValueForAvailableAlgorithms(value, parentVariable, "family_Items");
-            } else if (QmConstants.TYPE_FAMILYELEMENT.equals(typeName) && "predecessorItems".equals(variableName)) {
-                // Assign family_PredecessorItems to all algorithms of family element
-                setValueForAvailableAlgorithms(value, parentVariable, "family_PredecessorItems");
-            } else if (QmConstants.TYPE_FAMILYELEMENT.equals(typeName) 
-                && "predictedItemsThreshold".equals(variableName)) {
-                // Assign family_PredictedItemsThreshold to all algorithms of family element
-                setValueForAvailableAlgorithms(value, parentVariable, "family_PredictedItemsThreshold");
+            } else if (QmConstants.TYPE_FAMILYELEMENT.equals(typeName)) {                
+                if ("items".equals(variableName)) {
+                    // Assign family_Items to all algorithms of family element
+                    setValueForAvailableAlgorithms(value, parentVariable, "family_Items");
+                } else if ("predecessorItems".equals(variableName)) {
+                    // Assign family_PredecessorItems to all algorithms of family element
+                    setValueForAvailableAlgorithms(value, parentVariable, "family_PredecessorItems");
+                } else if ("predictedItemsThreshold".equals(variableName)) {
+                    // Assign family_PredictedItemsThreshold to all algorithms of family element
+                    setValueForAvailableAlgorithms(value, parentVariable, "family_PredictedItemsThreshold");
+                }
             }
         }
     }

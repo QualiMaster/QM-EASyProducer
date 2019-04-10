@@ -19,6 +19,10 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
+import eu.qualimaster.coordination.RepositoryConnector;
+import eu.qualimaster.coordination.RepositoryConnector.Models;
+import eu.qualimaster.coordination.RepositoryConnector.Phase;
+import eu.qualimaster.coordination.RuntimeVariableMapping;
 import eu.qualimaster.coordination.events.ModelUpdatedEvent;
 import eu.qualimaster.events.EventHandler;
 import eu.qualimaster.events.EventManager;
@@ -76,7 +80,15 @@ public class BindValuesInstantiator implements IVilType {
                     configMapping.get(configuration.getConfiguration());
             if (null == aConfig) {
                 net.ssehub.easy.varModel.confModel.Configuration config = configuration.getConfiguration();
-                aConfig = new AdaptiveConfiguration<>(config, new IvmlElementIdentifier(config));
+                RuntimeVariableMapping rMapping = null;
+                for (Phase phase: RepositoryConnector.Phase.values()) {
+                    Models models = RepositoryConnector.getModels(phase);
+                    if (models.getConfiguration() == config) {
+                        rMapping = models.getVariableMapping();
+                        break;
+                    }
+                }
+                aConfig = new AdaptiveConfiguration<>(config, new IvmlElementIdentifier(config, rMapping));
                 configMapping.put(configuration.getConfiguration(), aConfig);
             }
 
@@ -94,7 +106,6 @@ public class BindValuesInstantiator implements IVilType {
      */
     public static void storeValueBinding(Configuration configuration,
         net.ssehub.easy.instantiation.core.model.vilTypes.Map<String, Object> bindings) {
-
         Class<?> clazz = net.ssehub.easy.instantiation.core.model.vilTypes.Map.class;
         try {
             Field nestedMap = clazz.getDeclaredField("map");
