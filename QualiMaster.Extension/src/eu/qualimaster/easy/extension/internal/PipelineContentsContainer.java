@@ -26,7 +26,6 @@ import java.util.Set;
 import eu.qualimaster.adaptation.AdaptationManager;
 import eu.qualimaster.coordination.INameMapping;
 import eu.qualimaster.coordination.RepositoryConnector;
-import eu.qualimaster.coordination.RuntimeVariableMapping;
 import eu.qualimaster.coordination.RepositoryConnector.IPhase;
 import eu.qualimaster.coordination.RepositoryConnector.Models;
 import eu.qualimaster.coordination.RepositoryConnector.Phase;
@@ -274,14 +273,12 @@ public class PipelineContentsContainer {
             }
             if (null == models) { // fallback of original code, assumes that monitoring called first
                 Models tmpModels = RepositoryConnector.getModels(Phase.ADAPTATION);
-                RuntimeVariableMapping mapping = tmpModels.getVariableMapping();
-                if (null != mapping) {
+                if (null != tmpModels && null != tmpModels.getVariableMapping()) {
                     models = tmpModels;
                 }
                 if (null == models) {
                     tmpModels = RepositoryConnector.getModels(Phase.MONITORING);
-                    mapping = tmpModels.getVariableMapping();
-                    if (null != mapping) {
+                    if (null != tmpModels && null != tmpModels.getVariableMapping()) {
                         models = tmpModels;
                     }
                 }

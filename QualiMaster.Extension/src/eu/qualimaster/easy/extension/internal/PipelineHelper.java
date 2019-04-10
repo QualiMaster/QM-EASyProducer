@@ -467,6 +467,26 @@ public class PipelineHelper implements IVilType {
     }
     
     /**
+     * Returns the available algorithm with given name {@code Algorithm} from {@code pElt}.
+     * 
+     * @param pElt the IVML configuration variable representing the target pipeline element
+     * @param algorithm the algorithm name
+     * @return the available algorithm or <b>null</b> if not found
+     * @throws VilException in case that the available algorithm slot does not exist
+     */
+    @QMInternal
+    public static IDecisionVariable getAvailable(IDecisionVariable pElt, String algorithm) throws VilException {
+        IDecisionVariable result = null;
+        IDecisionVariable available = pElt.getNestedElement(QmConstants.SLOT_AVAILABLE);
+        if (null != available) {
+            result = VariableHelper.findNamedVariable(available, null, algorithm);
+        } else {
+            throw new VilException("No available slot", VilException.ID_RUNTIME);
+        }
+        return result;
+    }
+    
+    /**
      * Sets the value of the actual slot in <code>pipeline</code>, <code>pipelineElement</code> to 
      * <code>algorithm</code> to the respective instance stored in the available slot of <code>pipelineElement</code>.
      * 

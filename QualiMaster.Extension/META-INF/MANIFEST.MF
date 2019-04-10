@@ -26,10 +26,12 @@ Require-Bundle: net.ssehub.easy.instantiation.core;bundle-version="0.11.2",
  net.ssehub.easy.instantiation.maven;bundle-version="3.2.3",
  net.ssehub.easy.libs.commons.io,
  org.apache.commons.lang;bundle-version="2.6.0",
- eu.qualimaster.libs.QualiMaster;bundle-version="0.2.0";visibility:=reexport
+ eu.qualimaster.libs.QualiMaster;bundle-version="0.2.0";visibility:=reexport,
+ net.ssehub.easy.instantiation.serializer.xml;bundle-version="1.2.0"
 EASyLoader-BundleClassPath: false
 Service-Component: OSGI-INF/qualimaster.xml
 Bundle-ClassPath: .
 Export-Package: eu.qualimaster.easy.extension,
+ eu.qualimaster.easy.extension.debug,
  eu.qualimaster.easy.extension.internal,
  eu.qualimaster.easy.extension.modelop

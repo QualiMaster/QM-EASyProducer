@@ -84,8 +84,8 @@
          <scope>provided</scope>
        </dependency>
        <dependency>
-         <groupId>net.ssehub.easy.runtime</groupId>
-         <artifactId>EASy</artifactId>
+         <groupId>eu.qualimaster.easyProducer.runtime</groupId>
+         <artifactId>EASy.QualiMaster</artifactId>
          <version>1.3.0-SNAPSHOT</version>
          <scope>provided</scope>
        </dependency>       

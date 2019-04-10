@@ -57,12 +57,13 @@ public class ConfigurationInitializer {
      * 
      * @param config the configuration
      * @param newVariablePrefix the prefix for the new variables
+     * @param mapping optional runtime mapping to be updated (may be <b>null</b>)
      * @throws VilException in case that initialization fails
      */
     @QMInternal
     public static void initializeConfiguration(net.ssehub.easy.varModel.confModel.Configuration config, 
-        String newVariablePrefix) throws VilException {
-        initializeConfiguration(config, newVariablePrefix, true);
+        String newVariablePrefix, final RuntimeVariableMapping mapping) throws VilException {
+        initializeConfiguration(config, newVariablePrefix, true, mapping);
     }
     
     /**
@@ -71,11 +72,12 @@ public class ConfigurationInitializer {
      * @param config the configuration
      * @param newVariablePrefix the prefix for the new variables
      * @param initActual whether actual instance shall be initialized by default
+     * @param mapping optional runtime mapping to be updated (may be <b>null</b>)
      * @throws VilException in case that initialization fails
      */
     @QMInternal
     public static void initializeConfiguration(net.ssehub.easy.varModel.confModel.Configuration config, 
-        String newVariablePrefix, boolean initActual) throws VilException {
+        String newVariablePrefix, boolean initActual, final RuntimeVariableMapping mapping) throws VilException {
         Project project = config.getProject();
         if (null == project) {
             throw new VilException("no project available - syntax/parsing error?", VilException.ID_INVALID);
@@ -104,6 +106,19 @@ public class ConfigurationInitializer {
                 select(initActual, SLOT_REPLAYSINK_AVAILABLE, SLOT_REPLAYSINK_ACTUAL));            
             VariableValueCopier copier = new VariableValueCopier(newVariablePrefix, specSource, specFamily, specSink, 
                 specReplaySink);
+            if (null != mapping) {
+                copier.setAssignmentListener(new VariableValueCopier.IAssignmentListener() {
+                    
+                    @Override
+                    public void notifyCreated(IDecisionVariable origin, IDecisionVariable target) {
+                        mapping.addVariableMapping(origin, target);
+                    }
+                    
+                    @Override
+                    public void notifyAssigned(IDecisionVariable target, Value value, boolean added) {
+                    }
+                });
+            }
             copier.process(config);
         } catch (ConfigurationException e1) {
             throw new VilException(e1, VilException.ID_RUNTIME);
@@ -141,17 +156,21 @@ public class ConfigurationInitializer {
      * Creates a runtime variable mapping for <code>configuration</code>.
      * 
      * @param config the configuration
+     * @param result the runtime configuration mapping to modify (a new one is created if <b>null</b>)
      * @return the runtime variable mapping
      * @throws ModelQueryException in case of problems accessing model elements
      */
     @Invisible
     public static RuntimeVariableMapping createVariableMapping(
-        net.ssehub.easy.varModel.confModel.Configuration config) throws ModelQueryException {
+        net.ssehub.easy.varModel.confModel.Configuration config, RuntimeVariableMapping result) 
+        throws ModelQueryException {
         Project project = config.getProject();
         Compound sourceType = findCompound(project, TYPE_SOURCE);
         Compound familyElementType = findCompound(project, TYPE_FAMILYELEMENT);
         Compound sinkType = findCompound(project, TYPE_SINK);
-        RuntimeVariableMapping result = new RuntimeVariableMapping();
+        if (null == result) {
+            result = new RuntimeVariableMapping();
+        }
         Iterator<IDecisionVariable> iter = config.iterator();
         while (iter.hasNext()) {
             IDecisionVariable var = iter.next();
