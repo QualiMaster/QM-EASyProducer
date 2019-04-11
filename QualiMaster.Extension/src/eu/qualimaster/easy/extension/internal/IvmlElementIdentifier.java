@@ -407,7 +407,14 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
         return id;
     }
     
-    @Override
+    //@Override
+    /**
+     * Allows an initial mapping values based on the id.
+     * 
+     * @param id the ID
+     * @param oValue the value provided by the input mapping
+     * @return the mapped value (here, {@code oValue})
+     */
     protected Object mapValue(String id, Object oValue) {
         Object result = oValue;        
         if (id.startsWith(FrozenSystemState.ACTUAL + FrozenSystemState.SEPARATOR)) {
