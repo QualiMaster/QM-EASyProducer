@@ -78,6 +78,7 @@ public class Registration implements IRegistration {
     private static boolean registered = false;
     private static boolean debug = false;
     private static ClassLoader loader = Registration.class.getClassLoader();
+    private static boolean writeOutput = false;
     
     /**
      * A simple logging abstractor.
@@ -322,9 +323,10 @@ public class Registration implements IRegistration {
             }
             if (toImport.isEmpty()) {
                 scanJars(toImport, jarLocations, loader);
-                writeClassList(toImport);
+                if (writeOutput) {
+                    writeClassList(toImport);
+                }
             }
-            
             ANALYZER.setImportingTypes(toImport);
             try {
                 RtVilTypeRegistry.registerRtTypes(toImport);
@@ -573,6 +575,7 @@ public class Registration implements IRegistration {
      * @param args ignored for convenience
      */
     public static void main(String[] args) {
+        writeOutput = true;
         BuiltIn.initialize();
         net.ssehub.easy.instantiation.rt.core.model.rtVil.BuiltIn.initialize();
         debug = true;
@@ -585,7 +588,7 @@ public class Registration implements IRegistration {
             if (i > 0) {
                 jarLocations += File.pathSeparator;
             }
-            jarLocations += "lib/" + jarNames[i] + ".jar";
+            jarLocations += "../libs.QualiMaster/" + jarNames[i] + ".jar";
         }
         register(jarLocations); 
         
