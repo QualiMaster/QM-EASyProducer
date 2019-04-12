@@ -1,0 +1,16 @@
+project QM {
+
+    import Meta;
+    import InfraCfg;
+    import SwitchPipCfg;
+    annotate BindingTime bindingTime = BindingTime.compile to QM;
+
+    activePipelines = {refBy(pip)};
+    pipelines = {refBy(pip)};
+
+    freeze {
+        activePipelines;
+        algorithms;
+    } but (v | v.bindingTime == BindingTime.runtime);
+
+}

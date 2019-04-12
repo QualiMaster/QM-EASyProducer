@@ -25,8 +25,10 @@
     <!-- THIS IS A REALLY HYBRID BUILD BETWEEN OSGI AND MAVEN/QM-INFRASTRUCTURE  -->
     
 	<path id ="includes">
+		<pathelement path="${libs.easyLoader}"/>
 		<!-- Model -->
         <pathelement path="${libs.utils}"/>
+        <pathelement path="${libs.libs.common.io}"/>
         <pathelement path="${libs.model}"/>
         <pathelement path="${libs.vil.core}"/>
         <pathelement path="${libs.template.core}"/>
@@ -36,11 +38,13 @@
         <pathelement path="${libs.instantiator.core}"/>
         <pathelement path="${libs.instantiator.velocity}"/>
         <pathelement path="${libs.instantiatorCore.rt.core}"/>
-        
+		<pathelement path="${libs.instantiator.serializer}"/>
+		<pathelement path="${libs.libs.maven}"/>
         <!-- IVML Core -->
         <pathelement path="${libs.ivml}"/>
         <!-- reasonerCore -->
         <pathelement path="${libs.reasonerCore}"/>
+		<pathelement path="${libs.sseReasoner}"/>
         <!-- VIL -->
 		<pathelement path="${libs.vil.core}"/>
 		<pathelement path="${libs.vil.ui}"/>

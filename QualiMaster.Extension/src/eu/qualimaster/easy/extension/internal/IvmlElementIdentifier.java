@@ -407,14 +407,7 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
         return id;
     }
     
-    //@Override
-    /**
-     * Allows an initial mapping values based on the id.
-     * 
-     * @param id the ID
-     * @param oValue the value provided by the input mapping
-     * @return the mapped value (here, {@code oValue})
-     */
+    @Override
     protected Object mapValue(String id, Object oValue) {
         Object result = oValue;        
         if (id.startsWith(FrozenSystemState.ACTUAL + FrozenSystemState.SEPARATOR)) {
@@ -434,15 +427,7 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
         return result;
     }
     
-    //@Override
-    /**
-     * Allows mapping variables to runtime clones. The ID is calculated for 
-     * the original variable but if this method returns a different variable, associated
-     * with the returned variable.
-     * 
-     * @param variable the variable to be mapped
-     * @return the mapped variable (here, {@code variable})
-     */
+    @Override
     protected IDecisionVariable mapVariable(IDecisionVariable variable) {
         IDecisionVariable result = variable;
         if (null != rMapping) {
@@ -451,15 +436,7 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
         return result;
     }
 
-    //@Override
-    /**
-     * Converts the given object to an IVML value depending on the target {@link IDecisionVariable}.
-     * @param trgVariable The variable for which the value shall be converted.
-     * @param oValue The object value, which shall be converted.
-     * @return The converted value.
-     * @throws ValueDoesNotMatchTypeException If the passed object value does not match to the type of the target
-     *     variable.
-     */
+    @Override
     protected Value toIVMLValue(IDecisionVariable trgVariable, Object oValue) 
         throws ValueDoesNotMatchTypeException {
         Value result = null;

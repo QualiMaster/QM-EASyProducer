@@ -1,0 +1,84 @@
+project InfraCfg {
+
+    import Meta;
+    annotate BindingTime bindingTime = BindingTime.compile to InfraCfg;
+    
+    DataSource dSrc = {
+        name = "Random Source"
+    };
+    
+    dataSources = {refBy(dSrc)};
+
+    DataSink dSnk = {
+        name = "Random Sink"
+    };
+
+    dataSources = {refBy(dSrc)};
+    
+    Algorithm alg1 = {
+        name = "SwitchProcessor1"
+    };
+
+    Algorithm alg2 = {
+        name = "SwitchProcessor2"
+    };
+    
+    HardwareAlgorithm alg3 = {
+        name = "HwSwitchProcessor"
+    };
+
+    algorithms = {refBy(alg1), refBy(alg2), refBy(alg3)};
+        
+    Family fam1 = {
+        name = "fam1",
+        members = {refBy(alg1), refBy(alg2)}
+    };
+
+    Machine mach9 = {
+        name = "host-09.ssecluster.local"
+    };
+    
+    Machine mach10 = {
+        name = "host-10.ssecluster.local"
+    };
+    
+    Machine mach11 = {
+        name = "host-11.ssecluster.local"
+    };
+    
+    machines = {refBy(mach9), refBy(mach10), refBy(mach11)};
+    
+    MPCCNode olynthos = {
+        name = "olynthos1",
+        host = "147.27.39.12",
+        monitoringPort = 2402,
+        numCPUs = 12,
+        numDFEs = 4
+    };
+
+    clusters = {refBy(olynthos)};
+    
+    PublicCloudEnvironment AWS = {
+        name = "AWS"
+    };
+    
+    cloudEnvironments = {refBy(AWS)};
+
+    freeze {
+        dSrc;
+        dSnk;
+        alg1;
+        alg2;
+        alg3;
+        fam1;
+        algorithms;
+        machines;
+        clusters;
+        mach9;
+        mach10;
+        mach11;
+        olynthos;
+        AWS;
+        cloudEnvironments;
+    } but (v | v.bindingTime == BindingTime.runtime);
+}

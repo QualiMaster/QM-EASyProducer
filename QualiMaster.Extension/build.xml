@@ -6,7 +6,7 @@
     <property name="src.dir" value="src"/>
     <property name="doc.dir" value="doc"/>
     <property name="dist.dir" value="dist"/>
-    <property name="lib.dir" value="../libs.QualiMaster/lib"/>
+    <property name="lib.dir" value="../libs.QualiMaster"/>
     <property name="javacSource" value="1.6"/>
     <property name="javacTarget" value="1.6"/>
     <property name="javacEncoding" value="iso-8859-1"/>
@@ -38,7 +38,7 @@
         <copy file="${eu.qualimaster:MonitoringLayer:jar}" tofile="${lib.dir}/MonitoringLayer.jar" />
         <copy file="${eu.qualimaster:DataManagementLayer:jar}" tofile="${lib.dir}/DataManagementLayer.jar" />
         <copy file="${eu.qualimaster:StormCommons:jar}" tofile="${lib.dir}/StormCommons.jar" />
-        <echoproperties/>        
+        <echoproperties/>
         <java classname="eu.qualimaster.easy.extension.internal.Registration" fork="true">
             <classpath>
                 <pathelement location="target/classes"/>
@@ -49,7 +49,7 @@
                 <pathelement location="${lib.dir}/QualiMaster.Events.jar"/>
                 <pathelement location="${lib.dir}/StormCommons.jar"/>
                 <pathelement location="${lib.dir}/slf4j-api-1.7.5.jar"/>
-            	<!-- we need an EASy with rt-VIL here -->
+            	<!-- we need an EASy with rt-VIL here; must be anyway in POM, cannot just be an EASy variant -->
                 <pathelement location="${eu.qualimaster.easyProducer.runtime:EASy.QualiMaster:jar}"/>
                 <pathelement location="${org.apache.storm:storm-core:jar}"/>
                 <pathelement location="${eu.qualimaster:SpassMeterIntegration:jar}"/>

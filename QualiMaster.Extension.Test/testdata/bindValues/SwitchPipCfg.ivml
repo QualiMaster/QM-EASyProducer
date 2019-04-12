@@ -1,0 +1,36 @@
+project SwitchPipCfg {
+
+    import Meta;
+    import InfraCfg;
+    annotate BindingTime bindingTime = BindingTime.compile to SwitchPipCfg;
+
+    Sink snk = {
+        name = "snk",
+        sink = refBy(dSnk)
+    };
+    
+    FamilyElement famElt1 = {
+        name = "processor",
+        family = refBy(fam1), 
+        output = {refBy(snk)}
+    };
+    
+    Source src = {
+        name = "src", 
+        next = {refBy(famElt1)},
+        source = refBy(dSrc)
+    };
+    
+    Pipeline pip = {
+        artifact = "eu.qualiMaster:TestPipeline:0.0.1",
+        name = "SwitchPip",
+        sources = {refBy(src)}
+    };
+
+    freeze {
+        snk;
+        famElt1;
+        src;
+        pip;
+    } but (v | v.bindingTime == BindingTime.runtime);
+}

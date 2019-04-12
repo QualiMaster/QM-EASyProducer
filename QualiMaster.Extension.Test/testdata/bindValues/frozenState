@@ -1,0 +1,12 @@
+#
+#Wed Jan 13 14:31:01 CET 2016
+PipelineElement\:SwitchPip\:processor\:USED_MEMORY=25000.0
+Actual\:SwitchPip\:processor\:SwitchProcessor1\:AVAILABLE=1.0
+PipelineElement\:SwitchPip\:src\:ITEMS=880.6387225548903
+Machine\:host-10.ssecluster.local\:AVAILABLE=1.0
+HwNode\:olynthos1\:AVAILABLE=1.0
+Cloud\:AWS\:PING=150
+DataSource\:SwitchPip\:Random\ Source\:VOLUME=1000
+Pipeline\:SwitchPip\:LATENCY=140
+Infrastructure\:AVAILABLE_MACHINES=50
+Infrastructure\:USED_MACHINES=20

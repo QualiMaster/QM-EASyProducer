@@ -22,6 +22,7 @@ import java.io.IOException;
 import eu.qualimaster.coordination.CoordinationManager;
 import eu.qualimaster.coordination.INameMapping;
 import eu.qualimaster.coordination.NameMapping;
+import eu.qualimaster.coordination.RepositoryHelper;
 import eu.qualimaster.easy.extension.internal.NameMappingHelper;
 import eu.qualimaster.easy.extension.internal.SubPipelineHelper;
 
@@ -43,6 +44,8 @@ public class NameMappingHelperTest {
     @Test
     public void testNameMapping() throws IOException {
         final String pipName = "PriorityPip";
+        RepositoryHelper.IConnectorInitializer init =  RepositoryHelper.getInitializer();
+        RepositoryHelper.setInitializer(new RepositoryHelper.NullConnectorInitializer());
         INameMapping mapping = loadNameMapping("genSubTopoMapping.xml", pipName);
         CoordinationManager.registerTestMapping(mapping);
         Assert.assertEquals("PriorityPip_FamilyElement0", 
@@ -52,6 +55,7 @@ public class NameMappingHelperTest {
         Assert.assertEquals("FinancialCorrelation1", 
             NameMappingHelper.getImplementationName("MyPip", "FinancialCorrelation1"));
         CoordinationManager.unregisterNameMapping(mapping);
+        RepositoryHelper.setInitializer(init);
     }
 
     /**

@@ -1,0 +1,190 @@
+project Meta {
+
+    enum BindingTime {compile = 0, runtime = 1};
+    annotate BindingTime bindingTime = BindingTime.compile to Meta;
+
+    // -------------------- Observables -------------------
+
+    typedef IsAvailable Boolean;
+    typedef Ping Real;
+    typedef Used_Memory Integer;
+    typedef Volume Real;
+    typedef Latency Integer;
+    typedef Throughput_Items Integer;
+    typedef Throughput_Volume Integer;
+    typedef Capacity Real;
+    typedef Executors Integer;
+    typedef Items Real;
+    typedef Used_Machines Integer;
+    typedef Available_Machines Integer;
+
+    // ----------------- hardware ------------------------------
+    
+    compound Machine {
+        String name;
+        assign (bindingTime = BindingTime.runtime) to {
+            IsAvailable available;
+        }
+    }
+    
+    setOf(refTo(Machine)) machines;
+
+    assign (bindingTime = BindingTime.runtime) to {
+        Used_Machines usedMachines = 0;
+        Available_Machines availableMachines = 0;
+    }
+    
+    // --------------- reconf HW ------------------------
+    
+    compound HwNode {
+        String name;        
+        assign (bindingTime = BindingTime.runtime) to {
+            IsAvailable available;
+        }
+    }
+    
+    compound MPCCNode refines HwNode{
+        String host; // possibly needed to direct network stream to
+        Integer monitoringPort;
+        Integer numCPUs;
+        Integer numDFEs;
+    } 
+    
+    sequenceOf(refTo(HwNode)) clusters;
+    
+    // -------------------- cloud -----------------------
+
+    abstract compound CloudResource {
+        String name;
+        assign (bindingTime = BindingTime.runtime) to {
+            Ping ping;
+        }
+    }
+
+    compound PublicCloudEnvironment refines CloudResource {
+    }
+
+    setOf(refTo(CloudResource)) cloudEnvironments;
+
+    // ------------------- DataMgt -------------------------
+
+    compound DataElement {
+        String name;
+    }
+
+    compound DataSource refines DataElement {
+        assign (bindingTime = BindingTime.runtime) to {
+            Volume volume;
+        }
+    }
+    
+    sequenceOf(refTo(DataSource)) dataSources;
+
+    compound DataSink refines DataElement {
+        assign (bindingTime = BindingTime.runtime) to {
+            Volume volume;
+        }
+    }
+
+    sequenceOf(refTo(DataSink)) dataSinks;
+
+    // --------------------------- Algorithms --------------------
+    
+    compound Algorithm {
+        String name;
+        setOf(Constraint) constraints;
+        assign (bindingTime = BindingTime.runtime) to {
+          Latency latency;
+          Throughput_Items throughputItems;
+          Boolean isValid = true;
+        }
+    }
+    
+    compound HardwareAlgorithm refines Algorithm {
+    }
+    
+    compound SubPipelineAlgorithm refines Algorithm {
+    }
+
+    setOf(refTo(Algorithm)) algorithms;
+
+    // ---------------------- Families ----------------------------
+    
+    compound Family {
+        String name;
+        setOf(refTo(Algorithm)) members;
+    }
+    
+    // no families set here - not needed
+
+    // --------------------------- Pipelines ---------------------
+
+    compound PipelineElement {
+    }
+
+    compound PipelineNode refines PipelineElement {
+        String name;
+        setOf(Constraint) constraints;
+        assign (bindingTime = BindingTime.runtime) to {
+          Boolean isValid = true;
+          Real predictedItemsThreshold;
+        }
+    }
+    
+    compound Source refines PipelineNode {
+        refTo(DataSource) source;
+        setOf(refTo(PipelineNode)) next;
+        assign (bindingTime = BindingTime.runtime) to {
+          refTo(DataSource) actual;
+          setOf(refTo(DataSource)) available;
+          Throughput_Items throughputItems;
+          Items items;
+        }
+    }
+    
+    compound FamilyElement refines PipelineNode {
+        setOf(refTo(PipelineNode)) output;
+        refTo(Family) family;
+
+        assign (bindingTime = BindingTime.runtime) to {
+          refTo(Algorithm) actual;
+          setOf(refTo(Algorithm)) available;
+          Capacity capacity;
+          Executors executors;
+          Used_Memory usedMemory;
+        }
+    }
+    
+    compound Sink refines PipelineNode {
+        refTo(DataSink) sink;
+        assign (bindingTime = BindingTime.runtime) to {
+          refTo(DataSink) actual;
+          setOf(refTo(DataSink)) available;
+        }
+    }
+    
+    compound ReplaySink refines Sink {
+    }
+
+    compound Pipeline {
+        String artifact;
+        String name;
+        setOf(refTo(Source)) sources;
+        setOf(Constraint) constraints;
+
+        assign (bindingTime = BindingTime.runtime) to {
+          Latency latency;
+          Throughput_Items throughputItems;
+          Capacity capacity;
+          Executors executors;
+          Boolean isValid = true;
+          
+          capacity > 0.10;
+          capacity < 0.85;
+        }
+    }
+    
+    setOf(refTo(Pipeline)) activePipelines;
+    setOf(refTo(Pipeline)) pipelines;
+    
+}

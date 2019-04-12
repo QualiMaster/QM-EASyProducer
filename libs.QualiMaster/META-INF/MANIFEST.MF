@@ -4,12 +4,12 @@ Bundle-Name: QualiMaster
 Bundle-SymbolicName: eu.qualimaster.libs.QualiMaster
 Bundle-Version: 0.2.0
 Bundle-ClassPath: AdaptationLayer.jar,
-  CoordinationLayer.jar,
-  DataManagementLayer.jar,
-  MonitoringLayer.jar,
-  QualiMaster.Events.jar,
-  StormCommons.jar,
-  slf4j-api-1.7.5.jar
+ CoordinationLayer.jar,
+ DataManagementLayer.jar,
+ MonitoringLayer.jar,
+ QualiMaster.Events.jar,
+ StormCommons.jar,
+ slf4j-api-1.7.5.jar
 Export-Package: eu.qualimaster,
  eu.qualimaster.adaptation,
  eu.qualimaster.adaptation.events,
@@ -72,3 +72,4 @@ Export-Package: eu.qualimaster,
  eu.qualimaster.observables,
  eu.qualimaster.pipeline
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: EASyLoader;bundle-version="1.2.0";visibility:=reexport
