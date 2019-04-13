@@ -72,4 +72,4 @@ Export-Package: eu.qualimaster,
  eu.qualimaster.observables,
  eu.qualimaster.pipeline
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Require-Bundle: EASyLoader;bundle-version="1.2.0";visibility:=reexport
+Require-Bundle: net.ssehub.easy.loader;bundle-version="1.2.0";visibility:=reexport
