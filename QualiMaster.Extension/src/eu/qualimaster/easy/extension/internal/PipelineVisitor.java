@@ -147,10 +147,12 @@ public class PipelineVisitor {
      * @param containerValue A container of references.
      */
     private void visitContainerValue(ContainerValue containerValue) {
-        for (int i = 0, end = containerValue.getElementSize(); i < end; i++) {
-            ReferenceValue refValue = (ReferenceValue) containerValue.getElement(i);
-            IDecisionVariable referencedVariable = extractVar(refValue);
-            visitPipelineElement(referencedVariable);
+        if (null != containerValue) {
+            for (int i = 0, end = containerValue.getElementSize(); i < end; i++) {
+                ReferenceValue refValue = (ReferenceValue) containerValue.getElement(i);
+                IDecisionVariable referencedVariable = extractVar(refValue);
+                visitPipelineElement(referencedVariable);
+            }
         }
     }
     
