@@ -8,5 +8,5 @@ HwNode\:olynthos1\:AVAILABLE=1.0
 Cloud\:AWS\:PING=150
 DataSource\:SwitchPip\:Random\ Source\:VOLUME=1000
 Pipeline\:SwitchPip\:LATENCY=140
-Infrastructure\:AVAILABLE_MACHINES=50
-Infrastructure\:USED_MACHINES=20
+Infrastructure\:\:AVAILABLE_MACHINES=50
+Infrastructure\:\:USED_MACHINES=20

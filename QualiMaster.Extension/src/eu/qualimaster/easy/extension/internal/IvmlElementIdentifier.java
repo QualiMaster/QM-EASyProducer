@@ -400,7 +400,7 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
             }
             String normalizedName = ObservableMapping.mapReverseGeneralObservable(varName);
             if (null != normalizedName) {
-                varName = /*":" +*/ normalizedName;
+                varName = ":" + normalizedName; // INFRASTRUCTURE observables have ::
             }
             id = MAIN_PROJECT_ID + varName;
         }
