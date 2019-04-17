@@ -106,19 +106,6 @@ public class ConfigurationInitializer {
                 select(initActual, SLOT_REPLAYSINK_AVAILABLE, SLOT_REPLAYSINK_ACTUAL));            
             VariableValueCopier copier = new VariableValueCopier(newVariablePrefix, specSource, specFamily, specSink, 
                 specReplaySink);
-            if (null != mapping) {
-                copier.setAssignmentListener(new VariableValueCopier.IAssignmentListener() {
-                    
-                    @Override
-                    public void notifyCreated(IDecisionVariable origin, IDecisionVariable target) {
-                        mapping.addVariableMapping(origin, target);
-                    }
-                    
-                    @Override
-                    public void notifyAssigned(IDecisionVariable target, Value value, boolean added) {
-                    }
-                });
-            }
             copier.process(config);
         } catch (ConfigurationException e1) {
             throw new VilException(e1, VilException.ID_RUNTIME);
