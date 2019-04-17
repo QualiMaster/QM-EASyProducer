@@ -25,7 +25,6 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 
-import eu.qualimaster.coordination.RuntimeVariableMapping;
 import eu.qualimaster.coordination.events.AlgorithmProfilingEvent;
 import eu.qualimaster.easy.extension.ObservableMapping;
 import eu.qualimaster.easy.extension.QmConstants;
@@ -61,7 +60,8 @@ import net.ssehub.easy.varModel.model.values.ValueFactory;
  * 
  * @author El-Sharkawy
  */
-public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElementIdentifier.ObservableTuple> {
+public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElementIdentifier.ObservableTuple> 
+    implements PipelineVisitor.IVariableMapper {
 
     private static final String MAIN_PROJECT_ID = FrozenSystemState.INFRASTRUCTURE + FrozenSystemState.SEPARATOR;
     private static final Set<String> PROFILING_PIPELINES =  new HashSet<String>();
@@ -164,18 +164,15 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
     private List<IDecisionVariable> pipelines;
     private Map<String, PipelineContentsContainer> pipelineInfos;
     private Map<String, List<String>> cachedIDSegments;
-    private RuntimeVariableMapping rMapping;
+    private Map<IDecisionVariable, IDecisionVariable> varMapping = new HashMap<IDecisionVariable, IDecisionVariable>();
     
     /**
      * Sole constructor for this class.
      * @param config The used configuration, needed to perform queries.
-     * @param rMapping the runtime variable mapping containing variables that have been cloned/copied 
-     *   to store individual monitoring information per pipeline (may be <b>null</b> for none, then 
-     *   monitoring values are bound to the originally configured variables, not the clones, i.e., are
-     *   the same for all pipelines)
      */
-    public IvmlElementIdentifier(Configuration config, RuntimeVariableMapping rMapping) {
+    public IvmlElementIdentifier(Configuration config) {
         pipelines = new ArrayList<>();
+        
         for (IDecisionVariable variable : config) {
             if (variable.getDeclaration().getType().getName().equals(QmConstants.TYPE_PIPELINE)) {
                 pipelines.add(variable);
@@ -184,7 +181,13 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
 
         cachedIDSegments = new HashMap<>();
         pipelineInfos = new HashMap<>();
-        this.rMapping = rMapping;
+    }
+
+    @Override
+    public void map(IDecisionVariable original, IDecisionVariable copy) {
+        if (null != original && copy != null) {
+            varMapping.put(original, copy);
+        }
     }
     
     /**
@@ -203,7 +206,7 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
                 }
             }
             if (null != pipeline) {
-                PipelineVisitor visitor = new PipelineVisitor(pipeline);
+                PipelineVisitor visitor = new PipelineVisitor(pipeline, this);
                 infos = visitor.getPipelineContents();
             }
             
@@ -430,8 +433,11 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
     @Override
     protected IDecisionVariable mapVariable(IDecisionVariable variable) {
         IDecisionVariable result = variable;
-        if (null != rMapping) {
-            result = rMapping.getMappedCopy(variable); // either variable or mapped, never null
+        if (null != variable) {
+            IDecisionVariable tmp = varMapping.get(variable);
+            if (null != tmp) {
+                result = tmp;
+            }
         }
         return result;
     }

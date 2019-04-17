@@ -19,10 +19,6 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
-import eu.qualimaster.coordination.RepositoryConnector;
-import eu.qualimaster.coordination.RepositoryConnector.Models;
-import eu.qualimaster.coordination.RepositoryConnector.Phase;
-import eu.qualimaster.coordination.RuntimeVariableMapping;
 import eu.qualimaster.coordination.events.ModelUpdatedEvent;
 import eu.qualimaster.events.EventHandler;
 import eu.qualimaster.events.EventManager;
@@ -80,15 +76,7 @@ public class BindValuesInstantiator implements IVilType {
                     configMapping.get(configuration.getConfiguration());
             if (null == aConfig) {
                 net.ssehub.easy.varModel.confModel.Configuration config = configuration.getConfiguration();
-                RuntimeVariableMapping rMapping = null;
-                for (Phase phase: RepositoryConnector.Phase.values()) {
-                    Models models = RepositoryConnector.getModels(phase);
-                    if (models.getConfiguration() == config) {
-                        rMapping = models.getVariableMapping();
-                        break;
-                    }
-                }
-                aConfig = new AdaptiveConfiguration<>(config, new IvmlElementIdentifier(config, rMapping));
+                aConfig = new AdaptiveConfiguration<>(config, new IvmlElementIdentifier(config));
                 configMapping.put(configuration.getConfiguration(), aConfig);
             }
 
