@@ -80,8 +80,7 @@ public class Debug extends AbstractDebug {
                     exec.stopAfterBindValues();
                     try {
                         exec.execute();
-                        ReasonerFrontend.getInstance().check(config.getProject(), config, CONFIGURATION,
-                                ProgressObserver.NO_OBSERVER);
+                        ReasonerFrontend.getInstance().check(config, CONFIGURATION, ProgressObserver.NO_OBSERVER);
                     } catch (Exception e) { // be extremely careful
                         System.err.println("During value binding: " + e.getMessage());
                         e.printStackTrace();
