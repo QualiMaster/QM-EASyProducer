@@ -71,7 +71,7 @@ public class DebugParallel extends AbstractDebug {
             while (count.getAndDecrement() > 0) {
                 System.out.println("> " + name);
                 try {
-                    ReasoningResult rr = ReasonerFrontend.getInstance().propagate(cfg.getProject(), cfg, RCFG, 
+                    ReasoningResult rr = ReasonerFrontend.getInstance().propagate(cfg, RCFG, 
                         ProgressObserver.NO_OBSERVER);
                     rr.logInformation(cfg.getProject(), RCFG);
                 } catch (Throwable t) {

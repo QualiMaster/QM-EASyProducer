@@ -66,7 +66,7 @@ public class DebugModelPruning extends AbstractDebug {
         Script script = RepositoryHelper.obtainModel(BuildModel.INSTANCE, "QM", null);
         
         // Validate model before instantiation as it is done in QM-IConf
-        ReasoningResult rr = ReasonerFrontend.getInstance().propagate(config.getProject(), config, RCONFIG, 
+        ReasoningResult rr = ReasonerFrontend.getInstance().propagate(config, RCONFIG, 
             ProgressObserver.NO_OBSERVER);
         rr.logInformation(config.getProject(), RCONFIG);
         
@@ -80,7 +80,7 @@ public class DebugModelPruning extends AbstractDebug {
             
             @Override
             public void reason(Configuration config) {
-                ReasoningResult rr = ReasonerFrontend.getInstance().propagate(config.getProject(), config, RCONFIG,
+                ReasoningResult rr = ReasonerFrontend.getInstance().propagate(config, RCONFIG,
                     ProgressObserver.NO_OBSERVER);
                 rr.logInformation(config.getProject(), RCONFIG);
             }
