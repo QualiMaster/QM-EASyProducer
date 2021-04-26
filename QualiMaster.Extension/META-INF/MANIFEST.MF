@@ -2,6 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: QualiMaster extension for EASy-Producer
 Bundle-SymbolicName: QualiMaster.Extension;singleton:=true
+Automatic-Module-Name: QualiMaster.Extension
 Bundle-Version: 0.2.0
 Bundle-Vendor: QualiMaster Consortium
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
