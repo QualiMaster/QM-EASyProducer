@@ -59,6 +59,7 @@
 		<fileset dir="${eclipse.plugins.dir}">
 			<include name="**/*.jar" />
             <exclude name="**/org.apache.ant_*/**"/>
+            <exclude name="**/org.jacoco*/**"/>
 		</fileset>
 	</path>
 	
