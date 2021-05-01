@@ -60,6 +60,7 @@
 			<include name="**/*.jar" />
             <exclude name="**/org.apache.ant_*/**"/>
             <exclude name="**/org.jacoco*/**"/>
+            <exclude name="**/org.apache.xerces*/**"/>
 		</fileset>
 	</path>
 	
