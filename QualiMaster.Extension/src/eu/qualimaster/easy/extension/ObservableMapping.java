@@ -94,7 +94,7 @@ public class ObservableMapping {
     /**
      * Returns the variable name for an {@link IObservable} of an algorithm.
      * @param implementingObservableName The name of an {@link IObservable} implementation.
-     * @return the variable name of the IVML model, or <tt>null</tt> if there is no such {@link IObservable}.
+     * @return the variable name of the IVML model, or <code>null</code> if there is no such {@link IObservable}.
      */
     public static String mapAlgorithmObservable(String implementingObservableName) {
         return ALGORITHM_OBSERVABLES.get(implementingObservableName);
@@ -103,7 +103,7 @@ public class ObservableMapping {
     /**
      * Returns {@link IObservable#name()} for a given runtime variable of the IVML model of an algorithm.
      * @param variableObservableName a runtime variable of an algorithm
-     * @return {@link IObservable#name()} or <tt>null</tt> if there exist no such {@link IObservable} for the given
+     * @return {@link IObservable#name()} or <code>null</code> if there exist no such {@link IObservable} for the given
      *     variable name. This must be an variable name and not a display name! 
      */
     public static String mapReverseAlgorithmObservable(String variableObservableName) {
@@ -113,7 +113,7 @@ public class ObservableMapping {
     /**
      * Returns the variable name for an {@link IObservable} (not useable for algorithms).
      * @param implementingObservableName The name of an {@link IObservable} implementation.
-     * @return the variable name of the IVML model, or <tt>null</tt> if there is no such {@link IObservable}.
+     * @return the variable name of the IVML model, or <code>null</code> if there is no such {@link IObservable}.
      */
     public static String mapGeneralObservable(String implementingObservableName) {
         return GENERAL_OBSERVABLES.get(implementingObservableName);
@@ -122,7 +122,7 @@ public class ObservableMapping {
     /**
      * Returns {@link IObservable#name()} for a given runtime variable of the IVML model (not useable for algorithms).
      * @param variableObservableName a runtime variable
-     * @return {@link IObservable#name()} or <tt>null</tt> if there exist no such {@link IObservable} for the given
+     * @return {@link IObservable#name()} or <code>null</code> if there exist no such {@link IObservable} for the given
      *     variable name. This must be an variable name and not a display name! 
      */
     public static String mapReverseGeneralObservable(String variableObservableName) {

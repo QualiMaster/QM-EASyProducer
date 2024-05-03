@@ -259,7 +259,7 @@ public class Utils {
      * Extracts an {@link IDecisionVariable} from the given {@link ReferenceValue}.
      * @param refValue A value pointing to an element of a pipeline.
      * @param config The complete configuration form where to take the {@link IDecisionVariable}.
-     * @return The referenced {@link IDecisionVariable} or in case of any errors <tt>null</tt>.
+     * @return The referenced {@link IDecisionVariable} or in case of any errors <code>null</code>.
      */
     public static IDecisionVariable extractVariable(ReferenceValue refValue, Configuration config) {
         IDecisionVariable result = null;

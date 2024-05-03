@@ -21,8 +21,8 @@ import eu.qualimaster.observables.IObservable;
 import net.ssehub.easy.instantiation.core.model.vilTypes.IVilType;
 import net.ssehub.easy.instantiation.core.model.vilTypes.Instantiator;
 import net.ssehub.easy.instantiation.core.model.vilTypes.Map;
-import net.ssehub.easy.instantiation.core.model.vilTypes.OperationMeta;
 import net.ssehub.easy.instantiation.core.model.vilTypes.ParameterMeta;
+import net.ssehub.easy.instantiation.core.model.vilTypes.ReturnGenerics;
 import net.ssehub.easy.instantiation.core.model.vilTypes.Set;
 
 import static eu.qualimaster.easy.extension.internal.PredictionUtils.*;
@@ -47,7 +47,7 @@ public class ParameterPrediction implements IVilType {
      * @return the predictions per algorithm/observables, if not possible individual predictions may be <b>null</b>
      *     or the entire result may be <b>null</b> if there is no prediction at all
      */
-    @OperationMeta(returnGenerics = {String.class, Map.class, IObservable.class, Double.class})
+    @ReturnGenerics({String.class, Map.class, IObservable.class, Double.class})
     public static Map<String, Map<IObservable, Double>> parameterPrediction(String pipeline, String pipelineElement, 
         String parameter,
         @ParameterMeta(generics = {IObservable.class}) 

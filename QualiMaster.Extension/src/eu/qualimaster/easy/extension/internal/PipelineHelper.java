@@ -26,7 +26,7 @@ import net.ssehub.easy.instantiation.core.model.vilTypes.Collection;
 import net.ssehub.easy.instantiation.core.model.vilTypes.IVilType;
 import net.ssehub.easy.instantiation.core.model.vilTypes.Instantiator;
 import net.ssehub.easy.instantiation.core.model.vilTypes.Invisible;
-import net.ssehub.easy.instantiation.core.model.vilTypes.OperationMeta;
+import net.ssehub.easy.instantiation.core.model.vilTypes.ReturnGenerics;
 import net.ssehub.easy.instantiation.core.model.vilTypes.Set;
 import net.ssehub.easy.instantiation.core.model.vilTypes.SetSet;
 import net.ssehub.easy.instantiation.core.model.vilTypes.configuration.Configuration;
@@ -197,7 +197,7 @@ public class PipelineHelper implements IVilType {
      * @return the pipelines (may be empty)
      * @throws VilException in case that accessing a pipeline fails
      */
-    @OperationMeta(returnGenerics = DecisionVariable.class)
+    @ReturnGenerics(DecisionVariable.class)
     public static Set<DecisionVariable> obtainPipeline(Configuration configuration, Collection<?> clauses) 
         throws VilException {
         Iterator<?> iter = null == clauses ? null : clauses.iterator();
@@ -212,7 +212,7 @@ public class PipelineHelper implements IVilType {
      * @return the pipelines (may be empty)
      * @throws VilException in case that accessing a pipeline fails
      */
-    @OperationMeta(returnGenerics = DecisionVariable.class)
+    @ReturnGenerics(DecisionVariable.class)
     public static Set<DecisionVariable> obtainPipeline(Configuration configuration, Iterator<?> clauses) 
         throws VilException {
         java.util.Set<String> done = new HashSet<String>();

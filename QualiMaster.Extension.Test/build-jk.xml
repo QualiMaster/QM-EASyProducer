@@ -1,113 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="QualiMaster.Extension.Test" default="test" basedir="." xmlns:jacoco="antlib:org.jacoco.ant" 
-    xmlns:artifact="antlib:org.apache.maven.artifact.ant">
-	<!-- import von globalen Properties Einstellungen -->
-	<property file="${user.home}/global-build.properties"/>
-	<property file="${user.home}/qualimaster-build.properties"/>
-    
-    <include file="${user.home}/macros.xml"/>
+<project name="QualiMaster.Extension.Test" default="all" basedir=".">
+    <property file="${user.home}/migration.properties"/>
+    <property file="${user.home}/global-build.properties"/>
+    <include file="${user.home}/macros.xml"/>    
 	
-	<!-- Einstellungen fuer dieses Projekt -->
-	<property name="src.dir" value="src"/>
-	<property name="javacSource" value="1.7"/>
-	<property name="javacTarget" value="1.7"/>
+	<target name="all">
+        <maven pomFile="pom.xml" goal="install"/>
 
-    <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml">
-        <classpath path="${jacoco.path}/jacocoant.jar"/>
-    </taskdef>
-	
-	<!-- Check - no typedef shall be required as installed in ANT/lib -->
-    <path id="maven-ant-tasks.classpath" path="${ant-maven.lib}" />
-    <typedef resource="org/apache/maven/artifact/ant/antlib.xml"
-       uri="antlib:org.apache.maven.artifact.ant"
-       classpathref="maven-ant-tasks.classpath" />
-		
-    <!-- THIS IS A REALLY HYBRID BUILD BETWEEN OSGI AND MAVEN/QM-INFRASTRUCTURE  -->
-    
-	<path id ="includes">
-		<pathelement path="${libs.easyLoader}"/>
-		<!-- Model -->
-        <pathelement path="${libs.utils}"/>
-        <pathelement path="${libs.libs.common.io}"/>
-        <pathelement path="${libs.model}"/>
-        <pathelement path="${libs.vil.core}"/>
-        <pathelement path="${libs.template.core}"/>
-        <!-- DSL core common classes -->
-        <pathelement path="${libs.dslCore}"/>       
-        <!-- Instantiation -->
-        <pathelement path="${libs.instantiator.core}"/>
-        <pathelement path="${libs.instantiator.velocity}"/>
-        <pathelement path="${libs.instantiatorCore.rt.core}"/>
-		<pathelement path="${libs.instantiator.serializer}"/>
-		<pathelement path="${libs.libs.maven}"/>
-        <!-- IVML Core -->
-        <pathelement path="${libs.ivml}"/>
-        <!-- reasonerCore -->
-        <pathelement path="${libs.reasonerCore}"/>
-		<pathelement path="${libs.sseReasoner}"/>
-        <!-- VIL -->
-		<pathelement path="${libs.vil.core}"/>
-		<pathelement path="${libs.vil.ui}"/>
-		<pathelement path="../QualiMaster.Extension/build/jar/QualiMaster.Extension.jar"/>
-        <fileset dir="../libs.QualiMaster">
-            <include name="**/*.jar" />
-        </fileset>
-        <fileset dir="lib">
-            <include name="**/*.jar" />
-        </fileset>
-		<!-- Eclipse-Plugins -->
-		<fileset dir="${eclipse.plugins.dir}">
-			<include name="**/*.jar" />
-            <exclude name="**/org.apache.ant_*/**"/>
-            <exclude name="**/org.jacoco*/**"/>
-            <exclude name="**/org.apache.xerces*/**"/>
-		</fileset>
-	</path>
-	
-	<!-- Targets  -->
-	<target name="init">
-		<!-- Delete generated folders -->
-		<delete dir="${build.base.dir}"/>
-		
-		<!-- Create folders -->
-        <mkdir dir="${build.base.dir}"/>
-		<mkdir dir="${build.classes.dir}"/>
-		<mkdir dir="${build.jar.dir}"/>
-	
+        <delete failonerror="false" dir="bin"/>
+		<delete failonerror="false" dir="target"/>
+        <delete failonerror="false" dir=".m2"/>  
 	</target>
-	
-	<!-- Compile all files without test classes -->
-	<target name="compile" depends="init">
-		<javac srcdir="${src.dir}" debug="on" destdir="${build.classes.dir}" includeAntRuntime="no" failonerror="true" source="${javacSource}" target="${javacTarget}" encoding="${javac.encoding}">
-            <classpath refid="includes" />	
-        </javac>
-    </target>
-	
-	<target name="test" depends="compile">
-      <jacoco:coverage output="file" destfile="jacoco.exec" excludes="backtype.*:org.apache.thrift7.*">
-        <junit printsummary="withOutAndErr" dir="${build.base.dir}" fork="true" timeout="240000" showoutput="yes">
-            <classpath>
-                <path refid="includes" />
-                <pathelement location="${build.classes.dir}" />
-            </classpath>
-            <test name="test.eu.qualimaster.easy.extension.internal.AllTests" haltonfailure="no" outfile="result">
-                <formatter type="xml" />
-            </test>
-            <jvmarg value="-Dqm.base.dir=${home.QualiMaster.Extension.Test.java.dir}"/>
-            <env key="STORM_TEST_TIMEOUT_MS" value="20000"/>
-          </junit>
-      </jacoco:coverage>
-      
-		<jacoco:report>
-		    <executiondata>
-		        <file file="jacoco.exec"/>
-		    </executiondata>
-		    <structure name="QualiMaster.Extension">
-		        <classfiles>
-		            <fileset dir="${build.classes.dir}"/>
-		        </classfiles>
-		    </structure>
-		    <html destdir="report"/>
-		</jacoco:report>      
-    </target>
 </project>

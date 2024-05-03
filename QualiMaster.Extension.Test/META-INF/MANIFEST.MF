@@ -3,25 +3,23 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Tests for the EASy extension for QualiMaster
 Bundle-SymbolicName: QualiMaster.Extension.Test
 Automatic-Module-Name: QualiMaster.Extension.Test
-Bundle-Version: 0.2.0
-Require-Bundle: QualiMaster.Extension;bundle-version="0.2.0",
+Bundle-Version: 0.5.0.qualifier
+Require-Bundle: QualiMaster.Extension,
  org.junit;bundle-version="4.8.2",
- net.ssehub.easy.varModel,
- net.ssehub.easy.instantiation.core;bundle-version="0.11.2",
- de.uni-hildesheim.sse.easy.instantiatorCore.rt;bundle-version="0.0.1",
- net.ssehub.easy.instantiation.core,
+ net.ssehub.easy.instantiation.core;visibility:=reexport,
+ de.uni-hildesheim.sse.easy.instantiatorCore.rt,
  net.ssehub.easy.basics,
- net.ssehub.easy.varModel,
+ net.ssehub.easy.varModel;visibility:=reexport,
  de.uni_hildesheim.sse.ivml,
- org.eclipse.equinox.ds;resolution:=optional,
+ org.eclipse.osgi.services,
  org.apache.felix.scr;resolution:=optional,
  org.eclipse.core.runtime,
  org.eclipse.osgi.services,
- de.uni_hildesheim.sse.vil.rt;bundle-version="0.0.1",
-  de.uni_hildesheim.sse.vil.buildlang;bundle-version="1.0.0",
- de.uni_hildesheim.sse.vil.expressions;bundle-version="1.0.0",
- de.uni_hildesheim.sse.vil.templatelang;bundle-version="1.0.0",
- net.ssehub.easy.reasoning.core;bundle-version="1.0.0",
- net.ssehub.easy.reasoning.sseReasoner;bundle-version="1.0.0",
- net.ssehub.easy.instantiation.serializer.xml;bundle-version="1.2.0",
- net.ssehub.easy.instantiation.maven;bundle-version="3.2.3"
+ de.uni_hildesheim.sse.vil.rt,
+ de.uni_hildesheim.sse.vil.buildlang,
+ de.uni_hildesheim.sse.vil.expressions,
+ de.uni_hildesheim.sse.vil.templatelang,
+ net.ssehub.easy.reasoning.core,
+ net.ssehub.easy.reasoning.sseReasoner,
+ net.ssehub.easy.instantiation.serializer.xml,
+ net.ssehub.easy.instantiation.maven

@@ -70,9 +70,9 @@ public class PipelineVisitor {
      * Constructor for deciding whether runtime instances shall be mapped or whether this is not needed. No mapper.
      * 
      * @param pipeline The pipeline for which the information should be extracted.
-     * @param initializeRuntimeMapping <tt>true</tt> runtime variables will be mapped, <tt>false</tt> mapping is not
-     * needed. Mapping (<tt>true</tt>) is only needed during adaptation, no mapping (<tt>false</tt>) is needed
-     * in QM-Iconf application.
+     * @param initializeRuntimeMapping <code>true</code> runtime variables will be mapped, <code>false</code> mapping 
+     * is not needed. Mapping (<code>true</code>) is only needed during adaptation, no mapping (<code>false</code>) 
+     * is needed in QM-Iconf application.
      */
     public PipelineVisitor(IDecisionVariable pipeline, boolean initializeRuntimeMapping) {
         this(pipeline, initializeRuntimeMapping, null);
@@ -82,9 +82,9 @@ public class PipelineVisitor {
      * Constructor for deciding whether runtime instances shall be mapped or whether this is not needed. 
      * 
      * @param pipeline The pipeline for which the information should be extracted.
-     * @param initializeRuntimeMapping <tt>true</tt> runtime variables will be mapped, <tt>false</tt> mapping is not
-     * needed. Mapping (<tt>true</tt>) is only needed during adaptation, no mapping (<tt>false</tt>) is needed
-     * in QM-Iconf application.
+     * @param initializeRuntimeMapping <code>true</code> runtime variables will be mapped, <code>false</code> mapping 
+     * is not needed. Mapping (<code>true</code>) is only needed during adaptation, no mapping (<code>false</code>) is 
+     * needed in QM-Iconf application.
      * @param mapper variable mapper instance to link original and copied variables
      */
     public PipelineVisitor(IDecisionVariable pipeline, boolean initializeRuntimeMapping, IVariableMapper mapper) {
@@ -265,7 +265,7 @@ public class PipelineVisitor {
     /**
      * Extracts an {@link IDecisionVariable} from the given {@link ReferenceValue}.
      * @param refValue A value pointing to an element of a pipeline.
-     * @return The referenced {@link IDecisionVariable} or in case of any errors <tt>null</tt>.
+     * @return The referenced {@link IDecisionVariable} or in case of any errors <code>null</code>.
      */
     private IDecisionVariable extractVar(ReferenceValue refValue) {
         return Utils.extractVariable(refValue, config);

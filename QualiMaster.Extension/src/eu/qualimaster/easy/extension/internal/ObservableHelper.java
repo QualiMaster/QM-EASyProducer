@@ -22,8 +22,8 @@ import eu.qualimaster.observables.IObservable;
 import net.ssehub.easy.instantiation.core.model.vilTypes.IVilType;
 import net.ssehub.easy.instantiation.core.model.vilTypes.Instantiator;
 import net.ssehub.easy.instantiation.core.model.vilTypes.Map;
-import net.ssehub.easy.instantiation.core.model.vilTypes.OperationMeta;
 import net.ssehub.easy.instantiation.core.model.vilTypes.ParameterMeta;
+import net.ssehub.easy.instantiation.core.model.vilTypes.ReturnGenerics;
 import net.ssehub.easy.instantiation.core.model.vilTypes.Set;
 import net.ssehub.easy.instantiation.core.model.vilTypes.TypeDescriptor;
 import net.ssehub.easy.instantiation.rt.core.model.rtVil.types.RtVilTypeRegistry;
@@ -53,7 +53,7 @@ public class ObservableHelper implements IVilType {
      * @param ivmlNames the names to be mapped
      * @return the name-observable mapping
      */
-    @OperationMeta(returnGenerics = {String.class, IObservable.class})
+    @ReturnGenerics({String.class, IObservable.class})
     public static Map<String, IObservable> mapObservable(
         @ParameterMeta(generics = {String.class}) 
         Set<String> ivmlNames) {

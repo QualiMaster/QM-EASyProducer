@@ -25,7 +25,7 @@ import eu.qualimaster.coordination.INameMapping.Component;
 import net.ssehub.easy.instantiation.core.model.vilTypes.IVilType;
 import net.ssehub.easy.instantiation.core.model.vilTypes.Instantiator;
 import net.ssehub.easy.instantiation.core.model.vilTypes.ListSequence;
-import net.ssehub.easy.instantiation.core.model.vilTypes.OperationMeta;
+import net.ssehub.easy.instantiation.core.model.vilTypes.ReturnGenerics;
 import net.ssehub.easy.instantiation.core.model.vilTypes.Sequence;
 import net.ssehub.easy.instantiation.core.model.vilTypes.UnmodifiableSequence;
 
@@ -44,7 +44,7 @@ public class SubTopologyComponentsHelper implements IVilType {
      * @param algorithm the algorithm name
      * @return the names of the sub-topology components, may be empty if there are none
      */
-    @OperationMeta(returnGenerics = {String.class})
+    @ReturnGenerics({String.class})
     public static Sequence<String> getSubTopologyComponents(String pipeline, String algorithm) {
         INameMapping mapping = AdaptationManager.getNameMapping(pipeline);
         Algorithm alg = mapping.getAlgorithm(algorithm);

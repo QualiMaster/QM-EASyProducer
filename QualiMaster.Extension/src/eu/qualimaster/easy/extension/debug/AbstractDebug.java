@@ -38,7 +38,7 @@ public abstract class AbstractDebug {
         try {
             Method m = cls.getDeclaredMethod("activate", ComponentContext.class);
             m.setAccessible(true);
-            Object o  = cls.newInstance();
+            Object o  = cls.getDeclaredConstructor().newInstance();
             Object[] param = new Object[1];
             param[0] = null;
             m.invoke(o, param);

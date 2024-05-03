@@ -68,7 +68,7 @@ public class BindValuesInstantiator implements IVilType {
     /**
      * Binds the values of the given mapping to the configuration.
      * @param configuration The configuration, which shall receive the new values from the mapping
-     * @param bindings The new values to set in form of <tt>&lt;id for a (nested) variable, value&gt;</tt>
+     * @param bindings The new values to set in form of <code>&lt;id for a (nested) variable, value&gt;</code>
      */
     public static void storeValueBinding(Configuration configuration, Map<String, Object> bindings) {
         synchronized (configMapping) {
@@ -90,7 +90,7 @@ public class BindValuesInstantiator implements IVilType {
     /**
      * Converts and Vil-Map into a Java-Map and calls {@link #storeValueBinding(Configuration, Map)}.
      * @param configuration The configuration, which shall receive the new values from the mapping
-     * @param bindings The new values to set in form of <tt>&lt;id for a (nested) variable, value&gt;</tt>
+     * @param bindings The new values to set in form of <code>&lt;id for a (nested) variable, value&gt;</code>
      */
     public static void storeValueBinding(Configuration configuration,
         net.ssehub.easy.instantiation.core.model.vilTypes.Map<String, Object> bindings) {

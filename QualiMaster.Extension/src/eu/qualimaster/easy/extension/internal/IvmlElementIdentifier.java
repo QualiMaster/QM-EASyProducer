@@ -55,8 +55,7 @@ import net.ssehub.easy.varModel.model.values.ValueDoesNotMatchTypeException;
 import net.ssehub.easy.varModel.model.values.ValueFactory;
 
 /**
- * Uses {@link IvmlElement}s and {@link IObservable}s to identify temporary value mappings inside the
- * {@link net.ssehub.easy.adaptiveVarModel.confModel.AdaptiveConfiguration}.
+ * Uses {@link IvmlElement}s and {@link IObservable}s to identify temporary value mappings.
  * 
  * @author El-Sharkawy
  */
@@ -153,7 +152,7 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
          * @param element
          *            The (top level) variable to map.
          * @param observable
-         *            An observable nested inside of <tt>element</tt>
+         *            An observable nested inside of <code>element</code>
          */
         public ObservableTuple(IvmlElement element, IObservable observable) {
             this.element = element;
@@ -522,8 +521,8 @@ public class IvmlElementIdentifier extends AbstractVariableIdentifier<IvmlElemen
      * @param value The value to set.
      * @param familyElement A family element of a pipeline.
      * @param slot The slot to configure with the given value.
-     * @throws ConfigurationException in case that the types of 
-     *   {@link #getDeclaration()} and <code>value</code> do not comply
+     * @throws ConfigurationException in case that the types of the variable declaration 
+     *   and <code>value</code> do not comply
      */
     private void setValueForAvailableAlgorithms(Value value, IDecisionVariable familyElement, String slot)
         throws ConfigurationException {

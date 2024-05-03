@@ -60,7 +60,7 @@ public class ModelStatistics extends AbstractConfigurationStatisticsVisitor.Conf
     
     /**
      * Counts a new variable instance.
-     * @param typeName The kind of model element to count, e.g., ALgorithm or Family. Must not be <tt>null</tt>.
+     * @param typeName The kind of model element to count, e.g., ALgorithm or Family. Must not be <code>null</code>.
      */
     void incInstance(String typeName) {
         switch (typeName) {

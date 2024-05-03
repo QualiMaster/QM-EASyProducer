@@ -24,7 +24,7 @@ import eu.qualimaster.infrastructure.IScalingDescriptor;
 import net.ssehub.easy.instantiation.core.model.vilTypes.IVilType;
 import net.ssehub.easy.instantiation.core.model.vilTypes.Instantiator;
 import net.ssehub.easy.instantiation.core.model.vilTypes.Map;
-import net.ssehub.easy.instantiation.core.model.vilTypes.OperationMeta;
+import net.ssehub.easy.instantiation.core.model.vilTypes.ReturnGenerics;
 import net.ssehub.easy.instantiation.core.model.vilTypes.TypeDescriptor;
 import net.ssehub.easy.instantiation.rt.core.model.rtVil.types.RtVilTypeRegistry;
 
@@ -47,7 +47,7 @@ public class SubTopologyScalingHelper implements IVilType {
      * @param executors scale the executors or the tasks
      * @return the expected scaling (no scaling if empty)
      */
-    @OperationMeta(returnGenerics = {String.class, Integer.class})
+    @ReturnGenerics({String.class, Integer.class})
     public static Map<String, Integer> getSubTopologyScaling(String pipeline, String algorithm, double factor, 
         boolean executors) {
         java.util.Map<Object, Object> tmp = new HashMap<Object, Object>(); 
@@ -79,7 +79,7 @@ public class SubTopologyScalingHelper implements IVilType {
      * @param diffs return the differences (<code>true</code>) or the absolute values (<code>false</code>)
      * @return the expected scaling (no scaling if empty)
      */
-    @OperationMeta(returnGenerics = {String.class, Integer.class})
+    @ReturnGenerics({String.class, Integer.class})
     public static Map<String, Integer> getSubTopologyScaling(String pipeline, String algorithm, int oldExecutors, 
         int newExecutors, boolean diffs) {
         java.util.Map<Object, Object> tmp = new HashMap<Object, Object>(); 

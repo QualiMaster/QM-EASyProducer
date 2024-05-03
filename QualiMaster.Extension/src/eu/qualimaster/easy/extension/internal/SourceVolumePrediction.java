@@ -15,13 +15,14 @@
  */
 package eu.qualimaster.easy.extension.internal;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 
 import net.ssehub.easy.instantiation.core.model.vilTypes.IVilType;
 import net.ssehub.easy.instantiation.core.model.vilTypes.Instantiator;
 import net.ssehub.easy.instantiation.core.model.vilTypes.Map;
-import net.ssehub.easy.instantiation.core.model.vilTypes.OperationMeta;
 import net.ssehub.easy.instantiation.core.model.vilTypes.ParameterMeta;
+import net.ssehub.easy.instantiation.core.model.vilTypes.ReturnGenerics;
 import net.ssehub.easy.instantiation.core.model.vilTypes.Sequence;
 import net.ssehub.easy.instantiation.core.model.vilTypes.TypeDescriptor;
 import net.ssehub.easy.instantiation.core.model.vilTypes.TypeRegistry;
@@ -41,14 +42,9 @@ public class SourceVolumePrediction implements IVilType {
         SourceVolumePredictor impl = null;
         try {
             Class<?> cls = Class.forName("eu.qualimaster.easy.extension.internal.SourceVolumePredictorImpl");
-            impl = (SourceVolumePredictor) cls.newInstance();
-        } catch (ClassNotFoundException e) {
-            error(e);
-        } catch (InstantiationException e) {
-            error(e);
-        } catch (IllegalAccessException e) {
-            error(e);
-        } catch (ClassCastException e) {
+            impl = (SourceVolumePredictor) cls.getDeclaredConstructor().newInstance();
+        } catch (InvocationTargetException | NoSuchMethodException | ClassNotFoundException 
+            | InstantiationException | IllegalAccessException | ClassCastException e) {
             error(e);
         }
         if (null == impl) {
@@ -74,7 +70,7 @@ public class SourceVolumePrediction implements IVilType {
      * @param keywords the keywords to predict for
      * @return the predicted new value (may be <b>null</b> if there is no prediction)
      */
-    @OperationMeta(returnGenerics = {String.class, Double.class} )
+    @ReturnGenerics({String.class, Double.class})
     public static Map<String, Double> sourceVolumePrediction(String pipeline, String source, 
         @ParameterMeta(generics = {String.class})
         Sequence<String> keywords) {

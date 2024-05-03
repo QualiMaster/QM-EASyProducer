@@ -129,7 +129,7 @@ public class PipelineContentsContainer {
     /**
      * Returns whether the given {@link IDecisionVariable} is a mapped runtime counterpart of a model element.
      * @param var The {@link IDecisionVariable} to test.
-     * @return <tt>true</tt> if it is a runtime variable, <tt>false</tt> if it is an element of the originaly
+     * @return <code>true</code> if it is a runtime variable, <code>false</code> if it is an element of the originally
      *     defined model.
      */
     public static boolean isMappingVariable(IDecisionVariable var) {
@@ -165,7 +165,7 @@ public class PipelineContentsContainer {
      * Part of {@link #gatherAlgorithms()}, collects one (original) algorithm together with its mapped counterpart.
      * @param config The top level configuration, needed for querying {@link IDecisionVariable}s.
      * @param referencedOrgAlgos A container value containing reference values to algorithms.
-     * @param runtimeAlgorithms A list of already mapped counterparts. Maybe <tt>null</tt>,
+     * @param runtimeAlgorithms A list of already mapped counterparts. Maybe <code>null</code>,
      *     in this case no mapping will be created.
      */
     private void collectAlgorithmFromFamily(Configuration config, ContainerValue referencedOrgAlgos,
@@ -219,7 +219,7 @@ public class PipelineContentsContainer {
      * Creates the mapping structure for mapping runtime variables. This does not work for algorithms of a family,
      * because they have a different nesting structure.
      * @param orignalVariables The list of original variables for which the mapped variables shall be retrieved.
-     *   One of <tt>sources, sinks</tt>
+     *   One of <code>sources, sinks</code>
      * @param slotName The slot name of the pipeline element, which is pointing to the selected element. 
      * @param mapping The mapping to be filled, e.g., (original source name, mapped source instance).
      */
@@ -376,7 +376,7 @@ public class PipelineContentsContainer {
     
     /**
      * Returns a list of all member sources of the visited pipeline.
-     * @return A unmodifiable list of source elements of the pipeline, won't be <tt>null</tt>.
+     * @return A unmodifiable list of source elements of the pipeline, won't be <code>null</code>.
      */
     public List<IDecisionVariable> getSources() {
         return Collections.unmodifiableList(new ArrayList<>(sources));
@@ -384,7 +384,7 @@ public class PipelineContentsContainer {
     
     /**
      * Returns a list of all member non replay sinks of the visited pipeline.
-     * @return A unmodifiable list of non replay sink elements of the pipeline, won't be <tt>null</tt>.
+     * @return A unmodifiable list of non replay sink elements of the pipeline, won't be <code>null</code>.
      */
     public List<IDecisionVariable> getSinks() {
         return Collections.unmodifiableList(new ArrayList<>(sinks));
@@ -392,7 +392,7 @@ public class PipelineContentsContainer {
     
     /**
      * Returns a list of all member replay sinks of the visited pipeline.
-     * @return A unmodifiable list of replay sink elements of the pipeline, won't be <tt>null</tt>.
+     * @return A unmodifiable list of replay sink elements of the pipeline, won't be <code>null</code>.
      */
     public List<IDecisionVariable> getReplaySinks() {
         return Collections.unmodifiableList(new ArrayList<>(replaySinks));
@@ -400,7 +400,7 @@ public class PipelineContentsContainer {
     
     /**
      * Returns a list of all member family elements of the visited pipeline.
-     * @return A unmodifiable list of family elements of the pipeline, won't be <tt>null</tt>.
+     * @return A unmodifiable list of family elements of the pipeline, won't be <code>null</code>.
      */
     public List<IDecisionVariable> getFamilyElements() {
         return Collections.unmodifiableList(new ArrayList<>(familyElements));
@@ -408,7 +408,7 @@ public class PipelineContentsContainer {
     
     /**
      * Returns a list of all member data management elements of the visited pipeline.
-     * @return A unmodifiable list of data management elements of the pipeline, won't be <tt>null</tt>.
+     * @return A unmodifiable list of data management elements of the pipeline, won't be <code>null</code>.
      */
     public List<IDecisionVariable> getDataManagementElements() {
         return Collections.unmodifiableList(new ArrayList<>(dataManagementElements));

@@ -72,10 +72,11 @@ public class QualiMasterConfigurationSaver extends net.ssehub.easy.varModel.conf
      *   configuration to {@link Configuration#getProject()} (<code>false</code>)
      * @param onlyUserInput Specifies whether only user Input should be stored:
      * <ul>
-     *     <li><tt>true:</tt> Assignments in state {@link AssignmentState#ASSIGNED} and {@link AssignmentState#FROZEN}
-     *         will be saved.</li>
-     *     <li><tt>false: Assignments in state {@link AssignmentState#ASSIGNED}, {@link AssignmentState#FROZEN}, and
-     *         {@link AssignmentState#DERIVED} will be saved (i.e. also computed values).</tt></li>
+     *     <li><code>true:</code> Assignments in state {@link AssignmentState#ASSIGNED} and 
+     *         {@link AssignmentState#FROZEN} will be saved.</li>
+     *     <li><code>false</code>: Assignments in state {@link AssignmentState#ASSIGNED}, 
+     *         {@link AssignmentState#FROZEN}, and {@link AssignmentState#DERIVED} will be saved (i.e. also computed 
+     *         values).</li>
      * </ul>
      * @throws ConfigurationException in case of any configuration errors
      */

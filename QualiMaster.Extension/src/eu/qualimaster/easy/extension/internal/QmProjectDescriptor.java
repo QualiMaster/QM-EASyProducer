@@ -12,8 +12,6 @@ import net.ssehub.easy.producer.core.persistence.standard.StandaloneProjectDescr
 
 /**
  * Implements a descriptor for the source and target VIL project locations.
- * The {@link #QMProjectDescriptor(QmProjectDescriptor, File) 
- * second constructor} allows to specify a different target location.
  * 
  * @author Holger Eichelberger
  */
@@ -33,20 +31,18 @@ public class QmProjectDescriptor extends StandaloneProjectDescriptor {
     /**
      * Allows to instantiate the QM model into a given location.
      * 
-     * @param parent the parent descriptor (also representing the source, to
-     *   be obtained via {@link #ProjectDescriptor()})
+     * @param parent the parent descriptor (also representing the source)
      * @param base the folder to instantiate into
      */
     public QmProjectDescriptor(QmProjectDescriptor parent, File base) {
         super(parent, base);
     }
 
-
     /**
      * Selects the main VIL script.
      * 
      * @return the main VIL script
-     * @throws ModelManagementException sin case that resolving the model, obtaining 
+     * @throws ModelManagementException in case that resolving the model, obtaining 
      *   information etc failed.
      */
     private static Script selectMainScript() throws ModelManagementException {

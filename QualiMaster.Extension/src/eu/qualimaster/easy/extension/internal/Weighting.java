@@ -22,8 +22,8 @@ import net.ssehub.easy.instantiation.core.model.vilTypes.IVilType;
 import net.ssehub.easy.instantiation.core.model.vilTypes.Instantiator;
 import net.ssehub.easy.instantiation.core.model.vilTypes.Invisible;
 import net.ssehub.easy.instantiation.core.model.vilTypes.Map;
-import net.ssehub.easy.instantiation.core.model.vilTypes.OperationMeta;
 import net.ssehub.easy.instantiation.core.model.vilTypes.ParameterMeta;
+import net.ssehub.easy.instantiation.core.model.vilTypes.ReturnGenerics;
 import net.ssehub.easy.instantiation.core.model.vilTypes.Set;
 import net.ssehub.easy.instantiation.core.model.vilTypes.TypeDescriptor;
 import net.ssehub.easy.instantiation.core.model.vilTypes.TypeRegistry;
@@ -45,7 +45,7 @@ public class Weighting implements IVilType {
      *     respective maximum
      * @return the "best" solution in terms of the name as maximum of weighted average sums
      */
-    @OperationMeta(returnGenerics = {String.class, Double.class})
+    @ReturnGenerics({String.class, Double.class})
     public static Map<String, Double> weightAll(
         @ParameterMeta(generics = {String.class, Map.class, IObservable.class, Double.class}) 
         Map<String, Map<IObservable, Double>> predictions, 
@@ -64,7 +64,7 @@ public class Weighting implements IVilType {
      * @param costs the costs, i.e., observables to be counted negative
      * @return the "best" solution in terms of the name as maximum of weighted average sums
      */
-    @OperationMeta(returnGenerics = {String.class, Double.class})
+    @ReturnGenerics({String.class, Double.class})
     public static Map<String, Double> weightAll(
         @ParameterMeta(generics = {String.class, Map.class, IObservable.class, Double.class}) 
         Map<String, Map<IObservable, Double>> predictions, 

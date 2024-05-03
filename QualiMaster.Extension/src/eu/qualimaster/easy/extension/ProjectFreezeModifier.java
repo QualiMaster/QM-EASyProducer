@@ -49,9 +49,7 @@ import net.ssehub.easy.varModel.model.values.ValueDoesNotMatchTypeException;
 import net.ssehub.easy.varModel.model.values.ValueFactory;
 
 /**
- * This modifier is used to freeze all relevant declarations inside the CFG projects of Qualimaster. <br/>
- * This modifier is needed by the {@link AbstractInstantiateLocal} to automatically freeze all elements before
- * instantiation.
+ * This modifier is used to freeze all relevant declarations inside the CFG projects of Qualimaster.
  * @author El-Sharkawy
  *
  */
@@ -145,7 +143,8 @@ public class ProjectFreezeModifier implements IProjectModifier {
      * Checks whether the given declaration is a runtime variable.
      * @param config The configuration where the declaration belongs to.
      * @param declaration The declaration to test.
-     * @return <tt>true</tt> if the variable is a runtime variable and should not be frozen, <tt>false</tt> else.
+     * @return <code>true</code> if the variable is a runtime variable and should not be frozen, 
+     * <code>false</code> else.
      */
     private boolean isRuntimeVariable(Configuration config, DecisionVariableDeclaration declaration) {
         boolean isRuntimeVar = false;
@@ -175,7 +174,7 @@ public class ProjectFreezeModifier implements IProjectModifier {
     /**
      * Returns the binding time annotation of the project to create the selector statement of the freeze block.
      * @param project The project for which the freeze block shall be created.
-     * @return The binding time annotation or <tt>null</tt> it could not be found.
+     * @return The binding time annotation or <code>null</code> it could not be found.
      */
     private Attribute getBindingTimeAnnotation(Project project) {
         Attribute btAnnotation = project.getAttribute(QmConstants.ANNOTATION_BINDING_TIME);

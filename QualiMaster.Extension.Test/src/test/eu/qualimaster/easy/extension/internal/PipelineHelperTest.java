@@ -325,8 +325,7 @@ public class PipelineHelperTest {
     }
 
     /**
-     * Tests {@link PipelineElementHelper#obtainPipelineElement(
-     *    net.ssehub.easy.varModel.confModel.Configuration, String)}.
+     * Tests {@link PipelineElementHelper#obtainPipelineElement(Configuration, String)}.
      * 
      * @throws VilException in case that accessing the pipeline or a type fails
      */

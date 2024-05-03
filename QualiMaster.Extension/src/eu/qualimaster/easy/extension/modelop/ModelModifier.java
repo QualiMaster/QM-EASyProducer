@@ -70,7 +70,7 @@ import net.ssehub.easy.varModel.model.rewrite.modifier.ModelElementFilter;
  *   <li>Stores propagated values inside the configuration ({@value #SAVE_VALUES})</li>
  *   <li>Optimizes the model for runtime (prune config) ({@value #PRUNE_CONFIG})</li>
  *   <li>Saves the modified configuration to {@value #COPIED_MODELS_LOCATION} ({@value #WRITE_MODIFIED_CONFIG})</li>
- *   <li>Saves the VIL model to {@value #COPIED_VIL_LOCATION}</li>
+ *   <li>Saves the VIL model to {@value #COPIED_MODELS_LOCATION}</li>
  * </ul>
  * @author El-Sharkawy
  *
@@ -101,7 +101,7 @@ public class ModelModifier {
     
     /**
      * Specifies whether elements shall be deleted, which are not necessary for runtime:
-     * <tt>true</tt> delete frozen and unused elements, <tt>false</tt> do not delete anything.
+     * <code>true</code> delete frozen and unused elements, <code>false</code> do not delete anything.
      */
     private static final boolean PRUNE_CONFIG = true;
     
@@ -120,7 +120,7 @@ public class ModelModifier {
         /**
          * Should start the reasoning to validate a newly generated configuration and to propagate values
          * before its usage.
-         * Should call <tt>Reasoning.reasonOn(false, config);</tt>.
+         * Should call <code>Reasoning.reasonOn(false, config);</code>.
          * @param config The configuration to check (and propagate).
          */
         public void reason(Configuration config);
@@ -148,9 +148,9 @@ public class ModelModifier {
      * Single constructor for this class.
      * @param targetFolder The destination folder where to instantiate all artifacts
      * @param toplevelProject base project, which imports all other projects, e.g.,
-     *     <tt>VariabilityModel.Definition.TOP_LEVEL.getConfiguration().getProject()</tt>
+     *     <code>VariabilityModel.Definition.TOP_LEVEL.getConfiguration().getProject()</code>
      * @param baseLocation The folder where all EASy files (VTL, VIL, IVML) are placed in, e.g.,
-     *     <tt>Location.getModelLocationFile()</tt>
+     *     <code>Location.getModelLocationFile()</code>
      * @param qmApp Optional instance of the application to show error dialogs and to allow reasoning (validation
      * of the generated configuration).
      */
@@ -215,7 +215,7 @@ public class ModelModifier {
     /**
      * Returns the internally used {@link IProjectDescriptor} used by the executor returned by the
      * {@link #createExecutor()} method.
-     * @return The internally used source descriptor or <tt>null</tt> if also no executor is returned.
+     * @return The internally used source descriptor or <code>null</code> if also no executor is returned.
      */
     public IProjectDescriptor getSourceDescriptor() {
         return source;
@@ -224,9 +224,9 @@ public class ModelModifier {
     /**
      * Loads the main model.
      * @param management Either {@link VarModel#INSTANCE} or {@link BuildModel#INSTANCE}
-     * @param fileEnding Either <tt>.ivml</tt> or <tt>_0.vil</tt>.
+     * @param fileEnding Either <code>.ivml</code> or <code>_0.vil</code>.
      * @param <M> Either {@link Project} or {@link Script}.
-     * @return The loaded model or <tt>null</tt> if it was not found.
+     * @return The loaded model or <code>null</code> if it was not found.
      */
     private <M extends IModel> M load(ModelManagement<M> management, String fileEnding) {
         M model = null;
@@ -260,8 +260,8 @@ public class ModelModifier {
     /**
      * Shortcut for {@link #addOrRemoveLocation(File, boolean)} to (un-)load all models an once.
      * @param folder The folder to (un-)register
-     * @param add <tt>true</tt> the folder will be added as possible location for models, <tt>false</tt> the folder
-     *     will be removed.
+     * @param add <code>true</code> the folder will be added as possible location for models, <code>false</code> the 
+     *     folder will be removed.
      */
     private void addOrRemoveLocation(File folder, boolean add) {
         addOrRemoveLocation(VarModel.INSTANCE, folder, add);
@@ -274,8 +274,8 @@ public class ModelModifier {
      * Removed or adds a (temporary) folder for loading models from this locations.
      * @param modelManagement {@link VarModel#INSTANCE}, {@link BuildModel#INSTANCE}, or {@link TemplateModel#INSTANCE}
      * @param folder The folder to (un-)register
-     * @param add <tt>true</tt> the folder will be added as possible location for models, <tt>false</tt> the folder
-     *     will be removed.
+     * @param add <code>true</code> the folder will be added as possible location for models, <code>false</code> the 
+     *     folder will be removed.
      */
     private void addOrRemoveLocation(ModelManagement<? extends IModel> modelManagement, File folder, boolean add) {
         try {
