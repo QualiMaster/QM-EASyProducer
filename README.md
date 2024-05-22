@@ -9,4 +9,6 @@ configuration tool (QM-IConf, https://github.com/QualiMaster/QM-IConf) uses the 
 
 Further, the extension also contains a debug program useful to load a (local) version of the QualiMaster configuration model and to perform tests / debug against the source code of EASy-Producer.
 
+In May 2024, the extensions for QualiMaster were upgraded to EASy-Producer 1.3.10 and, thereby, to JDK 17 and maven builds.
+
 QualiMaster.Extension for EASy-Producer is released as open source under the Apache 2.0 license.
